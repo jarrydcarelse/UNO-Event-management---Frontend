@@ -1,6 +1,6 @@
 // EventsPage.js
-// Main page for Events, matching Figma design layout
-// Contains Events Overview and New Events Requests sections
+// Main page for Events, updated to closely match Figma design
+// Includes sidebar, Events Overview, and New Events Requests sections
 import EventCard from '../components/EventCard';
 import RequestCard from '../components/RequestCard';
 
@@ -13,7 +13,7 @@ function EventsPage() {
       date: '15 December 2025',
       progress: 50,
       tasks: '5/10',
-      color: 'bg-yellow-500',
+      color: 'bg-yellow-400', // Adjusted to match Figma's yellow
     },
     {
       name: 'Wedding Reception',
@@ -21,7 +21,7 @@ function EventsPage() {
       date: '5 June 2025',
       progress: 17,
       tasks: '2/12',
-      color: 'bg-red-500',
+      color: 'bg-red-400', // Adjusted to match Figma's red
     },
     {
       name: 'Tech Product Launch',
@@ -29,7 +29,7 @@ function EventsPage() {
       date: '22 August 2025',
       progress: 85,
       tasks: '6/7',
-      color: 'bg-green-500',
+      color: 'bg-green-400', // Adjusted to match Figma's green
     },
   ];
 
@@ -60,40 +60,40 @@ function EventsPage() {
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow p-4">
-        <div className="flex items-center mb-6">
-          <h2 className="text-xl font-bold text-pink-500">Armand</h2>
+      <div className="w-64 bg-white shadow-md p-6">
+        <div className="mb-6">
+          <h2 className="text-xl font-bold text-pink-600">Armand</h2> {/* Adjusted pink shade */}
+          <p className="text-sm text-gray-500 mt-1">armand@eventify.com</p>
         </div>
-        <p className="text-sm text-gray-600 mb-6">armand@eventify.com</p>
         <input
           type="text"
           placeholder="Search..."
-          className="input input-bordered w-full mb-6"
+          className="input input-bordered w-full mb-6 text-gray-600"
         />
-        <ul className="menu bg-base-100 w-full">
-          <li><a>Dashboard</a></li>
-          <li><a className="bg-pink-500 text-white">Events</a></li>
-          <li><a>Tasks</a></li>
-          <li><a>Budget</a></li>
-          <li><a>Archive</a></li>
+        <ul className="menu bg-base-100 w-full rounded-box">
+          <li><a className="text-gray-700 hover:bg-gray-200">Dashboard</a></li>
+          <li><a className="bg-pink-600 text-white">Events</a></li> {/* Adjusted active style */}
+          <li><a className="text-gray-700 hover:bg-gray-200">Tasks</a></li>
+          <li><a className="text-gray-700 hover:bg-gray-200">Budget</a></li>
+          <li><a className="text-gray-700 hover:bg-gray-200">Archive</a></li>
         </ul>
-        <button className="btn btn-ghost w-full mt-4">Logout</button>
+        <button className="btn btn-ghost w-full mt-6 text-gray-700">Logout</button>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Events Overview</h1>
-          <button className="btn btn-circle btn-outline">
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">Events Overview</h1>
+          <button className="btn btn-circle btn-outline border-gray-300 hover:bg-gray-200">
+            <svg className="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
             </svg>
           </button>
         </div>
 
         {/* Events Overview */}
-        <div className="mb-8">
+        <div className="mb-10">
           {events.map((event, index) => (
             <EventCard
               key={index}
@@ -108,8 +108,8 @@ function EventsPage() {
         </div>
 
         {/* New Events Requests */}
-        <h2 className="text-xl font-bold mb-4">New Events Requests</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">New Events Requests</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {requests.map((request, index) => (
             <RequestCard
               key={index}
