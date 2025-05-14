@@ -1,0 +1,132 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Manrope', sans-serif;
+    height: 100%;
+}
+
+.signup-page {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+.signup-left {
+    flex: 1;
+    background-color: #FF8FAB;
+    background-image: url('../assets/pink-pattern.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 60px;
+    flex-direction: column;
+    text-align: left;
+}
+
+.signup-left .branding .logo-img {
+    width: 360px;
+    margin-bottom: 0;
+}
+
+.signup-left .branding .welcome-text {
+    max-width: 600px;
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.signup-right {
+    flex: 1;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px;
+}
+
+
+.signup-form {
+    width: 100%;
+    max-width: 320px;
+    padding: 36px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.signup-form h2 {
+    color: #FF8FAB;
+    margin: 0 0 8px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.signup-divider {
+    border: none;
+    height: 1px;
+    background-color: #ddd;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.signup-form label {
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+.signup-form input {
+    padding: 18px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.signup-form .signup-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.signup-form .btn-signup {
+    flex: 1;
+    padding: 18px;
+    background-color: #FF8FAB;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.signup-form .btn-signup:hover {
+    background-color: #F884A1;
+}
+
+.signup-form .btn-signin {
+    flex: 1;
+    padding: 18px;
+    background: #fff;
+    color: #FF8FAB;
+    border: 1px solid #FF8FAB;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.signup-form .btn-signin:hover {
+    background-color: #FF8FAB;
+    color: #fff;
+}
