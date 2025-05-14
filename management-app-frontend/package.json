@@ -27,9 +27,13 @@
     }
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.21",
     "concurrently": "^8.2.2",
+    "daisyui": "^5.0.35",
     "electron": "^31.3.1",
     "electron-builder": "^24.13.3",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.6",
     "wait-on": "^7.2.0"
   },
   "browserslist": {
@@ -45,13 +49,9 @@
     ]
   },
   "dependencies": {
-    "autoprefixer": "^10.4.21",
-    "daisyui": "^5.0.35",
-    "postcss": "^8.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-scripts": "^5.0.1",
-    "tailwindcss": "^4.1.6",
     "web-vitals": "^5.0.1"
   }
 }

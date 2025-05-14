@@ -1,0 +1,219 @@
+/* EventsPage.css */
+/* Styles for the Events page, designed to match the Figma layout */
+/* Defines layout, colors, typography, and spacing based on Figma design */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.events-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f3f4f6; /* Tailwind gray-100 */
+}
+
+.sidebar {
+  width: 256px; /* Tailwind w-64 */
+  background-color: #ffffff; /* Tailwind white */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Tailwind shadow-lg */
+  padding: 24px; /* Tailwind p-6 */
+}
+
+.sidebar h2 {
+  font-size: 1.25rem; /* Tailwind text-xl */
+  font-weight: 700; /* Tailwind font-bold */
+  color: #ff69b4; /* Tailwind pink-500 */
+  margin-bottom: 0.5rem; /* Tailwind mb-2 */
+}
+
+.sidebar p {
+  font-size: 0.875rem; /* Tailwind text-sm */
+  color: #6b7280; /* Tailwind gray-500 */
+  margin-top: 0.5rem; /* Tailwind mt-2 */
+}
+
+.sidebar input {
+  width: 100%;
+  margin-bottom: 24px; /* Tailwind mb-6 */
+  border-color: #d1d5db; /* Tailwind border-gray-300 */
+  border-radius: 0.375rem; /* Tailwind rounded-md */
+  color: #4b5563; /* Tailwind text-gray-600 */
+}
+
+.sidebar input::placeholder {
+  color: #9ca3af; /* Tailwind placeholder-gray-400 */
+}
+
+.sidebar nav ul {
+  background-color: #ffffff; /* Tailwind bg-base-100 */
+  width: 100%;
+  border-radius: 0;
+}
+
+.sidebar nav ul li a {
+  color: #4b5563; /* Tailwind text-gray-600 */
+  padding: 0.5rem 0; /* Tailwind py-2 */
+  font-size: 0.875rem; /* Tailwind text-sm */
+}
+
+.sidebar nav ul li a:hover {
+  background-color: #e5e7eb; /* Tailwind hover:bg-gray-200 */
+}
+
+.sidebar nav ul li a.active {
+  background-color: #ff69b4; /* Tailwind pink-500 */
+  color: #ffffff; /* Tailwind text-white */
+}
+
+.sidebar button {
+  width: 100%;
+  margin-top: 24px; /* Tailwind mt-6 */
+  color: #4b5563; /* Tailwind text-gray-600 */
+  font-size: 0.875rem; /* Tailwind text-sm */
+}
+
+.main-content {
+  flex: 1;
+  padding: 24px; /* Tailwind p-6 */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px; /* Tailwind mb-8 */
+}
+
+.header h1 {
+  font-size: 30px; /* Figma spec */
+  font-weight: 700; /* Tailwind font-bold */
+  color: #1f2937; /* Tailwind text-gray-800 */
+}
+
+.header button {
+  border-color: #d1d5db; /* Tailwind border-gray-300 */
+}
+
+.header button:hover {
+  background-color: #e5e7eb; /* Tailwind hover:bg-gray-200 */
+}
+
+.header button svg {
+  height: 1.5rem; /* Tailwind h-6 */
+  width: 1.5rem; /* Tailwind w-6 */
+  color: #4b5563; /* Tailwind text-gray-600 */
+}
+
+.events-overview,
+.new-events-requests {
+  margin-bottom: 40px; /* Tailwind mb-10 */
+}
+
+.new-events-requests h2 {
+  font-size: 24px; /* Figma spec */
+  font-weight: 700; /* Tailwind font-bold */
+  color: #1f2937; /* Tailwind text-gray-800 */
+  margin-bottom: 24px; /* Tailwind mb-6 */
+}
+
+.new-events-requests .grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px; /* Tailwind gap-6 */
+}
+
+@media (min-width: 768px) {
+  .new-events-requests .grid {
+    grid-template-columns: repeat(3, 1fr); /* Tailwind md:grid-cols-3 */
+  }
+}
+
+.event-card,
+.request-card {
+  background-color: #ffffff; /* Tailwind white */
+  padding: 20px; /* Tailwind p-5 */
+  border-radius: 0.5rem; /* Tailwind rounded-lg */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Tailwind shadow-lg */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px; /* Tailwind mb-5 */
+}
+
+.event-card h3,
+.request-card h3 {
+  font-size: 18px; /* Figma spec */
+  font-weight: 600; /* Tailwind font-semibold */
+  color: #1f2937; /* Tailwind text-gray-800 */
+}
+
+.event-card p,
+.request-card p {
+  font-size: 14px; /* Figma spec */
+  color: #4b5563; /* Tailwind text-gray-600 */
+  margin-top: 0.25rem; /* Tailwind mt-1 */
+  text-transform: uppercase;
+  letter-spacing: 0.025em; /* Tailwind tracking-wide */
+}
+
+.progress-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* Tailwind space-x-3 */
+}
+
+.progress-bar-container span {
+  font-size: 14px; /* Figma spec */
+  color: #4b5563; /* Tailwind text-gray-600 */
+}
+
+.progress-bar {
+  width: 160px; /* Tailwind w-40 */
+  height: 10px; /* Tailwind h-2.5 */
+  background-color: #e5e7eb; /* Tailwind bg-gray-200 */
+  border-radius: 9999px; /* Tailwind rounded-full */
+  overflow: hidden;
+}
+
+.progress-bar div {
+  height: 100%;
+  border-radius: 9999px; /* Tailwind rounded-full */
+}
+
+.button {
+  border-radius: 9999px; /* Tailwind rounded-full */
+  padding: 0 1rem; /* Tailwind px-4 */
+  font-size: 14px; /* Figma spec */
+}
+
+.button-outline {
+  border-color: #d1d5db; /* Tailwind border-gray-300 */
+  background-color: transparent;
+  color: #374151; /* Tailwind text-gray-700 */
+}
+
+.button-outline:hover {
+  background-color: #e5e7eb; /* Tailwind hover:bg-gray-100 */
+}
+
+.button-success {
+  background-color: #22c55e; /* Tailwind green-500 */
+  color: #ffffff; /* Tailwind text-white */
+}
+
+.button-success:hover {
+  background-color: #16a34a; /* Tailwind green-600 */
+}
+
+.button-error {
+  background-color: #ef4444; /* Tailwind red-500 */
+  color: #ffffff; /* Tailwind text-white */
+}
+
+.button-error:hover {
+  background-color: #dc2626; /* Tailwind red-600 */
+}

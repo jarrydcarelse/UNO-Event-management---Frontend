@@ -1,8 +1,9 @@
 // EventsPage.js
-// Main page for Events, styled with Tailwind to match Figma design
-// Includes sidebar, header, Events Overview, and New Events Requests sections
+// Main page for Events, with styles moved to EventsPage.css
+// Uses class names to apply Figma-matched styling
 import EventCard from '../components/EventCard';
 import RequestCard from '../components/RequestCard';
+import './css/EventsPage.css';
 
 function EventsPage() {
   // Placeholder data to match Figma design
@@ -58,42 +59,40 @@ function EventsPage() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="events-page">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-lg p-6">
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-pink-500">Armand</h2>
-          <p className="text-sm text-gray-500 mt-2">armand@eventify.com</p>
+      <aside className="sidebar">
+        <div>
+          <h2>Armand</h2>
+          <p>armand@eventify.com</p>
         </div>
-        <input
-          type="text"
-          placeholder="Search..."
-          className="input input-bordered w-full mb-6 text-gray-600 placeholder-gray-400 border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
-        />
-        <ul className="menu bg-base-100 w-full rounded-none">
-          <li><a className="text-gray-600 hover:bg-gray-200 py-2 text-sm">Dashboard</a></li>
-          <li><a className="bg-pink-500 text-white py-2 text-sm">Events</a></li>
-          <li><a className="text-gray-600 hover:bg-gray-200 py-2 text-sm">Tasks</a></li>
-          <li><a className="text-gray-600 hover:bg-gray-200 py-2 text-sm">Budget</a></li>
-          <li><a className="text-gray-600 hover:bg-gray-200 py-2 text-sm">Archive</a></li>
-        </ul>
-        <button className="btn btn-ghost w-full mt-6 text-gray-600 text-sm">Logout</button>
-      </div>
+        <input type="text" placeholder="Search..." />
+        <nav>
+          <ul>
+            <li><a className="text-sm">Dashboard</a></li>
+            <li><a className="active text-sm">Events</a></li>
+            <li><a className="text-sm">Tasks</a></li>
+            <li><a className="text-sm">Budget</a></li>
+            <li><a className="text-sm">Archive</a></li>
+          </ul>
+        </nav>
+        <button className="text-sm">Logout</button>
+      </aside>
 
       {/* Main Content */}
-      <div className="flex-1 p-6">
+      <main className="main-content">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-[30px] font-bold text-gray-800">Events Overview</h1>
-          <button className="btn btn-circle btn-outline border-gray-300 hover:bg-gray-200">
-            <svg className="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <header className="header">
+          <h1>Events Overview</h1>
+          <button>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
             </svg>
           </button>
-        </div>
+        </header>
 
         {/* Events Overview */}
-        <div className="mb-10">
+        <section className="events-overview">
           {events.map((event, index) => (
             <EventCard
               key={index}
@@ -105,23 +104,25 @@ function EventsPage() {
               color={event.color}
             />
           ))}
-        </div>
+        </section>
 
         {/* New Events Requests */}
-        <h2 className="text-[24px] font-bold text-gray-800 mb-6">New Events Requests</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {requests.map((request, index) => (
-            <RequestCard
-              key={index}
-              name={request.name}
-              budget={request.budget}
-              client={request.client}
-              date={request.date}
-              tasks={request.tasks}
-            />
-          ))}
-        </div>
-      </div>
+        <section className="new-events-requests">
+          <h2>New Events Requests</h2>
+          <div className="grid">
+            {requests.map((request, index) => (
+              <RequestCard
+                key={index}
+                name={request.name}
+                budget={request.budget}
+                client={request.client}
+                date={request.date}
+                tasks={request.tasks}
+              />
+            ))}
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
