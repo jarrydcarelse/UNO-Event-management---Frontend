@@ -1,0 +1,206 @@
+.events-page {
+  background-color: #f2f4f7;
+  min-height: 100vh;
+  padding: 2rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+/* Card wrapper */
+.card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Overview section */
+.overview-section .overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.overview-section h2 {
+  font-size: 1.25rem;
+  color: #333333;
+}
+
+.add-btn {
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.overview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.overview-row {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.overview-info {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.overview-name {
+  font-weight: 500;
+  color: #111827;
+}
+
+.overview-detail {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.overview-status {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #374151;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.red { background-color: #ef4444; }
+.status-dot.yellow { background-color: #f59e0b; }
+.status-dot.green { background-color: #10b981; }
+
+.overview-progress {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.progress-bar-bg {
+  flex: 1;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+  height: 8px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.progress-bar-fill.red { background-color: #ef4444; }
+.progress-bar-fill.yellow { background-color: #f59e0b; }
+.progress-bar-fill.green { background-color: #10b981; }
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.overview-tasks {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.view-btn {
+  background-color: #f9fafb;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* Requests section */
+.requests-section h2 {
+  font-size: 1.25rem;
+  color: #333333;
+}
+
+.requests-list {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.request-card {
+  background-color: #f9fafb;
+  border-radius: 12px;
+  padding: 1rem;
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.request-card h3 {
+  font-size: 1rem;
+  color: #111827;
+}
+
+.request-card p {
+  font-size: 0.9rem;
+  color: #374151;
+  margin: 0;
+}
+
+.request-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.accept-btn {
+  flex: 1;
+  background-color: #10b981;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.deny-btn {
+  flex: 1;
+  background-color: #f87171;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .overview-list,
+  .requests-list {
+    flex-direction: column;
+  }
+}
