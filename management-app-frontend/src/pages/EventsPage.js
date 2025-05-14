@@ -3,7 +3,7 @@
 // Uses class names to apply Figma-matched styling
 import EventCard from '../components/EventCard';
 import RequestCard from '../components/RequestCard';
-import './css/EventsPage.css';
+import '../css/EventsPage.css'; // Fixed import path
 
 function EventsPage() {
   // Placeholder data to match Figma design

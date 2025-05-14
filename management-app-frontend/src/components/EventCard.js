@@ -1,7 +1,7 @@
 // EventCard.js
 // Component for displaying an event in the Events Overview section
 // Uses class names from EventsPage.css to match Figma design
-import './css/EventsPage.css';
+import '../css/EventsPage.css'; // Fixed import path
 
 function EventCard({ name, client, date, progress, tasks, color }) {
   return (

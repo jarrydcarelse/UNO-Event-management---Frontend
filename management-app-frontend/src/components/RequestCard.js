@@ -1,7 +1,7 @@
 // RequestCard.js
 // Component for displaying a new event request
 // Uses class names from EventsPage.css to match Figma design
-import './css/EventsPage.css';
+import '../css/EventsPage.css'; // Fixed import path
 
 function RequestCard({ name, budget, client, date, tasks }) {
   return (
