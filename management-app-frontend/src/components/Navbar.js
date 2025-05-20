@@ -1,67 +1,80 @@
-import { FaSearch, FaSignOutAlt } from "react-icons/fa";
-import { HiOutlineClipboardList, HiOutlineCalendar, HiOutlineArchive, HiOutlineCash } from "react-icons/hi";
-import { MdDashboard } from "react-icons/md";
+import React from "react";
+import { 
+  FiChevronLeft, 
+  FiChevronRight,
+  FiHome,
+  FiCalendar,
+  FiCheckSquare,
+  FiDollarSign,
+  FiArchive,
+  FiLogOut,
+  FiUser
+} from "react-icons/fi";
+import { Link, useLocation } from "react-router-dom";
+import "../styles/Navbar.css";
 
-const Sidebar = () => {
+const Navbar = ({ isOpen, setIsOpen }) => {
+  const location = useLocation();
+  const navItems = [
+    { name: "Dashboard", icon: <FiHome size={20} />, path: "/dashboard" },
+    { name: "Events", icon: <FiCalendar size={20} />, path: "/events" },
+    { name: "Tasks", icon: <FiCheckSquare size={20} />, path: "/event-tasks" },
+    { name: "Budget", icon: <FiDollarSign size={20} />, path: "/budget" },
+    { name: "Archive", icon: <FiArchive size={20} />, path: "/archive" }
+  ];
+
   return (
-    <div className="w-64 h-screen bg-white shadow-md flex flex-col fixed left-0 top-0">
-      {/* Profile */}
-      <div className="flex items-center px-6 py-6 border-b">
-        <div className="bg-pink-400 text-white rounded-full h-10 w-10 flex items-center justify-center text-xl font-bold">
-          A
+    <div className={`sidebar ${isOpen ? "" : "collapsed"}`}>
+      {/* Enhanced Toggle Button */}
+      <button 
+        className="toggle-btn"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? "Collapse menu" : "Expand menu"}
+      >
+        {isOpen ? (
+          <FiChevronLeft size={18} className="toggle-icon" />
+        ) : (
+          <FiChevronRight size={18} className="toggle-icon" />
+        )}
+      </button>
+
+      {/* Profile Section */}
+      <div className="profile">
+        <div className="avatar">
+          <FiUser size={18} />
         </div>
-        <div className="ml-4">
-          <p className="font-semibold">Armand</p>
-          <p className="text-sm text-gray-500">armand@eventify.com</p>
-        </div>
+        {isOpen && (
+          <div className="user-info">
+            <p className="name">Armand</p>
+            <p className="email">armand@eventify.com</p>
+          </div>
+        )}
       </div>
 
-      {/* Search */}
-      <div className="px-4 mt-4">
-        <div className="flex items-center bg-gray-100 px-3 py-2 rounded-md">
-          <FaSearch className="text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="bg-transparent focus:outline-none ml-2 w-full"
-          />
-        </div>
-      </div>
-
-      <nav className="mt-6 flex-1">
-        <ul className="space-y-1 px-4">
-          <NavItem icon={<MdDashboard />} label="Dashboard" active />
-          <NavItem icon={<HiOutlineCalendar />} label="Events" />
-          <NavItem icon={<HiOutlineClipboardList />} label="Tasks" />
-          <NavItem icon={<HiOutlineCash />} label="Budget" />
-          <NavItem icon={<HiOutlineArchive />} label="Archive" />
-        </ul>
+      {/* Navigation Links */}
+      <nav className="nav-links">
+        {navItems.map((item, index) => (
+          <Link 
+            to={item.path}
+            key={index}
+            className={location.pathname.startsWith(item.path) ? "active" : ""}
+            title={!isOpen ? item.name : ""}
+          >
+            <span className="nav-icon">{item.icon}</span>
+            {isOpen && <span className="nav-text">{item.name}</span>}
+          </Link>
+        ))}
       </nav>
 
-      <div className="px-6 py-4 border-t mt-auto">
-        <button className="flex items-center text-gray-600 hover:text-red-500">
-          <FaSignOutAlt className="mr-2" />
-          Logout
+      {/* Logout Section */}
+      <div className="logout">
+        <button title={!isOpen ? "Logout" : ""}>
+          <FiLogOut size={18} />
+          {isOpen && <span>Logout</span>}
         </button>
       </div>
     </div>
   );
 };
 
-const NavItem = ({ icon, label, active }) => (
-  <li>
-    <a
-      href="#"
-      className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-        active
-          ? "bg-pink-100 text-pink-600"
-          : "text-gray-600 hover:bg-gray-100"
-      }`}
-    >
-      <span className="mr-3 text-lg">{icon}</span>
-      {label}
-    </a>
-  </li>
-);
-
-export default Sidebar;
+export default Navbar;

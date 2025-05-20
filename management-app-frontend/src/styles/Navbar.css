@@ -1,0 +1,189 @@
+/* Navbar.css */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  background-color: white;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+  align-items: center;
+  padding: 20px 12px;
+}
+
+/* Enhanced Toggle Button */
+.toggle-btn {
+  position: absolute;
+  right: -15px;
+  top: 20px;
+  width: 30px;
+  height: 30px;
+  background: white;
+  border: 1px solid #FFB3C6;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FF5F8A;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 110;
+}
+
+.toggle-btn:hover {
+  background: #FF5F8A;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.toggle-icon {
+  transition: transform 0.2s ease;
+}
+
+.toggle-btn:hover .toggle-icon {
+  transform: scale(1.2);
+}
+
+/* Profile Section */
+.profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.sidebar:not(.collapsed) .profile {
+  width: 100%;
+}
+
+.avatar {
+  background-color: #FF8FAB;
+  color: white;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.sidebar.collapsed .avatar {
+  width: 36px;
+  height: 36px;
+}
+
+.user-info {
+  margin-left: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.user-info .name {
+  font-weight: bold;
+  color: #333;
+}
+
+.user-info .email {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Navigation Links */
+.nav-links {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #555;
+  padding: 12px 14px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.sidebar.collapsed .nav-links a {
+  padding: 12px;
+  justify-content: center;
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.nav-text {
+  margin-left: 12px;
+  font-size: 14px;
+}
+
+.nav-links a.active {
+  background-color: #FFE4EC;
+  color: #FF5F8A;
+  font-weight: 500;
+}
+
+.nav-links a.active .nav-icon {
+  color: #FF5F8A;
+}
+
+.nav-links a:hover {
+  background-color: #FFE4EC;
+  color: #FF5F8A;
+}
+
+.nav-links a:hover .nav-icon {
+  transform: scale(1.1);
+}
+
+/* Logout Section */
+.logout {
+  margin-top: auto;
+  width: 100%;
+}
+
+.logout button {
+  background: none;
+  border: none;
+  color: #FF5F8A;
+  cursor: pointer;
+  padding: 12px 14px;
+  border-radius: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.sidebar.collapsed .logout button {
+  padding: 12px;
+  justify-content: center;
+}
+
+.logout button span {
+  margin-left: 12px;
+}
+
+.logout button:hover {
+  background-color: #FFE4EC;
+}
+
+.logout button:hover svg {
+  transform: scale(1.1);
+}
