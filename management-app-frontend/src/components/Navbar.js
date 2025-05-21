@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { 
   FiChevronLeft, 
   FiChevronRight,
@@ -13,7 +13,10 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import "../styles/Navbar.css";
 
-const Navbar = ({ isOpen, setIsOpen }) => {
+const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
+  const [internalIsOpen, internalSetIsOpen] = useState(true);
+  const isOpen = propIsOpen !== undefined ? propIsOpen : internalIsOpen;
+  const setIsOpen = propSetIsOpen !== undefined ? propSetIsOpen : internalSetIsOpen;
   const location = useLocation();
   const navItems = [
     { name: "Dashboard", icon: <FiHome size={20} />, path: "/dashboard" },
