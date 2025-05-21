@@ -5,6 +5,7 @@ import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
 import Events from './pages/Events';
 import EventTasks from './pages/EventTasks';
+import Budget from './pages/Budget';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/events" element={<Events />} />
         <Route path="/event-tasks" element={<EventTasks />} />
+        <Route path="/budget" element={<Budget />} />
       </Routes>
     </BrowserRouter>
   );

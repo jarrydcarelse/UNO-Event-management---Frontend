@@ -1,0 +1,202 @@
+/* src/styles/Budget.css */
+.budget-page {
+    background-color: #f2f4f7;
+    min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    flex: 1;
+    margin-left: 250px;
+    transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+.budget-page.collapsed {
+    margin-left: 80px;
+}
+
+.budget-page h1,
+.budget-page h2,
+.budget-page h3 {
+    color: #333333;
+    margin-bottom: 1rem;
+}
+
+.budget-page h1 {
+    font-size: 1.5rem;
+}
+
+.budget-page h2 {
+    font-size: 1.25rem;
+}
+
+.budget-page h3 {
+    font-size: 1.125rem;
+}
+
+/* Budget Summary */
+.budget-summary {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+.category-cards {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.category-card {
+    background-color: #f9fafb;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    flex: 1;
+    min-width: 150px;
+    text-align: center;
+}
+
+.category-card h4 {
+    font-size: 1rem;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.category-card p {
+    font-size: 1rem;
+    color: #374151;
+    font-weight: 500;
+}
+
+/* Budget Form */
+.budget-form {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+.budget-form form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+
+.budget-form div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.budget-form label {
+    color: #374151;
+    font-weight: 500;
+}
+
+.budget-form input,
+.budget-form select {
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: #111827;
+}
+
+.budget-form button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+.budget-form button:hover {
+    opacity: 0.9;
+}
+
+.budget-form button.cancel {
+    background-color: #9ca3af;
+}
+
+/* Budget Table */
+.budget-table {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.budget-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.budget-table th,
+.budget-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    color: #374151;
+}
+
+.budget-table th {
+    background-color: #f9fafb;
+    font-weight: 500;
+    color: #111827;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.budget-table td {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.budget-table tr:last-child td {
+    border-bottom: none;
+}
+
+.budget-table button {
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    margin-right: 0.5rem;
+}
+
+.budget-table button.edit {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+.budget-table button.delete {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+
+.budget-table button:hover {
+    opacity: 0.9;
+}
+
+
+
+    /* Sidebar (Navbar) is fixed at 250px, so dashboard-page needs margin or flex */
+.dashboard-page {
+  flex: 1;
+  margin-left: 250px; /* matches .sidebar width */
+  transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+.dashboard-page.collapsed {
+  margin-left: 80px;
+}
+
+@media (max-width: 900px) {
+  .dashboard-page {
+    margin-left: 80px;
+    padding: 1rem;
+  }
+}
