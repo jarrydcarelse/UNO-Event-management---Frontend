@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from "../components/Navbar"; 
 import '../styles/Events.css';
 
 const overviewEvents = [
@@ -60,65 +61,70 @@ const newRequests = [
 ];
 
 function Events() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
+  
   return (
-    <div className="events-page">
-      <div className="overview-section card">
-        <div className="overview-header">
-          <h2>Events Overview</h2>
-          <button className="add-btn">+</button>
-        </div>
-        <div className="overview-list">
-          {overviewEvents.map((evt, idx) => (
-            <div key={idx} className="overview-row">
-              <div className="overview-info">
-                <span className="overview-name">{evt.name}</span>
-                <span className="overview-detail">Client: {evt.client}</span>
-                <span className="overview-detail">Event Date: {evt.date}</span>
-              </div>
-              <div className="overview-status">
-                <span className={`status-dot ${evt.colorClass}`}></span>
-                <span>{evt.status}</span>
-              </div>
-              <div className="overview-progress">
-                <div className="progress-bar-bg">
-                  <div
-                    className={`progress-bar-fill ${evt.colorClass}`}
-                    style={{ width: `${evt.progress}%` }}
-                  />
+    <div className="events-layout">
+      <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <div className={`main-content${sidebarOpen ? '' : ' collapsed'}`}>
+        <div className="overview-section card">
+          <div className="overview-header">
+            <h2>Events Overview</h2>
+            <button className="add-btn">+</button>
+          </div>
+          <div className="overview-list">
+            {overviewEvents.map((evt, idx) => (
+              <div key={idx} className="overview-row">
+                <div className="overview-info">
+                  <span className="overview-name">{evt.name}</span>
+                  <span className="overview-detail">Client: {evt.client}</span>
+                  <span className="overview-detail">Event Date: {evt.date}</span>
                 </div>
-                <span className="progress-text">{evt.progress}%</span>
+                <div className="overview-status">
+                  <span className={`status-dot ${evt.colorClass}`}></span>
+                  <span>{evt.status}</span>
+                </div>
+                <div className="overview-progress">
+                  <div className="progress-bar-bg">
+                    <div
+                      className={`progress-bar-fill ${evt.colorClass}`}
+                      style={{ width: `${evt.progress}%` }}
+                    />
+                  </div>
+                  <span className="progress-text">{evt.progress}%</span>
+                </div>
+                <span className="overview-tasks">
+                  Tasks Completed: {evt.completed} | {evt.total}
+                </span>
+                <button
+                  className="view-btn"
+                  onClick={() => navigate('/event-tasks')}
+                >
+                  View
+                </button>
               </div>
-              <span className="overview-tasks">
-                Tasks Completed: {evt.completed} | {evt.total}
-              </span>
-              <button
-                className="view-btn"
-                onClick={() => navigate('/event-tasks')}
-              >
-                View
-              </button>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="requests-section card">
-        <h2>New Events Requests</h2>
-        <div className="requests-list">
-          {newRequests.map((req, idx) => (
-            <div key={idx} className="request-card">
-              <h3>{req.name}</h3>
-              <p>Budget: {req.budget}</p>
-              <p>Client: {req.client}</p>
-              <p>Event Date: {req.date}</p>
-              <p>Tasks: {req.tasks}</p>
-              <div className="request-actions">
-                <button className="accept-btn">Accept</button>
-                <button className="deny-btn">Deny</button>
+        <div className="requests-section card">
+          <h2>New Events Requests</h2>
+          <div className="requests-list">
+            {newRequests.map((req, idx) => (
+              <div key={idx} className="request-card">
+                <h3>{req.name}</h3>
+                <p>Budget: {req.budget}</p>
+                <p>Client: {req.client}</p>
+                <p>Event Date: {req.date}</p>
+                <p>Tasks: {req.tasks}</p>
+                <div className="request-actions">
+                  <button className="accept-btn">Accept</button>
+                  <button className="deny-btn">Deny</button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

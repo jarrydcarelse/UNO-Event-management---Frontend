@@ -139,3 +139,24 @@
   color: #374151;
   border: 1px solid #374151;
 }
+.eventtasks-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.event-tasks-page {
+  flex: 1;
+  margin-left: 250px; /* matches .sidebar width */
+  transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+.event-tasks-page.collapsed {
+  margin-left: 80px;
+}
+
+@media (max-width: 900px) {
+  .event-tasks-page {
+    margin-left: 80px;
+    padding: 1rem;
+  }
+}

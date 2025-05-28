@@ -1,23 +1,17 @@
 import React, { useState } from 'react';
+import Navbar from '../components/Navbar';
 import '../styles/Dashboard.css';
 
 const activeEvents = [
   { name: 'Wedding Reception', status: 'In Progress', progress: 17, colorClass: 'red' },
   { name: 'Corporate Year-End Gala', status: 'In Progress', progress: 50, colorClass: 'yellow' },
   { name: 'Tech Product Launch', status: 'In Progress', progress: 80, colorClass: 'green' },
-  { name: 'UI Workshop', status: 'In Progress', progress: 25, colorClass: 'red' },
-  { name: 'Catering Approval', status: 'In Progress', progress: 40, colorClass: 'yellow' },
-  { name: 'Venue Setup', status: 'In Progress', progress: 60, colorClass: 'green' },
 ];
 
 const notifications = [
-  { text: 'New Event Request' },
-  { text: 'New Event Request' },
-  { text: 'Budget Warning' },
-  { text: 'System Maintenance' },
-  { text: 'New Comment Added' },
-  { text: 'Overdue Task Alert' },
-  { text: 'Invitation Accepted' },
+  { text: 'New Event Request', variant: 'info' },
+  { text: 'New Event Request', variant: 'info' },
+  { text: 'Budget Warning', variant: 'warning' },
 ];
 
 const tasks = [
@@ -50,107 +44,73 @@ const tasks = [
   },
 ];
 
-export default function Dashboard() {
-  // pagination for tasks
-  const perPage = 3;
-  const [page, setPage] = useState(0);
-  const pageCount = Math.ceil(tasks.length / perPage);
-  const pagedTasks = tasks.slice(page * perPage, page * perPage + perPage);
+const Dashboard = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <div className="dashboard-container">
-      <aside className="sidebar-placeholder" />
-
-      <main className="dashboard-main">
-        {/* Top row */}
+    <div className="dashboard-layout">
+      <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <div className={`dashboard-page${sidebarOpen ? '' : ' collapsed'}`}>
+        {/* Active Events and Notifications */}
         <div className="dashboard-top">
-          <section className="card overview-card">
+          <div className="card overview-card">
             <h2>Active Events Overview</h2>
-            <hr className="section-divider" />
-            <div className="scroll-container">
-              {activeEvents.map((e,i) => (
-                <div key={i} className="row event-row">
-                  <span className="event-name">{e.name}</span>
-                  <div className="status-group">
-                    <span className={`status-dot ${e.colorClass}`}></span>
-                    <span className="status-text">{e.status}</span>
+            {activeEvents.map((evt, idx) => (
+              <div key={idx} className="overview-row">
+                <span className="overview-name">{evt.name}</span>
+                <div className="overview-status">
+                  <span className={`status-dot ${evt.colorClass}`}></span>
+                  <span>{evt.status}</span>
+                </div>
+                <div className="overview-progress">
+                  <div className="progress-bar-bg">
+                    <div
+                      className={`progress-bar-fill ${evt.colorClass}`}
+                      style={{ width: `${evt.progress}%` }}
+                    />
                   </div>
-                  <div className="progress-group">
-                    <div className="progress-bar">
-                      <div
-                        className={`progress-fill ${e.colorClass}`}
-                        style={{ width: `${e.progress}%` }}
-                      />
-                    </div>
-                    <span className="progress-text">{e.progress}%</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="card notifications-card">
-            <h2>Notifications</h2>
-            <hr className="section-divider" />
-            <div className="scroll-container">
-              {notifications.map((n,i) => (
-                <div key={i} className="row notification-row">
-                  <span className="notification-icon">🔔</span>
-                  <span className="notification-text">{n.text}</span>
-                  <button className="notification-trash">🗑️</button>
-                </div>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        {/* Task Management with pagination */}
-        <section className="card tasks-card">
-          <h2>Task Management</h2>
-          <hr className="section-divider" />
-
-          <div className="tasks-container">
-            {pagedTasks.map((t,i) => (
-              <div key={i} className="task-block">
-                <div className="task-header">
-                  <span className="task-name">{t.event}</span>
-                  <hr className="inner-divider" />
-                </div>
-                <p className="task-title">{t.title}</p>
-                <div className="status-group">
-                  <span className={`status-dot ${t.priorityClass}`}></span>
-                  <span>Priority: {t.priority}</span>
-                </div>
-                <div className="task-meta">
-                  <p>Assigned To: {t.assignedTo}</p>
-                  <p>Due Date: {t.dueDate}</p>
-                  <p>Status: {t.status}</p>
-                </div>
-                <div className="task-actions">
-                  <button className="edit-btn">✎ Edit</button>
-                  <button className="reassign-btn">⟲ Reassign</button>
+                  <span>{evt.progress}%</span>
                 </div>
               </div>
             ))}
           </div>
-
-          <div className="pagination">
-            <button
-              onClick={() => setPage(p => Math.max(p - 1, 0))}
-              disabled={page === 0}
-            >
-              ‹ Prev
-            </button>
-            <span>Page {page + 1} / {pageCount}</span>
-            <button
-              onClick={() => setPage(p => Math.min(p + 1, pageCount - 1))}
-              disabled={page === pageCount - 1}
-            >
-              Next ›
-            </button>
+          <div className="card notifications-card">
+            <h2>Notifications</h2>
+            {notifications.map((note, idx) => (
+              <div key={idx} className={`notification-item ${note.variant}`}>
+                <span className="note-icon">•</span>
+                <span>{note.text}</span>
+              </div>
+            ))}
           </div>
-        </section>
-      </main>
+        </div>
+
+        {/* Task Management */}
+        <div className="task-management">
+          <h2>Task Management</h2>
+          <div className="task-cards">
+            {tasks.map((task, idx) => (
+              <div key={idx} className="card task-card">
+                <h3>{task.event}</h3>
+                <p className="task-title">{task.title}</p>
+                <p className="task-priority">
+                  <span className={`status-dot ${task.priorityClass}`}></span>
+                  Priority: {task.priority}
+                </p>
+                <p>Assigned To: {task.assignedTo}</p>
+                <p>Due Date: {task.dueDate}</p>
+                <p>Status: {task.status}</p>
+                <div className="task-actions">
+                  <button className="action-btn edit">✎ Edit</button>
+                  <button className="action-btn reassign">⟲ Reassign</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default Dashboard;

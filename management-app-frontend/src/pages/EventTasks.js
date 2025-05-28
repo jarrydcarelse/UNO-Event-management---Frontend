@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Navbar from '../components/Navbar';
 import '../styles/EventTasks.css';
 import checkIcon from '../assets/images/check.png'; // adjust path if needed
 
@@ -27,58 +28,63 @@ const tasks = [
 ];
 
 const EventTasks = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   return (
-    <div className="event-tasks-page">
-      <div className="event-header card">
-        <div className="event-header-left">
-          <h2>{eventDetails.name}</h2>
-          <span className="event-client">{eventDetails.client}</span>
+    <div className="eventtasks-layout">
+      <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <div className={`event-tasks-page${sidebarOpen ? '' : ' collapsed'}`}>
+        <div className="event-header card">
+          <div className="event-header-left">
+            <h2>{eventDetails.name}</h2>
+            <span className="event-client">{eventDetails.client}</span>
+          </div>
+          <div className="event-header-right">
+            <span className={`status-dot ${eventDetails.colorClass}`}></span>
+          </div>
         </div>
-        <div className="event-header-right">
-          <span className={`status-dot ${eventDetails.colorClass}`}></span>
-        </div>
-      </div>
 
-      <div className="event-progress card">
-        <div className="progress-bar-bg">
-          <div
-            className="progress-bar-fill"
-            style={{
-              width: `${eventDetails.progress}%`,
-              backgroundColor: eventDetails.colorClass === 'yellow' ? '#f59e0b' : eventDetails.colorClass === 'red' ? '#ef4444' : '#10b981'
-            }}
-          />
+        <div className="event-progress card">
+          <div className="progress-bar-bg">
+            <div
+              className="progress-bar-fill"
+              style={{
+                width: `${eventDetails.progress}%`,
+                backgroundColor: eventDetails.colorClass === 'yellow' ? '#f59e0b' : eventDetails.colorClass === 'red' ? '#ef4444' : '#10b981'
+              }}
+            />
+          </div>
+          <div className="event-stats">
+            <span>Deadline: {eventDetails.deadline}</span>
+            <span>Overall Progress: {eventDetails.progress}%</span>
+            <span>Tasks Completed: {eventDetails.completed} | {eventDetails.totalTasks}</span>
+            <span>Overall Budget: {eventDetails.budget}</span>
+            <span>Overall Spent: {eventDetails.spent}</span>
+          </div>
         </div>
-        <div className="event-stats">
-          <span>Deadline: {eventDetails.deadline}</span>
-          <span>Overall Progress: {eventDetails.progress}%</span>
-          <span>Tasks Completed: {eventDetails.completed} | {eventDetails.totalTasks}</span>
-          <span>Overall Budget: {eventDetails.budget}</span>
-          <span>Overall Spent: {eventDetails.spent}</span>
-        </div>
-      </div>
 
-      <div className="task-management-section">
-        <h2>Task Management</h2>
-        <div className="task-list">
-          {tasks.map((task, idx) => (
-            <div key={idx} className={`task-card ${task.completed ? 'completed' : ''}`}>
-              <div className="task-title-row">
-                <h3>{task.title}</h3>
-                {task.completed && <img src={checkIcon} className="check-icon" alt="Completed task" />}
+        <div className="task-management-section">
+          <h2>Task Management</h2>
+          <div className="task-list">
+            {tasks.map((task, idx) => (
+              <div key={idx} className={`task-card ${task.completed ? 'completed' : ''}`}>
+                <div className="task-title-row">
+                  <h3>{task.title}</h3>
+                  {task.completed && <img src={checkIcon} className="check-icon" alt="Completed task" />}
+                </div>
+                <p className="task-priority">
+                  <span className={`status-dot ${task.priorityClass}`}></span>
+                  Priority: {task.priority}
+                </p>
+                <p>Assigned To: {task.assignedTo}</p>
+                <p>Budget: {task.budget}</p>
+                <div className="task-actions">
+                  <button className="action-btn edit">✎ Edit</button>
+                  <button className="action-btn reassign">⟲ Reassign</button>
+                </div>
               </div>
-              <p className="task-priority">
-                <span className={`status-dot ${task.priorityClass}`}></span>
-                Priority: {task.priority}
-              </p>
-              <p>Assigned To: {task.assignedTo}</p>
-              <p>Budget: {task.budget}</p>
-              <div className="task-actions">
-                <button className="action-btn edit">✎ Edit</button>
-                <button className="action-btn reassign">⟲ Reassign</button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
