@@ -1,144 +1,159 @@
-/* fills viewport, uses flex gap instead of sidebar margin */
-.dashboard-container {
+.dashboard-layout {
   display: flex;
-  height: 100vh;
-  background: #F2F2F7;
+  min-height: 100vh;
+  background: #f9f9fb;
   font-family: 'Manrope', sans-serif;
-  gap: 24px;
-  padding: 24px;
-  box-sizing: border-box;
 }
 
-/* sidebar stub */
-.sidebar-placeholder {
-  width: 240px;
-  background: #fff;
-  border-radius: 12px;
-  /* height handled by container */
-}
-
-/* main content */
-.dashboard-main {
+.dashboard-page {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  padding: 24px;
+  margin-left: 250px;
+  box-sizing: border-box;
+  transition: margin-left 0.3s ease;
 }
 
-/* TWO columns for the top row */
+.dashboard-page.collapsed {
+  margin-left: 80px;
+}
+
 .dashboard-top {
   display: flex;
   gap: 24px;
+  margin-bottom: 24px;
 }
 
-/* base card */
-.card {
+/* Sticky headers inside scrollable containers */
+.card-header {
+  position: sticky;
+  top: 0;
   background: #fff;
-  border-radius: 12px;
+  z-index: 1;
+}
+
+.section-divider {
+  border: none;
+  height: 1px;
+  background: #ddd;
+  margin: 8px 0;
+}
+
+/* Scroll areas */
+.scroll-container {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* Layout distribution */
+.overview-card { flex: 3; }
+.notifications-card { flex: 1; }
+
+.card {
+  background: #ffffff;
+  border-radius: 16px;
   padding: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   gap: 16px;
-  flex: 1;
 }
 
-/* section header */
 .card h2 {
   margin: 0;
   font-size: 20px;
   font-weight: 600;
 }
-.section-divider {
-  border: none;
-  height: 1px;
-  background: #ddd;
-  margin: 0;
-}
 
-/* make only the top two cards scrollable when long */
-.scroll-container {
-  max-height: 240px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* generic row style */
-.row {
-  background: #F2F2F7;
-  border-radius: 8px;
-  padding: 16px;
+.overview-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-/* Active Events */
-.event-row { justify-content: space-between; }
-.event-name { flex: 2; font-weight: 500; color: #111827; }
-.status-group {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 .status-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
 }
-.status-dot.red    { background: #FF3B30; }
-.status-dot.yellow { background: #FFCC00; }
-.status-dot.green  { background: #34C759; }
-.status-text       { font-size: 14px; color: #374151; }
 
-.progress-group {
+.red { background: #FF3B30; }
+.yellow { background: #FFCC00; }
+.green { background: #34C759; }
+
+.overview-name {
+  flex: 2;
+  font-weight: 500;
+  color: #111827;
+}
+
+.overview-status {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #374151;
+}
+
+.overview-progress {
   flex: 2;
   display: flex;
   align-items: center;
   gap: 10px;
   justify-content: flex-end;
 }
-.progress-bar {
-  flex: 1;
-  height: 8px;
-  background: #E5E7EB;
-  border-radius: 4px;
+
+.progress-bar-bg {
+  height: 12px;
+  width: 100px;
+  background: #e5e7eb;
+  border-radius: 9999px;
   overflow: hidden;
 }
-.progress-fill.red    { background: #FF3B30; }
-.progress-fill.yellow { background: #FFCC00; }
-.progress-fill.green  { background: #34C759; }
-.progress-text        { font-size: 14px; color: #374151; }
+
+.progress-bar-fill {
+  height: 12px;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
 
 /* Notifications */
-.notification-row { justify-content: space-between; }
-.notification-icon { font-size: 16px; }
-.notification-text {
-  flex: 1;
-  color: #374151;
-}
-.notification-trash {
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  color: #FF8FAB;
+.notification-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
-/* TASKS with pagination */
-.tasks-card {
-  /* full width under top two */
+.notification-item.info {
+  background-color: #fdeaf4;
+  color: #d63384;
 }
-.tasks-container {
+
+.notification-item.warning {
+  background-color: #fff4e6;
+  color: #f08c00;
+}
+
+.note-icon {
+  font-size: 18px;
+}
+
+/* Tasks section */
+.tasks-card {}
+
+.task-cards {
   display: flex;
   gap: 16px;
+  padding-top: 8px;
 }
 
-/* each task block */
 .task-block {
-  background: #F2F2F7;
+  background: #f2f2f7;
   border-radius: 8px;
   padding: 16px;
   display: flex;
@@ -147,22 +162,26 @@
   flex: 1;
   min-width: 200px;
 }
+
 .task-header .task-name {
   font-weight: 500;
   color: #111827;
 }
+
 .inner-divider {
   border: none;
   height: 1px;
   background: #ddd;
-  margin: 4px 0 0;
+  margin: 4px 0;
 }
+
 .task-title {
   margin: 0;
   font-size: 14px;
   color: #374151;
   font-weight: 500;
 }
+
 .task-meta {
   display: flex;
   flex-direction: column;
@@ -170,75 +189,46 @@
   font-size: 14px;
   color: #374151;
 }
+
 .task-actions {
   margin-top: auto;
   display: flex;
   justify-content: space-between;
 }
+
 .edit-btn, .reassign-btn {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: none;
+  padding: 8px 14px;
+  border-radius: 9999px;
   font-size: 14px;
+  border: none;
   cursor: pointer;
-}
-.edit-btn     { background: #2563EB; color: #fff; }
-.reassign-btn { background: #9CA3AF; color: #fff; }
-
-/* pagination controls */
-.pagination {
-  margin-top: 16px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 12px;
-}
-.pagination button {
-  padding: 6px 12px;
-  border: none;
-  background: #2563EB;
-  color: #fff;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-}
-.pagination button:disabled {
-  background: #ccc;
-  cursor: default;
-}
-.pagination span {
-  font-size: 14px;
-  color: #374151;
+  gap: 6px;
 }
 
-/* responsive */
+.edit-btn {
+  background-color: #2563eb;
+  color: white;
+}
+
+.reassign-btn {
+  background-color: #9ca3af;
+  color: white;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .dashboard-top {
     flex-direction: column;
   }
+
   .task-cards {
     flex-direction: column;
   }
-}
-.dashboard-layout {
-  display: flex;
-  min-height: 100vh;
-}
 
-/* Sidebar (Navbar) is fixed at 250px, so dashboard-page needs margin or flex */
-.dashboard-page {
-  flex: 1;
-  margin-left: 250px; /* matches .sidebar width */
-  transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1);
-}
-
-.dashboard-page.collapsed {
-  margin-left: 80px;
-}
-
-@media (max-width: 900px) {
   .dashboard-page {
     margin-left: 80px;
-    padding: 1rem;
+    padding: 16px;
   }
 }

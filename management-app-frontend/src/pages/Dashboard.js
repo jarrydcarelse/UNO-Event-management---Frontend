@@ -6,12 +6,17 @@ const activeEvents = [
   { name: 'Wedding Reception', status: 'In Progress', progress: 17, colorClass: 'red' },
   { name: 'Corporate Year-End Gala', status: 'In Progress', progress: 50, colorClass: 'yellow' },
   { name: 'Tech Product Launch', status: 'In Progress', progress: 80, colorClass: 'green' },
+  { name: 'Fundraiser Ball', status: 'In Progress', progress: 30, colorClass: 'yellow' },
+  { name: 'Startup Pitch Night', status: 'In Progress', progress: 90, colorClass: 'green' },
+  { name: 'Charity Auction', status: 'In Progress', progress: 60, colorClass: 'yellow' },
 ];
 
 const notifications = [
   { text: 'New Event Request', variant: 'info' },
   { text: 'New Event Request', variant: 'info' },
   { text: 'Budget Warning', variant: 'warning' },
+  { text: 'Task Deadline Tomorrow', variant: 'warning' },
+  { text: 'Client Feedback Received', variant: 'info' },
 ];
 
 const tasks = [
@@ -51,9 +56,8 @@ const Dashboard = () => {
     <div className="dashboard-layout">
       <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <div className={`dashboard-page${sidebarOpen ? '' : ' collapsed'}`}>
-        {/* Active Events and Notifications */}
         <div className="dashboard-top">
-          <div className="card overview-card">
+          <div className="card overview-card scroll-container">
             <h2>Active Events Overview</h2>
             {activeEvents.map((evt, idx) => (
               <div key={idx} className="overview-row">
@@ -74,7 +78,8 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
-          <div className="card notifications-card">
+
+          <div className="card notifications-card scroll-container">
             <h2>Notifications</h2>
             {notifications.map((note, idx) => (
               <div key={idx} className={`notification-item ${note.variant}`}>
@@ -85,24 +90,29 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Task Management */}
-        <div className="task-management">
+        <div className="card tasks-card">
           <h2>Task Management</h2>
+          <hr className="section-divider" />
           <div className="task-cards">
             {tasks.map((task, idx) => (
-              <div key={idx} className="card task-card">
-                <h3>{task.event}</h3>
+              <div key={idx} className="task-block">
+                <div className="task-header">
+                  <h3 className="task-name">{task.event}</h3>
+                  <hr className="inner-divider" />
+                </div>
                 <p className="task-title">{task.title}</p>
                 <p className="task-priority">
                   <span className={`status-dot ${task.priorityClass}`}></span>
                   Priority: {task.priority}
                 </p>
-                <p>Assigned To: {task.assignedTo}</p>
-                <p>Due Date: {task.dueDate}</p>
-                <p>Status: {task.status}</p>
+                <div className="task-meta">
+                  <p>Assigned To: {task.assignedTo}</p>
+                  <p>Due Date: {task.dueDate}</p>
+                  <p>Status: {task.status}</p>
+                </div>
                 <div className="task-actions">
-                  <button className="action-btn edit">✎ Edit</button>
-                  <button className="action-btn reassign">⟲ Reassign</button>
+                  <button className="edit-btn">✎ Edit</button>
+                  <button className="reassign-btn">⟲ Reassign</button>
                 </div>
               </div>
             ))}
