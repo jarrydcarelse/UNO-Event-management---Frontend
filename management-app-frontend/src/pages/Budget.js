@@ -29,9 +29,11 @@ const Budget = () => {
         if (newItem.description && newItem.category && newItem.amount && newItem.event) {
             if (editItem) {
                 setBudgetItems(budgetItems.map(item => item.id === editItem.id ? editItem : item));
+                window.alert('Budget item updated.');
                 setEditItem(null);
             } else {
                 setBudgetItems([...budgetItems, { ...newItem, id: Date.now(), status: newItem.status }]);
+                window.alert('Budget item added.');
             }
             setNewItem({ description: '', category: '', amount: '', status: 'Pending', event: '' });
         }
@@ -139,6 +141,7 @@ const Budget = () => {
                         <button type="submit">{editItem ? 'Update Item' : 'Add Item'}</button>
                         {editItem && (
                             <button
+                                type="button"
                                 className="cancel"
                                 onClick={() => {
                                     setEditItem(null);
@@ -173,11 +176,11 @@ const Budget = () => {
                                         <td>{item.event}</td>
                                         <td>{item.description}</td>
                                         <td>{item.category}</td>
-                                        <td>R{item.amount.toFixed(2)}</td>
+                                        <td>R{Number(item.amount).toFixed(2)}</td>
                                         <td>{item.status}</td>
                                         <td>
-                                            <button className="edit" onClick={() => handleEditItem(item)}>Edit</button>
-                                            <button className="delete" onClick={() => handleDeleteItem(item.id)}>Delete</button>
+                                            <button type="button" className="edit" onClick={() => handleEditItem(item)}>Edit</button>
+                                            <button type="button" className="delete" onClick={() => handleDeleteItem(item.id)}>Delete</button>
                                         </td>
                                     </tr>
                                 ))}
