@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import '../styles/Budget.css';
 
-const Budget = ({ sidebarOpen }) => {
+const Budget = () => {
+    // Manage sidebar open/collapse state
+    const [sidebarOpen, setSidebarOpen] = useState(true);
     const [budgetItems, setBudgetItems] = useState([
         { id: 1, description: 'Venue Rental', category: 'Venue', amount: 1500, status: 'Approved', event: 'Wedding Reception' },
         { id: 2, description: 'Catering Services', category: 'Food', amount: 800, status: 'Pending', event: 'Wedding Reception' },
@@ -52,8 +54,8 @@ const Budget = ({ sidebarOpen }) => {
     }, {});
 
     return (
-        <>
-            <Navbar sidebarOpen={sidebarOpen} />
+        <div className="dashboard-layout">
+            <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
             <div className={`budget-page${sidebarOpen ? '' : ' collapsed'}`}>
                 <h1>Event Budget Overview</h1>
@@ -135,7 +137,17 @@ const Budget = ({ sidebarOpen }) => {
                             </select>
                         </div>
                         <button type="submit">{editItem ? 'Update Item' : 'Add Item'}</button>
-                        {editItem && <button className="cancel" onClick={() => { setEditItem(null); setNewItem({ description: '', category: '', amount: '', status: 'Pending', event: '' }); }}>Cancel</button>}
+                        {editItem && (
+                            <button
+                                className="cancel"
+                                onClick={() => {
+                                    setEditItem(null);
+                                    setNewItem({ description: '', category: '', amount: '', status: 'Pending', event: '' });
+                                }}
+                            >
+                                Cancel
+                            </button>
+                        )}
                     </form>
                 </div>
 
@@ -174,7 +186,7 @@ const Budget = ({ sidebarOpen }) => {
                     )}
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
