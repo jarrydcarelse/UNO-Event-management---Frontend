@@ -439,3 +439,27 @@
 .event-tasks-page .task-list {
   display: none;
 }
+/* Event progress container styling */
+.event-progress {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+/* Progress bar background */
+.event-progress .progress-bar-bg {
+  background-color: #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 12px;
+  margin-bottom: 1rem;
+}
+
+/* Progress bar fill */
+.event-progress .progress-bar-fill {
+  height: 100%;
+  border-radius: 8px;
+  background-color: #10b981; /* overridden by inline colorClass style */
+}
