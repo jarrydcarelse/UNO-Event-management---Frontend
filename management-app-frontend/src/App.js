@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Events from './pages/Events';
 import EventTasks from './pages/EventTasks';
 import Budget from './pages/Budget';
+import Archive from './pages/Archive';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/events" element={<Events />} />
         <Route path="/event-tasks" element={<EventTasks />} />
         <Route path="/budget" element={<Budget />} />
+        <Route path="/archive" element={<Archive />} />
       </Routes>
     </BrowserRouter>
   );
