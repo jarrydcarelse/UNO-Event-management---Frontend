@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from "../components/Navbar"; 
-import '../styles/Events.css';
-import { FiPlus } from 'react-icons/fi';
+import Navbar from "../components/Navbar";
+import '../events/Events.css';
 
+// Dummy data for initial state
 const initialRequests = [
   {
     name: 'Workshop on Sustainable Design',
@@ -29,30 +29,28 @@ const initialRequests = [
 ];
 
 function Events() {
-  // State for events overview
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const navigate = useNavigate();
+
+  // Main event overview data (stateful for adding/removing events)
   const [overviewEvents, setOverviewEvents] = useState([
     { name: 'Corporate Year-End Gala', client: 'ABC Consulting', date: '15 December 2025', status: 'In Progress', progress: 50, completed: 5, total: 10, colorClass: 'yellow' },
     { name: 'Wedding Reception', client: 'Emily & Daniel', date: '5 June 2025', status: 'In Progress', progress: 17, completed: 2, total: 12, colorClass: 'red' },
     { name: 'Tech Product Launch', client: 'InnovateX', date: '22 August 2025', status: 'In Progress', progress: 85, completed: 6, total: 7, colorClass: 'green' },
   ]);
-
-  // State for sidebar
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const navigate = useNavigate();
-
-  // State for Add Event modal
+  const [newEventData, setNewEventData] = useState({ name: '', client: '', date: '' });
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newEventData, setNewEventData] = useState({
-    name: '',
-    client: '',
-    date: ''
-  });
+  const [requests, setRequests] = useState(initialRequests);
+  const [showAcceptModal, setShowAcceptModal] = useState(false);
+  const [acceptRequestIndex, setAcceptRequestIndex] = useState(null);
 
+  // Handle modal input changes
   const handleAddInputChange = (e) => {
     const { name, value } = e.target;
     setNewEventData({ ...newEventData, [name]: value });
   };
 
+  // Add event from modal
   const handleAddEvent = () => {
     const { name, client, date } = newEventData;
     if (name && client && date) {
@@ -66,28 +64,19 @@ function Events() {
           completed: 0,
           total: 0,
           progress: 0,
-          colorClass: 'yellow'
-        }
+          colorClass: 'yellow',
+        },
       ]);
-      setNewEventData({
-        name: '',
-        client: '',
-        date: ''
-      });
+      setNewEventData({ name: '', client: '', date: '' });
       setShowAddModal(false);
     }
   };
 
-  // State for requests
-  const [requests, setRequests] = useState(initialRequests);
-  const [showAcceptModal, setShowAcceptModal] = useState(false);
-  const [acceptRequestIndex, setAcceptRequestIndex] = useState(null);
-
+  // Accept request modal logic
   const handleAcceptRequest = (index) => {
     setAcceptRequestIndex(index);
     setShowAcceptModal(true);
   };
-
   const confirmAcceptRequest = () => {
     const req = requests[acceptRequestIndex];
     setOverviewEvents([
@@ -101,13 +90,12 @@ function Events() {
         total: req.tasks,
         progress: 0,
         colorClass: 'yellow',
-      }
+      },
     ]);
     setRequests(requests.filter((_, i) => i !== acceptRequestIndex));
     setShowAcceptModal(false);
     setAcceptRequestIndex(null);
   };
-
   const handleDenyRequest = (index) => {
     setRequests(requests.filter((_, i) => i !== index));
   };
@@ -115,99 +103,97 @@ function Events() {
   return (
     <div className="events-layout">
       <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-      <div className={`main-content${sidebarOpen ? '' : ' collapsed'}`}>
-        {/* Events Overview Section */}
-        <div className="overview-section card">
-          <div className="overview-header">
-            <h2>Events Overview</h2>
-            <button className="add-btn" onClick={() => setShowAddModal(true)}>+</button>
-          </div>
-          <div className="overview-list">
-            {overviewEvents.map((evt, idx) => (
-              <div key={idx} className="overview-row">
-                <div className="overview-info">
-                  <span className="overview-name">{evt.name}</span>
-                  <span className="overview-detail">Client: {evt.client}</span>
-                  <span className="overview-detail">Event Date: {evt.date}</span>
+      <div className={`events-page${sidebarOpen ? '' : ' collapsed'}`}>
+        {/* Events Overview */}
+        <div className="events-card events-overview-card events-scroll-container">
+          <h2 className="events-section-title">Events Overview</h2>
+          {overviewEvents.map((evt, idx) => (
+            <div key={idx} className="events-overview-row">
+              <div className="events-overview-main">
+                <span className="events-overview-name">{evt.name}</span>
+                <div className="events-overview-details">
+                  <span><b>Client:</b> {evt.client}</span>
+                  <span><b>Event Date:</b> {evt.date}</span>
                 </div>
-                <div className="overview-status">
-                  <span className={`status-dot ${evt.colorClass}`}></span>
-                  <span>{evt.status}</span>
+              </div>
+              <div className="events-overview-status">
+                <span className={`events-status-dot ${evt.colorClass}`}></span>
+                <span>{evt.status}</span>
+              </div>
+              <div className="events-overview-progress">
+                <div className="events-progress-bar-bg">
+                  <div
+                    className={`events-progress-bar-fill ${evt.colorClass}`}
+                    style={{ width: `${evt.progress}%` }}
+                  />
                 </div>
-                <div className="overview-progress">
-                  <div className="progress-bar-bg">
-                    <div
-                      className={`progress-bar-fill ${evt.colorClass}`}
-                      style={{ width: `${evt.progress}%` }}
-                    />
-                  </div>
-                  <span className="progress-text">{evt.progress}%</span>
+                <span>{evt.progress}%</span>
+              </div>
+              <div className="events-overview-tasks">
+                <span className="events-tasks-label">Tasks Completed:</span>
+                <span className="events-tasks-value">{evt.completed} | {evt.total}</span>
+              </div>
+              <button
+                className="events-view-btn"
+                onClick={() => navigate('/event-tasks')}
+              >
+                View
+              </button>
+            </div>
+          ))}
+          <button className="events-add-btn" onClick={() => setShowAddModal(true)}>+</button>
+        </div>
+
+        {/* New Events Requests */}
+        <div className="events-card events-requests-card">
+          <h2 className="events-section-title">New Events Requests</h2>
+          <div className="events-requests-list">
+            {requests.map((req, idx) => (
+              <div key={idx} className="events-request">
+                <h3 className="events-request-title">{req.name}</h3>
+                <p><b>Budget:</b> {req.budget}</p>
+                <p><b>Client:</b> {req.client}</p>
+                <p><b>Event Date:</b> {req.date}</p>
+                <p><b>Tasks:</b> {req.tasks}</p>
+                <div className="events-request-actions">
+                  <button className="events-accept-btn" onClick={() => handleAcceptRequest(idx)}>Accept</button>
+                  <button className="events-deny-btn" onClick={() => handleDenyRequest(idx)}>Deny</button>
                 </div>
-                <span className="overview-tasks">
-                  Tasks Completed: {evt.completed} | {evt.total}
-                </span>
-                <button
-                  className="view-btn"
-                  onClick={() => navigate('/event-tasks')}
-                >
-                  View
-                </button>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Add New Event Modal */}
+        {/* Add Event Modal */}
         {showAddModal && (
-          <div className="modal-overlay">
-            <div className="modal-content">
+          <div className="events-modal-overlay">
+            <div className="events-modal-content">
               <h3>Add New Event</h3>
-              <div className="modal-fields">
+              <div className="events-modal-fields">
                 <label>Name:</label>
                 <input type="text" name="name" value={newEventData.name} onChange={handleAddInputChange} />
-
                 <label>Client:</label>
                 <input type="text" name="client" value={newEventData.client} onChange={handleAddInputChange} />
-
                 <label>Date:</label>
                 <input type="date" name="date" value={newEventData.date} onChange={handleAddInputChange} />
               </div>
-              <div className="modal-actions">
-                <button className="view-btn" onClick={handleAddEvent}>Save</button>
-                <button className="view-btn" onClick={() => setShowAddModal(false)}>Cancel</button>
+              <div className="events-modal-actions">
+                <button className="events-view-btn" onClick={handleAddEvent}>Save</button>
+                <button className="events-view-btn" onClick={() => setShowAddModal(false)}>Cancel</button>
               </div>
             </div>
           </div>
         )}
 
-        {/* New Events Requests Section */}
-        <div className="requests-section card">
-          <h2>New Events Requests</h2>
-          <div className="requests-list">
-            {requests.map((req, idx) => (
-              <div key={idx} className="request-card">
-                <h3>{req.name}</h3>
-                <p>Budget: {req.budget}</p>
-                <p>Client: {req.client}</p>
-                <p>Event Date: {req.date}</p>
-                <p>Tasks: {req.tasks}</p>
-                <div className="request-actions">
-                  <button className="accept-btn" onClick={() => handleAcceptRequest(idx)}>Accept</button>
-                  <button className="deny-btn" onClick={() => handleDenyRequest(idx)}>Deny</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
+        {/* Accept Request Modal */}
         {showAcceptModal && (
-          <div className="modal-overlay">
-            <div className="modal-content">
+          <div className="events-modal-overlay">
+            <div className="events-modal-content">
               <h3>Confirm Add Event</h3>
               <p>Are you sure you want to add this event to the overview?</p>
-              <div className="modal-actions">
-                <button className="cancel-btn" onClick={() => setShowAcceptModal(false)}>Cancel</button>
-                <button className="view-btn" onClick={confirmAcceptRequest}>Confirm</button>
+              <div className="events-modal-actions">
+                <button className="events-deny-btn" onClick={() => setShowAcceptModal(false)}>Cancel</button>
+                <button className="events-accept-btn" onClick={confirmAcceptRequest}>Confirm</button>
               </div>
             </div>
           </div>
