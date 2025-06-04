@@ -1,0 +1,217 @@
+body {
+  font-family: 'Manrope', sans-serif;
+  color: #111827;
+  background: #f2f2f7;
+  margin: 0;
+}
+
+.eventtasks-layout {
+  display: flex;
+  height: 100vh;
+}
+
+.eventtasks-page {
+  flex: 1;
+  padding: 32px;
+  margin-left: 250px;
+  box-sizing: border-box;
+  transition: margin-left 0.3s ease;
+}
+.eventtasks-page.collapsed {
+  margin-left: 100px;
+}
+
+/* Header Card */
+.eventtasks-header-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 26px 32px 18px 32px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.eventtasks-header-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.eventtasks-event-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+.eventtasks-event-client {
+  color: #757575;
+  font-size: 15px;
+}
+
+/* Progress Card */
+.eventtasks-progress-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 22px 32px 16px 32px;
+  margin-bottom: 26px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.eventtasks-progress-bar-bg {
+  width: 100%;
+  height: 15px;
+  background: #f2f2f7;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.eventtasks-progress-bar-fill {
+  background: #FFCC00;
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.3s;
+}
+.eventtasks-stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  font-size: 15px;
+  color: #374151;
+  justify-content: flex-start;
+}
+.eventtasks-stats-row span {
+  min-width: 120px;
+}
+
+/* Task Management Card */
+.eventtasks-tasksection-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 32px 32px 32px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.eventtasks-tasksection-card h2 {
+  margin: 0 0 18px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Grid of tasks */
+.eventtasks-tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+@media (max-width: 1100px) {
+  .eventtasks-tasks-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 800px) {
+  .eventtasks-tasks-grid { grid-template-columns: 1fr; }
+}
+
+/* Task Card */
+.eventtasks-taskcard {
+  background: #f2f2f7;
+  border-radius: 12px;
+  padding: 22px 18px 18px 18px;
+  min-width: 210px;
+  min-height: 180px;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  border: 2px solid transparent;
+  transition: border 0.2s;
+}
+.eventtasks-taskcard.completed {
+  border: 2px solid #b6f2c0;
+  background: #e8fff0;
+}
+.eventtasks-taskcard-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+.eventtasks-check-circle {
+  background: #34c759;
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 5px;
+  font-size: 17px;
+  margin-left: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Priority row */
+.eventtasks-taskcard-priority-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 15px;
+}
+.eventtasks-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.red { background: #FF3B30; }
+.yellow { background: #FFCC00; }
+.green { background: #34C759; }
+
+/* Meta (Assigned, Budget) */
+.eventtasks-taskcard-meta {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 12px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Action Buttons */
+.eventtasks-taskcard-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: auto;
+}
+.eventtasks-taskbtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: none;
+  background: none;
+  color: #FF5F8A;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 7px;
+  transition: background 0.2s;
+}
+.eventtasks-taskbtn:hover {
+  background: #fce6ef;
+}
+
+.eventtasks-taskbtn.edit svg {
+  font-size: 16px;
+}
+.eventtasks-taskbtn.reassign svg {
+  font-size: 16px;
+}
+.eventtasks-taskbtn.completed {
+  color: #34C759;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .eventtasks-header-card, .eventtasks-progress-card, .eventtasks-tasksection-card {
+    padding: 16px 8px;
+  }
+  .eventtasks-page { margin-left: 80px; padding: 12px; }
+}

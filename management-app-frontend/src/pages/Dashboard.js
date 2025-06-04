@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
-import '../styles/Dashboard.css';
+import '../dashboard/Dashboard.css';
 
 const activeEvents = [
   { name: 'Wedding Reception', status: 'In Progress', progress: 17, colorClass: 'red' },
@@ -92,7 +92,6 @@ const Dashboard = () => {
 
         <div className="card tasks-card">
           <h2>Task Management</h2>
-          <hr className="section-divider" />
           <div className="task-cards">
             {tasks.map((task, idx) => (
               <div key={idx} className="task-block">
@@ -110,9 +109,9 @@ const Dashboard = () => {
                   <p>Due Date: {task.dueDate}</p>
                   <p>Status: {task.status}</p>
                 </div>
-                <div className="task-actions">
-                  <button className="edit-btn">✎ Edit</button>
-                  <button className="reassign-btn">⟲ Reassign</button>
+                <div className="task-actions" style={{ justifyContent: 'space-between' }}>
+                  <button className="edit-btn">Edit</button>
+                  <button className="reassign-btn">Reassign</button>
                 </div>
               </div>
             ))}
