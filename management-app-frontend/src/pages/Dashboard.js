@@ -111,7 +111,6 @@ const Dashboard = () => {
                 </div>
                 <div className="task-actions" style={{ justifyContent: 'space-between' }}>
                   <button className="edit-btn">Edit</button>
-                  <button className="reassign-btn">Reassign</button>
                 </div>
               </div>
             ))}

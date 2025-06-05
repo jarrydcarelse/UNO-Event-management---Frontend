@@ -1,3 +1,5 @@
+// src/components/Navbar.js
+
 import React, { useState } from "react";
 import { 
   FiChevronLeft, 
@@ -10,14 +12,18 @@ import {
   FiLogOut,
   FiUser
 } from "react-icons/fi";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Navbar.css";
 
 const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
+  // Allow controlled or internal open/collapse state
   const [internalIsOpen, internalSetIsOpen] = useState(true);
   const isOpen = propIsOpen !== undefined ? propIsOpen : internalIsOpen;
   const setIsOpen = propSetIsOpen !== undefined ? propSetIsOpen : internalSetIsOpen;
+
   const location = useLocation();
+  const navigate = useNavigate();
+
   const navItems = [
     { name: "Dashboard", icon: <FiHome size={20} />, path: "/dashboard" },
     { name: "Events", icon: <FiCalendar size={20} />, path: "/events" },
@@ -27,8 +33,8 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
   ];
 
   return (
-    <div className={`sidebar ${isOpen ? "" : "collapsed"}`}>
-      {/* Enhanced Toggle Button */}
+    <div className={`sidebar${isOpen ? "" : " collapsed"}`}>
+      {/* Sidebar Toggle */}
       <button 
         className="toggle-btn"
         onClick={() => setIsOpen(!isOpen)}
@@ -69,9 +75,12 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
         ))}
       </nav>
 
-      {/* Logout Section */}
+      {/* Logout */}
       <div className="logout">
-        <button title={!isOpen ? "Logout" : ""}>
+        <button
+          title={!isOpen ? "Logout" : ""}
+          onClick={() => navigate("/login")}
+        >
           <FiLogOut size={18} />
           {isOpen && <span>Logout</span>}
         </button>

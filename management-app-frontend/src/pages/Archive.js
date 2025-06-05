@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Navbar from '../components/Navbar'; // Adjust the path if needed
 import { FaEye, FaTrash } from 'react-icons/fa';
 import { FiChevronDown } from 'react-icons/fi';
-import '../styles/Archive.css';
+import '../archive/Archive.css';
 
 // Dummy data for now; replace with real API data later
 const archiveItems = [

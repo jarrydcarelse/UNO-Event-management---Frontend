@@ -1,0 +1,168 @@
+.archive-page {
+  flex: 1;
+  background: #f2f2f7;
+  padding: 32px;
+  margin-left: 250px;
+  box-sizing: border-box;
+  min-height: 100vh;
+  transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.archive-page.collapsed {
+  margin-left: 80px;
+}
+
+/* Header row with sort */
+.archive-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.archive-header h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+  color: #232336;
+  letter-spacing: -1px;
+}
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #fff;
+  border-radius: 999px;
+  padding: 7px 18px;
+  font-size: 15px;
+  color: #374151;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  cursor: pointer;
+  font-weight: 600;
+  user-select: none;
+  transition: background 0.13s;
+}
+.sort-control:hover {
+  background: #f2f2f7;
+}
+.sort-icon {
+  font-size: 20px;
+  margin-left: 2px;
+}
+
+/* Archive card grid */
+.archive-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 28px;
+  justify-items: stretch;
+  align-items: start;
+  width: 100%;
+  margin: 0;
+  /* Remove max-width and margin auto! */
+}
+
+
+/* Card */
+.archive-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  padding: 28px 24px 20px 24px;
+  width: 340px;
+  max-width: 98vw;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.18s;
+  position: relative;
+}
+.archive-card h3 {
+  font-size: 1.14rem;
+  font-weight: 700;
+  color: #FF5F8A;
+  margin: 0 0 7px 0;
+  line-height: 1.24;
+}
+
+.archive-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+.label {
+  min-width: 115px;
+  color: #8f8f98;
+  font-weight: 600;
+}
+.value {
+  color: #232336;
+  font-weight: 600;
+}
+.status-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #34C759;
+  margin-right: 3px;
+}
+.status-dot.green { background: #34C759; }
+
+/* Notes section */
+.notes-section {
+  margin-top: 8px;
+}
+.archive-notes {
+  background: #f2f2f7;
+  color: #374151;
+  border-radius: 10px;
+  font-size: 14px;
+  padding: 10px 12px;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* Action buttons */
+.archive-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 999px;
+  border: none;
+  background: #FF5F8A;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(255,95,138,0.10);
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.action-btn .icon {
+  font-size: 17px;
+}
+.action-btn:hover {
+  background: #e94a73;
+}
+
+/* Responsive: 2 columns, then 1 column */
+@media (max-width: 1150px) {
+  .archive-page { margin-left: 80px; padding: 18px; }
+  .archive-container { gap: 18px; }
+  .archive-card { width: 100%; max-width: 420px; }
+}
+@media (max-width: 800px) {
+  .archive-container { flex-direction: column; gap: 12px; align-items: stretch; }
+  .archive-card { width: 100%; max-width: 100%; }
+}
