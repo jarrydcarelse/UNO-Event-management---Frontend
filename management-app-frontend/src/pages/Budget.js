@@ -1,7 +1,7 @@
 // src/pages/Budget.js
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
-import '../styles/Budget.css';
+import '../budget/Budget.css';
 
 const Budget = () => {
     // Manage sidebar open/collapse state
