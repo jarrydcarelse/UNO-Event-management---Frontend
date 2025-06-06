@@ -1,0 +1,11 @@
+[build]
+  # “publish” must match your CRA output folder
+  publish = "build"
+  # “command” must match your build script
+  command = "npm run build"
+
+[[redirects]]
+  # For all routes, serve index.html
+  from = "/*"
+  to = "/index.html"
+  status = 200
