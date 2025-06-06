@@ -28,7 +28,7 @@ const SignUp = () => {
     try {
       // Call the Render backend directly
       const res = await axios.post(
-        "https://eventify-backend-kgtm.onrender.com/api/Auth/register",
+        "https://eventify-backend-kgtm.onrender.com/api/users/signup",
         {
           email,
           password
