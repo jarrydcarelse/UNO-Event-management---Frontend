@@ -56,9 +56,12 @@ const Dashboard = () => {
     <div className="dashboard-layout">
       <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <div className={`dashboard-page${sidebarOpen ? '' : ' collapsed'}`}>
+        {/* Unified Page Header */}
+        <h1 className="dashboard-main-header">Dashboard</h1>
         <div className="dashboard-top">
           <div className="card overview-card scroll-container">
             <h2>Active Events Overview</h2>
+            <hr className="section-divider" />
             {activeEvents.map((evt, idx) => (
               <div key={idx} className="overview-row">
                 <span className="overview-name">{evt.name}</span>
@@ -81,6 +84,7 @@ const Dashboard = () => {
 
           <div className="card notifications-card scroll-container">
             <h2>Notifications</h2>
+            <hr className="section-divider" />
             {notifications.map((note, idx) => (
               <div key={idx} className={`notification-item ${note.variant}`}>
                 <span className="note-icon">•</span>
@@ -90,8 +94,10 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Unified Task Management Section */}
         <div className="card tasks-card">
           <h2>Task Management</h2>
+          <hr className="section-divider" />
           <div className="task-cards">
             {tasks.map((task, idx) => (
               <div key={idx} className="task-block">
@@ -109,7 +115,7 @@ const Dashboard = () => {
                   <p>Due Date: {task.dueDate}</p>
                   <p>Status: {task.status}</p>
                 </div>
-                <div className="task-actions" style={{ justifyContent: 'space-between' }}>
+                <div className="task-actions">
                   <button className="edit-btn">Edit</button>
                 </div>
               </div>
@@ -122,3 +128,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

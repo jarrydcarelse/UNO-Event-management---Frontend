@@ -1,196 +1,222 @@
-// src/pages/Budget.js
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
+import { FiPlus, FiEdit2, FiTrash2, FiX } from 'react-icons/fi';
 import '../budget/Budget.css';
 
-const Budget = () => {
-    // Manage sidebar open/collapse state
-    const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [budgetItems, setBudgetItems] = useState([
-        { id: 1, description: 'Venue Rental', category: 'Venue', amount: 1500, status: 'Approved', event: 'Wedding Reception' },
-        { id: 2, description: 'Catering Services', category: 'Food', amount: 800, status: 'Pending', event: 'Wedding Reception' },
-        { id: 3, description: 'Decorations', category: 'Setup', amount: 300, status: 'Approved', event: 'Corporate Year-End Gala' },
-        { id: 4, description: 'Entertainment', category: 'Entertainment', amount: 500, status: 'Pending', event: 'Tech Product Launch' },
-    ]);
-    const [newItem, setNewItem] = useState({ description: '', category: '', amount: '', status: 'Pending', event: '' });
-    const [editItem, setEditItem] = useState(null);
+const initialItems = [
+  { id: 1, description: 'Venue Rental', category: 'Venue', amount: 1500, status: 'Approved', event: 'Wedding Reception' },
+  { id: 2, description: 'Catering Services', category: 'Food', amount: 800, status: 'Pending', event: 'Wedding Reception' },
+  { id: 3, description: 'Decorations', category: 'Setup', amount: 300, status: 'Approved', event: 'Corporate Year-End Gala' },
+  { id: 4, description: 'Entertainment', category: 'Entertainment', amount: 500, status: 'Pending', event: 'Tech Product Launch' },
+];
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        if (editItem) {
-            setEditItem({ ...editItem, [name]: value });
-        } else {
-            setNewItem({ ...newItem, [name]: value });
+const eventOptions = [
+  'Wedding Reception',
+  'Corporate Year-End Gala',
+  'Tech Product Launch'
+];
+
+export default function Budget() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [budgetItems, setBudgetItems] = useState(initialItems);
+  const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState('add'); // add | edit
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [form, setForm] = useState({
+    event: '', description: '', category: '', amount: '', status: 'Pending'
+  });
+
+  // Open Add/Edit Modal
+  const openAddModal = () => {
+    setModalType('add');
+    setForm({ event: '', description: '', category: '', amount: '', status: 'Pending' });
+    setShowModal(true);
+    setSelectedItem(null);
+  };
+  const openEditModal = (item) => {
+    setModalType('edit');
+    setForm({
+      event: item.event,
+      description: item.description,
+      category: item.category,
+      amount: item.amount,
+      status: item.status,
+    });
+    setSelectedItem(item);
+    setShowModal(true);
+  };
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedItem(null);
+    setForm({ event: '', description: '', category: '', amount: '', status: 'Pending' });
+  };
+
+  // Handle Add/Edit Submit
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!form.event || !form.description || !form.category || !form.amount) return;
+    if (modalType === 'add') {
+      setBudgetItems([
+        ...budgetItems,
+        {
+          ...form,
+          id: Date.now(),
+          amount: Number(form.amount),
         }
-    };
+      ]);
+    } else if (modalType === 'edit' && selectedItem) {
+      setBudgetItems(
+        budgetItems.map((item) =>
+          item.id === selectedItem.id
+            ? { ...form, id: selectedItem.id, amount: Number(form.amount) }
+            : item
+        )
+      );
+    }
+    closeModal();
+  };
 
-    const handleAddOrUpdateItem = (e) => {
-        e.preventDefault();
-        if (newItem.description && newItem.category && newItem.amount && newItem.event) {
-            if (editItem) {
-                setBudgetItems(budgetItems.map(item => item.id === editItem.id ? editItem : item));
-                window.alert('Budget item updated.');
-                setEditItem(null);
-            } else {
-                setBudgetItems([...budgetItems, { ...newItem, id: Date.now(), status: newItem.status }]);
-                window.alert('Budget item added.');
-            }
-            setNewItem({ description: '', category: '', amount: '', status: 'Pending', event: '' });
-        }
-    };
+  // Delete
+  const handleDelete = (id) => {
+    setBudgetItems(budgetItems.filter(item => item.id !== id));
+  };
 
-    const handleEditItem = (item) => {
-        setEditItem(item);
-        setNewItem({ description: item.description, category: item.category, amount: item.amount, status: item.status, event: item.event });
-    };
+  // Totals
+  const totalBudget = budgetItems.reduce((total, item) => total + Number(item.amount), 0);
+  const categoryTotals = budgetItems.reduce((acc, item) => {
+    acc[item.category] = (acc[item.category] || 0) + Number(item.amount);
+    return acc;
+  }, {});
 
-    const handleDeleteItem = (id) => {
-        setBudgetItems(budgetItems.filter(item => item.id !== id));
-    };
+  // Render
+  return (
+    <div className="budget-layout">
+      <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <div className={`budget-page${sidebarOpen ? '' : ' collapsed'}`}>
+        {/* Main Header */}
+        <h2 className="budget-main-header">Budget Overview</h2>
 
-    const totalBudget = budgetItems.reduce((total, item) => total + Number(item.amount), 0);
-
-    const categoryTotals = budgetItems.reduce((acc, item) => {
-        acc[item.category] = (acc[item.category] || 0) + Number(item.amount);
-        return acc;
-    }, {});
-
-    return (
-        <div className="dashboard-layout">
-            <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-
-            <div className={`budget-page${sidebarOpen ? '' : ' collapsed'}`}>
-                <h1>Event Budget Overview</h1>
-                <h2>Total Budget: R{totalBudget.toFixed(2)}</h2>
-
-                <div className="budget-summary">
-                    <h3>Budget by Category</h3>
-                    {Object.keys(categoryTotals).length === 0 ? (
-                        <p>No categories yet.</p>
-                    ) : (
-                        <div className="category-cards">
-                            {Object.entries(categoryTotals).map(([category, total], idx) => (
-                                <div key={idx} className="category-card">
-                                    <h4>{category}</h4>
-                                    <p>R{total.toFixed(2)}</p>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                <div className="budget-form">
-                    <h3>{editItem ? 'Edit Budget Item' : 'Add Budget Item'}</h3>
-                    <form onSubmit={handleAddOrUpdateItem}>
-                        <div>
-                            <label>Event: </label>
-                            <select
-                                name="event"
-                                value={editItem ? editItem.event : newItem.event}
-                                onChange={handleInputChange}
-                                required
-                            >
-                                <option value="">Select Event</option>
-                                <option value="Wedding Reception">Wedding Reception</option>
-                                <option value="Corporate Year-End Gala">Corporate Year-End Gala</option>
-                                <option value="Tech Product Launch">Tech Product Launch</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Description: </label>
-                            <input
-                                type="text"
-                                name="description"
-                                value={editItem ? editItem.description : newItem.description}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label>Category: </label>
-                            <input
-                                type="text"
-                                name="category"
-                                value={editItem ? editItem.category : newItem.category}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label>Amount (R): </label>
-                            <input
-                                type="number"
-                                name="amount"
-                                value={editItem ? editItem.amount : newItem.amount}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label>Status: </label>
-                            <select
-                                name="status"
-                                value={editItem ? editItem.status : newItem.status}
-                                onChange={handleInputChange}
-                            >
-                                <option value="Pending">Pending</option>
-                                <option value="Approved">Approved</option>
-                                <option value="Completed">Completed</option>
-                            </select>
-                        </div>
-                        <button type="submit">{editItem ? 'Update Item' : 'Add Item'}</button>
-                        {editItem && (
-                            <button
-                                type="button"
-                                className="cancel"
-                                onClick={() => {
-                                    setEditItem(null);
-                                    setNewItem({ description: '', category: '', amount: '', status: 'Pending', event: '' });
-                                }}
-                            >
-                                Cancel
-                            </button>
-                        )}
-                    </form>
-                </div>
-
-                <div className="budget-table">
-                    <h3>Budget Breakdown</h3>
-                    {budgetItems.length === 0 ? (
-                        <p>No budget items yet.</p>
-                    ) : (
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Event</th>
-                                    <th>Description</th>
-                                    <th>Category</th>
-                                    <th>Amount (R)</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {budgetItems.map((item) => (
-                                    <tr key={item.id}>
-                                        <td>{item.event}</td>
-                                        <td>{item.description}</td>
-                                        <td>{item.category}</td>
-                                        <td>R{Number(item.amount).toFixed(2)}</td>
-                                        <td>{item.status}</td>
-                                        <td>
-                                            <button type="button" className="edit" onClick={() => handleEditItem(item)}>Edit</button>
-                                            <button type="button" className="delete" onClick={() => handleDeleteItem(item.id)}>Delete</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
-                </div>
-            </div>
+        {/* Total Budget */}
+        <div className="budget-total-card">
+          <span>Total Budget</span>
+          <span className="budget-total-value">R{totalBudget.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
         </div>
-    );
-};
 
-export default Budget;
+        {/* Category Summary */}
+        <div className="budget-summary-card">
+          <h3>Budget by Category</h3>
+          <div className="budget-category-cards">
+            {Object.entries(categoryTotals).map(([cat, val], idx) => (
+              <div key={idx} className="budget-category-card">
+                <span className="budget-category-name">{cat}</span>
+                <span className="budget-category-value">R{val.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+              </div>
+            ))}
+            {Object.keys(categoryTotals).length === 0 && (
+              <span className="budget-empty-msg">No categories yet.</span>
+            )}
+          </div>
+        </div>
+
+        {/* Add Button */}
+        <div className="budget-add-btn-row">
+          <button className="budget-add-btn" onClick={openAddModal}>
+            <FiPlus style={{ marginRight: 7 }} /> Add Budget Item
+          </button>
+        </div>
+
+        {/* Breakdown Table */}
+        <div className="budget-breakdown-card">
+          <h3>Budget Breakdown</h3>
+          <div className="budget-table-scroll">
+            <table className="budget-table">
+              <thead>
+                <tr>
+                  <th>Event</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Amount (R)</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {budgetItems.map(item => (
+                  <tr key={item.id}>
+                    <td>{item.event}</td>
+                    <td>{item.description}</td>
+                    <td>{item.category}</td>
+                    <td>R{Number(item.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td>
+                      <span className={`budget-status-chip status-${item.status.toLowerCase()}`}>
+                        {item.status}
+                      </span>
+                    </td>
+                    <td>
+                      <button className="budget-table-btn" title="Edit" onClick={() => openEditModal(item)}>
+                        <FiEdit2 />
+                      </button>
+                      <button className="budget-table-btn" title="Delete" onClick={() => handleDelete(item.id)}>
+                        <FiTrash2 />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {budgetItems.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="budget-empty-msg">No budget items yet.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Modal */}
+        {showModal && (
+          <div className="budget-modal-overlay">
+            <div className="budget-modal">
+              <div className="budget-modal-header">
+                <h3>{modalType === 'add' ? 'Add Budget Item' : 'Edit Budget Item'}</h3>
+                <button className="budget-modal-close" onClick={closeModal}><FiX /></button>
+              </div>
+              <form onSubmit={handleSubmit}>
+                <div className="budget-modal-fields">
+                  <label>Event</label>
+                  <select name="event" value={form.event} onChange={handleFormChange} required>
+                    <option value="">Select Event</option>
+                    {eventOptions.map((ev, idx) => (
+                      <option key={idx} value={ev}>{ev}</option>
+                    ))}
+                  </select>
+                  <label>Description</label>
+                  <input name="description" value={form.description} onChange={handleFormChange} required />
+                  <label>Category</label>
+                  <input name="category" value={form.category} onChange={handleFormChange} required />
+                  <label>Amount (R)</label>
+                  <input type="number" name="amount" value={form.amount} onChange={handleFormChange} required />
+                  <label>Status</label>
+                  <select name="status" value={form.status} onChange={handleFormChange}>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                </div>
+                <div className="budget-modal-actions">
+                  <button type="button" className="budget-modal-btn" onClick={closeModal}>Cancel</button>
+                  <button type="submit" className="budget-modal-btn pink">
+                    {modalType === 'add' ? 'Add Item' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
