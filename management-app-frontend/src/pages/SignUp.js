@@ -8,106 +8,116 @@ import pattern from '../assets/pink-pattern.png';
 const API_BASE = "https://eventify-backend-kgtm.onrender.com";
 
 const SignUp = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [repeatPassword, setRepeatPassword] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
-    const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [repeatPassword, setRepeatPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setSuccess('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
 
-        // Frontend check for password match
-        if (password !== repeatPassword) {
-            setError("Passwords do not match.");
-            return;
-        }
+    // Frontend check: make sure password and repeatPassword match
+    if (password !== repeatPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
 
-        try {
-            const res = await axios.post(`${API_BASE}/api/Auth/register`, { email, password });
-            setSuccess(res.data.message || "Registration successful! Redirecting to login...");
-            setTimeout(() => navigate('/login'), 1500);
-        } catch (err) {
-            console.log("Registration error:", err, err.response);
-            setError(
-                err.response?.data?.message ||
-                err.response?.data?.title ||
-                "Registration failed. Please try again."
-            );
-        }
-    };
+    try {
+      const res = await axios.post(`${API_BASE}/api/Auth/register`, {
+        email,
+        password
+      });
 
-    return (
-        <div className="signup-page">
-            <div
-                className="signup-left"
-                style={{ backgroundImage: `url(${pattern})` }}
-            >
-                <div className="branding">
-                    <img src={logo} alt="Eventify Logo" className="logo-img" />
-                    <p className="welcome-text">
-                        Welcome to Eventify Events Management System. Sign up to manage your events, track tasks, and stay connected.
-                    </p>
-                </div>
-            </div>
+      // If backend returns a message, show “Registration successful”
+      const msg = res.data?.message || "Registration successful! Redirecting to login...";
+      setSuccess(msg);
 
-            <div className="signup-right">
-                <form className="signup-form" onSubmit={handleSubmit}>
-                    <h2>Sign Up</h2>
-                    <hr className="signup-divider" />
+      // Redirect to login page after a short delay
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
 
-                    {error && <div className="signup-error">{error}</div>}
-                    {success && <div className="signup-success">{success}</div>}
+    } catch (err) {
+      console.log("Registration error:", err, err.response);
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.title ||
+        "Registration failed. Please try again.";
+      setError(msg);
+    }
+  };
 
-                    <label htmlFor="email">Email</label>
-                    <input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        required
-                    />
-
-                    <label htmlFor="password">Password</label>
-                    <input
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        required
-                    />
-
-                    <label htmlFor="repeat-password">Repeat Password</label>
-                    <input
-                        id="repeat-password"
-                        type="password"
-                        value={repeatPassword}
-                        onChange={e => setRepeatPassword(e.target.value)}
-                        required
-                    />
-
-                    <hr className="signup-divider" />
-
-                    <div className="signup-buttons">
-                        <button type="submit" className="btn-signup">
-                            Sign Up
-                        </button>
-                        <button
-                            type="button"
-                            className="btn-signin"
-                            onClick={() => navigate('/login')}
-                        >
-                            Sign In
-                        </button>
-                    </div>
-                </form>
-            </div>
+  return (
+    <div className="signup-page">
+      <div
+        className="signup-left"
+        style={{ backgroundImage: `url(${pattern})` }}
+      >
+        <div className="branding">
+          <img src={logo} alt="Eventify Logo" className="logo-img" />
+          <p className="welcome-text">
+            Welcome to Eventify Events Management System. Sign up to manage your events, track tasks, and stay connected.
+          </p>
         </div>
-    );
+      </div>
 
+      <div className="signup-right">
+        <form className="signup-form" onSubmit={handleSubmit}>
+          <h2>Sign Up</h2>
+          <hr className="signup-divider" />
+
+          {error && <div className="signup-error">{error}</div>}
+          {success && <div className="signup-success">{success}</div>}
+
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <label htmlFor="repeat-password">Repeat Password</label>
+          <input
+            id="repeat-password"
+            type="password"
+            value={repeatPassword}
+            onChange={(e) => setRepeatPassword(e.target.value)}
+            required
+          />
+
+          <hr className="signup-divider" />
+
+          <div className="signup-buttons">
+            <button type="submit" className="btn-signup">
+              Sign Up
+            </button>
+            <button
+              type="button"
+              className="btn-signin"
+              onClick={() => navigate('/login')}
+            >
+              Sign In
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default SignUp;
