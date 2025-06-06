@@ -1,18 +1,34 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/Login.css';
 import logo from '../assets/logo.png';
 import pattern from '../assets/pink-pattern.png';
 
+const API_BASE = "https://eventify-backend-kgtm.onrender.com";
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: hook up real auth here
-    navigate('/dashboard');
+    setError('');
+    try {
+      const res = await axios.post(`${API_BASE}/api/Auth/login`, { email, password });
+      // Save the JWT token (for future authenticated requests)
+      localStorage.setItem("token", res.data.token);
+      // Redirect to dashboard
+      navigate('/dashboard');
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+        err.response?.data?.title ||
+        "Login failed. Please check your credentials."
+      );
+    }
   };
 
   return (
@@ -34,6 +50,8 @@ const Login = () => {
         <form className="login-form" onSubmit={handleSubmit}>
           <h2>Login</h2>
           <hr className="login-divider" />
+
+          {error && <div className="login-error">{error}</div>}
 
           <label htmlFor="email">Email</label>
           <input
