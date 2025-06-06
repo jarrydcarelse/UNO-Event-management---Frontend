@@ -26,18 +26,24 @@ const SignUp = () => {
     }
 
     try {
-      // Proxy through Netlify Function
-      const res = await axios.post("/.netlify/functions/register", {
-        email,
-        password
-      });
+      // Call the Render backend directly
+      const res = await axios.post(
+        "https://eventify-backend-kgtm.onrender.com/api/Auth/register",
+        {
+          email,
+          password
+        }
+      );
 
       const msg = res.data?.message || "Registration successful! Redirecting to login...";
       setSuccess(msg);
       setTimeout(() => navigate('/login'), 1500);
-
     } catch (err) {
-      console.log("Registration error:", err, err.response);
+      console.log("Registration error:", {
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message
+      });
       const msg =
         err.response?.data?.message ||
         err.response?.data?.title ||
