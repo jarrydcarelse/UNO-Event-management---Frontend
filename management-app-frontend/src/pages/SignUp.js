@@ -1,11 +1,11 @@
+// src/pages/SignUp.js
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/SignUp.css';
 import logo from '../assets/logo.png';
 import pattern from '../assets/pink-pattern.png';
-
-const API_BASE = "https://eventify-backend-kgtm.onrender.com";
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -20,26 +20,21 @@ const SignUp = () => {
     setError('');
     setSuccess('');
 
-    // Frontend check: make sure password and repeatPassword match
     if (password !== repeatPassword) {
       setError("Passwords do not match.");
       return;
     }
 
     try {
-      const res = await axios.post(`${API_BASE}/api/Auth/register`, {
+      // Proxy through Netlify Function
+      const res = await axios.post("/.netlify/functions/register", {
         email,
         password
       });
 
-      // If backend returns a message, show “Registration successful”
       const msg = res.data?.message || "Registration successful! Redirecting to login...";
       setSuccess(msg);
-
-      // Redirect to login page after a short delay
-      setTimeout(() => {
-        navigate('/login');
-      }, 1500);
+      setTimeout(() => navigate('/login'), 1500);
 
     } catch (err) {
       console.log("Registration error:", err, err.response);
@@ -60,7 +55,8 @@ const SignUp = () => {
         <div className="branding">
           <img src={logo} alt="Eventify Logo" className="logo-img" />
           <p className="welcome-text">
-            Welcome to Eventify Events Management System. Sign up to manage your events, track tasks, and stay connected.
+            Welcome to Eventify Events Management System.
+            Sign up to manage your events, track tasks, and stay connected.
           </p>
         </div>
       </div>
