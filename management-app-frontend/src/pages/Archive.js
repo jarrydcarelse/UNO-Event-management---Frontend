@@ -1,13 +1,10 @@
-// src/pages/Archive.js
-
 import React, { useState } from 'react';
-import Navbar from '../components/Navbar'; // Adjust the path if needed
+import Navbar from '../components/Navbar';
 import { FaEye, FaTrash } from 'react-icons/fa';
-import { FiChevronDown } from 'react-icons/fi';
+import { FiChevronDown, FiX } from 'react-icons/fi';
 import '../archive/Archive.css';
 
-// Dummy data for now; replace with real API data later
-const archiveItems = [
+const initialArchiveItems = [
   {
     id: 1,
     eventName: 'Wedding Reception – Sam & Alex',
@@ -26,146 +23,102 @@ const archiveItems = [
     totalBudget: 'R250,000',
     notes: 'All sponsors happy. AV setup was flawless.'
   },
-  {
-    id: 3,
-    eventName: 'Charity Auction – Hope Foundation',
-    status: 'Completed',
-    dateCompleted: '28 Jan 2025',
-    completedTasks: '10/10',
-    totalBudget: 'R75,000',
-    notes: 'Great turnout. Raised more than expected.'
-  },
-  {
-    id: 4,
-    eventName: 'Product Launch – AlphaTech X3',
-    status: 'Completed',
-    dateCompleted: '15 Apr 2025',
-    completedTasks: '12/12',
-    totalBudget: 'R300,000',
-    notes: 'Launch event went smoothly with excellent media coverage.'
-  },
-  {
-    id: 5,
-    eventName: 'Employee Retreat – Team Synergy',
-    status: 'Completed',
-    dateCompleted: '22 Mar 2025',
-    completedTasks: '8/8',
-    totalBudget: 'R120,000',
-    notes: 'Great team-building activities and positive feedback from staff.'
-  },
-  {
-    id: 6,
-    eventName: 'Charity Ball – Hope Foundation',
-    status: 'Completed',
-    dateCompleted: '10 May 2025',
-    completedTasks: '18/18',
-    totalBudget: 'R200,000',
-    notes: 'Raised significant funds for charity, seamless organization.'
-  },
-  {
-    id: 7,
-    eventName: 'Annual Conference – TechFuture 2025',
-    status: 'Completed',
-    dateCompleted: '30 Apr 2025',
-    completedTasks: '25/25',
-    totalBudget: 'R450,000',
-    notes: 'Speakers were on time, venue setup was top-notch, positive attendee reviews.'
-  },
-  {
-    id: 8,
-    eventName: 'Fashion Show – South Style Expo',
-    status: 'Completed',
-    dateCompleted: '05 Jun 2025',
-    completedTasks: '10/10',
-    totalBudget: 'R180,000',
-    notes: 'Models showcased perfectly, strong audience turnout and press coverage.'
-  },
-  {
-    id: 9,
-    eventName: 'Music Festival – Summer Beats',
-    status: 'Completed',
-    dateCompleted: '12 Jun 2025',
-    completedTasks: '30/30',
-    totalBudget: 'R600,000',
-    notes: 'All acts performed on schedule, excellent crowd control, zero incidents.'
-  }
+  // ... add the rest from your original code ...
 ];
 
-const Archive = () => {
-  // Control whether the side navbar is open or collapsed
+export default function Archive() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [archiveItems, setArchiveItems] = useState(initialArchiveItems);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [toDelete, setToDelete] = useState(null);
+
+  const openDeleteModal = (item) => {
+    setToDelete(item);
+    setShowDeleteModal(true);
+  };
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setToDelete(null);
+  };
+  const confirmDelete = () => {
+    setArchiveItems(archiveItems.filter(i => i.id !== toDelete.id));
+    closeDeleteModal();
+  };
 
   return (
-    <div className="dashboard-layout">
-      {/* Navbar with open/collapse functionality */}
+    <div className="archive-layout">
       <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
-      {/* Main content wrapper */}
       <div className={`archive-page${sidebarOpen ? '' : ' collapsed'}`}>
-        {/* Header: Title + Sort control */}
-        <div className="archive-header">
-          <h2>Archive</h2>
-          <div className="sort-control">
+        {/* Header */}
+        <div className="archive-header-row">
+          <h2 className="archive-title">Archive</h2>
+          <div className="archive-sort">
             <span>Sort By Date Completed</span>
             <FiChevronDown className="sort-icon" />
           </div>
         </div>
 
-        {/* Grid of archive cards */}
-        <div className="archive-container">
+        {/* Cards Grid */}
+        <div className="archive-cards-grid">
           {archiveItems.map((item) => (
-            <div key={item.id} className="archive-card">
-              {/* Event Title */}
-              <h3>{item.eventName}</h3>
-
-              {/* Status Row (dot + label) */}
-              <div className="archive-row">
-                <span className="label">Status:</span>
-                <div className="status-group">
-                  <span className="status-dot green" />
-                  <span className="value">{item.status}</span>
-                </div>
+            <div className="archive-card" key={item.id}>
+              <div className="archive-card-title">{item.eventName}</div>
+              <div className="archive-meta-row">
+                <span className="archive-label">Status:</span>
+                <span className="archive-dot green" />
+                <span className="archive-value">{item.status}</span>
               </div>
-
-              {/* Date Completed */}
-              <div className="archive-row">
-                <span className="label">Date Completed:</span>
-                <span className="value">{item.dateCompleted}</span>
+              <div className="archive-meta-row">
+                <span className="archive-label">Date Completed:</span>
+                <span className="archive-value">{item.dateCompleted}</span>
               </div>
-
-              {/* Completed Tasks */}
-              <div className="archive-row">
-                <span className="label">Completed Tasks:</span>
-                <span className="value">{item.completedTasks}</span>
+              <div className="archive-meta-row">
+                <span className="archive-label">Completed Tasks:</span>
+                <span className="archive-value">{item.completedTasks}</span>
               </div>
-
-              {/* Total Budget Used */}
-              <div className="archive-row">
-                <span className="label">Total Budget Used:</span>
-                <span className="value">{item.totalBudget}</span>
+              <div className="archive-meta-row">
+                <span className="archive-label">Total Budget Used:</span>
+                <span className="archive-value">{item.totalBudget}</span>
               </div>
-
-              {/* Notes Box */}
-              <div className="notes-section">
-                <span className="label">Notes</span>
-                <div className="archive-notes">
-                  {item.notes}
-                </div>
+              <div className="archive-notes-section">
+                <span className="archive-label">Notes:</span>
+                <div className="archive-notes">{item.notes}</div>
               </div>
-
-              {/* Action Buttons */}
-              <div className="archive-actions">
-                <button className="action-btn view">
-                  <FaEye className="icon" />
-                  <span>View</span>
+              <div className="archive-actions-row">
+                <button className="archive-btn view">
+                  <FaEye style={{ marginRight: 7 }} /> View
+                </button>
+                <button className="archive-btn del" onClick={() => openDeleteModal(item)}>
+                  <FaTrash style={{ marginRight: 7 }} /> Delete
                 </button>
               </div>
             </div>
           ))}
+          {archiveItems.length === 0 && (
+            <span className="archive-empty-msg">No archived events.</span>
+          )}
         </div>
+
+        {/* Delete Modal */}
+        {showDeleteModal && (
+          <div className="archive-modal-overlay">
+            <div className="archive-modal">
+              <div className="archive-modal-header">
+                <h3>Delete Archived Event?</h3>
+                <button className="archive-modal-close" onClick={closeDeleteModal}>
+                  <FiX />
+                </button>
+              </div>
+              <p>Are you sure you want to delete "{toDelete?.eventName}" from the archive? This cannot be undone.</p>
+              <div className="archive-modal-actions">
+                <button className="archive-modal-btn" onClick={closeDeleteModal}>Cancel</button>
+                <button className="archive-modal-btn pink" onClick={confirmDelete}>Delete</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
-};
-
-export default Archive;
+}

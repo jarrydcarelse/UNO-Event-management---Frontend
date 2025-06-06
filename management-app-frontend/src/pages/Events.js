@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from "../components/Navbar";
 import '../events/Events.css';
 
-// Dummy data for initial state
 const initialRequests = [
   {
     name: 'Workshop on Sustainable Design',
@@ -32,25 +31,25 @@ function Events() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
 
-  // Main event overview data (stateful for adding/removing events)
   const [overviewEvents, setOverviewEvents] = useState([
-    { name: 'Corporate Year-End Gala', client: 'ABC Consulting', date: '15 December 2025', status: 'In Progress', progress: 50, completed: 5, total: 10, colorClass: 'yellow' },
     { name: 'Wedding Reception', client: 'Emily & Daniel', date: '5 June 2025', status: 'In Progress', progress: 17, completed: 2, total: 12, colorClass: 'red' },
-    { name: 'Tech Product Launch', client: 'InnovateX', date: '22 August 2025', status: 'In Progress', progress: 85, completed: 6, total: 7, colorClass: 'green' },
+    { name: 'Corporate Year-End Gala', client: 'ABC Consulting', date: '15 December 2025', status: 'In Progress', progress: 50, completed: 5, total: 10, colorClass: 'yellow' },
+    { name: 'Tech Product Launch', client: 'InnovateX', date: '22 August 2025', status: 'In Progress', progress: 80, completed: 6, total: 7, colorClass: 'green' },
   ]);
+
   const [newEventData, setNewEventData] = useState({ name: '', client: '', date: '' });
   const [showAddModal, setShowAddModal] = useState(false);
   const [requests, setRequests] = useState(initialRequests);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [acceptRequestIndex, setAcceptRequestIndex] = useState(null);
 
-  // Handle modal input changes
+  // Modal input handlers
   const handleAddInputChange = (e) => {
     const { name, value } = e.target;
     setNewEventData({ ...newEventData, [name]: value });
   };
 
-  // Add event from modal
+  // Add new event from modal
   const handleAddEvent = () => {
     const { name, client, date } = newEventData;
     if (name && client && date) {
@@ -64,19 +63,21 @@ function Events() {
           completed: 0,
           total: 0,
           progress: 0,
-          colorClass: 'yellow',
-        },
+          colorClass: 'yellow'
+        }
       ]);
       setNewEventData({ name: '', client: '', date: '' });
       setShowAddModal(false);
     }
   };
 
-  // Accept request modal logic
+  // Accept new event request (shows confirmation modal)
   const handleAcceptRequest = (index) => {
     setAcceptRequestIndex(index);
     setShowAcceptModal(true);
   };
+
+  // Confirm accept, moves event to overview
   const confirmAcceptRequest = () => {
     const req = requests[acceptRequestIndex];
     setOverviewEvents([
@@ -90,12 +91,14 @@ function Events() {
         total: req.tasks,
         progress: 0,
         colorClass: 'yellow',
-      },
+      }
     ]);
     setRequests(requests.filter((_, i) => i !== acceptRequestIndex));
     setShowAcceptModal(false);
     setAcceptRequestIndex(null);
   };
+
+  // Deny request (removes from requests)
   const handleDenyRequest = (index) => {
     setRequests(requests.filter((_, i) => i !== index));
   };
@@ -104,9 +107,16 @@ function Events() {
     <div className="events-layout">
       <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <div className={`events-page${sidebarOpen ? '' : ' collapsed'}`}>
+        {/* Page Header */}
+        <h1 className="events-main-header">Events</h1>
+
         {/* Events Overview */}
-        <div className="events-card events-overview-card events-scroll-container">
-          <h2 className="events-section-title">Events Overview</h2>
+        <div className="card events-overview-card scroll-container">
+          <div className="events-overview-header">
+            <h2>Events Overview</h2>
+            <button className="events-add-btn" onClick={() => setShowAddModal(true)}>+ Add New Event</button>
+          </div>
+          <hr className="section-divider" />
           {overviewEvents.map((evt, idx) => (
             <div key={idx} className="events-overview-row">
               <div className="events-overview-main">
@@ -117,45 +127,50 @@ function Events() {
                 </div>
               </div>
               <div className="events-overview-status">
-                <span className={`events-status-dot ${evt.colorClass}`}></span>
+                <span className={`status-dot ${evt.colorClass}`}></span>
                 <span>{evt.status}</span>
               </div>
               <div className="events-overview-progress">
-                <div className="events-progress-bar-bg">
+                <div className="progress-bar-bg">
                   <div
-                    className={`events-progress-bar-fill ${evt.colorClass}`}
+                    className={`progress-bar-fill ${evt.colorClass}`}
                     style={{ width: `${evt.progress}%` }}
                   />
                 </div>
                 <span>{evt.progress}%</span>
               </div>
               <div className="events-overview-tasks">
-                <span className="events-tasks-label">Tasks Completed:</span>
-                <span className="events-tasks-value">{evt.completed} | {evt.total}</span>
+                <span className="tasks-label">Tasks Completed:</span>
+                <span className="tasks-value">{evt.completed} | {evt.total}</span>
               </div>
-              <button
-                className="events-view-btn"
-                onClick={() => navigate('/event-tasks')}
-              >
-                View
-              </button>
+              {/* View button in own block */}
+              <div className="events-overview-viewbtn-block">
+                <button
+                  className="events-view-btn"
+                  onClick={() => navigate('/event-tasks')}
+                >
+                  View
+                </button>
+              </div>
             </div>
           ))}
-          <button className="events-add-btn" onClick={() => setShowAddModal(true)}>+</button>
         </div>
 
-        {/* New Events Requests */}
-        <div className="events-card events-requests-card">
-          <h2 className="events-section-title">New Events Requests</h2>
-          <div className="events-requests-list">
+        {/* New Event Requests */}
+        <div className="card events-requests-card">
+          <h2>New Event Requests</h2>
+          <hr className="section-divider" />
+          <div className="events-requests-list-horizontal">
             {requests.map((req, idx) => (
-              <div key={idx} className="events-request">
-                <h3 className="events-request-title">{req.name}</h3>
-                <p><b>Budget:</b> {req.budget}</p>
-                <p><b>Client:</b> {req.client}</p>
-                <p><b>Event Date:</b> {req.date}</p>
-                <p><b>Tasks:</b> {req.tasks}</p>
-                <div className="events-request-actions">
+              <div key={idx} className="events-request-horizontal">
+                <div className="events-request-horizontal-info">
+                  <span className="events-request-horizontal-title">{req.name}</span>
+                  <span><b>Budget:</b> {req.budget}</span>
+                  <span><b>Client:</b> {req.client}</span>
+                  <span><b>Date:</b> {req.date}</span>
+                  <span><b>Tasks:</b> {req.tasks}</span>
+                </div>
+                <div className="events-request-horizontal-actions">
                   <button className="events-accept-btn" onClick={() => handleAcceptRequest(idx)}>Accept</button>
                   <button className="events-deny-btn" onClick={() => handleDenyRequest(idx)}>Deny</button>
                 </div>
@@ -167,8 +182,11 @@ function Events() {
         {/* Add Event Modal */}
         {showAddModal && (
           <div className="events-modal-overlay">
-            <div className="events-modal-content">
-              <h3>Add New Event</h3>
+            <div className="events-modal">
+              <div className="events-modal-header">
+                <h3>Add New Event</h3>
+                <button className="events-modal-close" onClick={() => setShowAddModal(false)}>×</button>
+              </div>
               <div className="events-modal-fields">
                 <label>Name:</label>
                 <input type="text" name="name" value={newEventData.name} onChange={handleAddInputChange} />
@@ -178,8 +196,8 @@ function Events() {
                 <input type="date" name="date" value={newEventData.date} onChange={handleAddInputChange} />
               </div>
               <div className="events-modal-actions">
-                <button className="events-view-btn" onClick={handleAddEvent}>Save</button>
-                <button className="events-view-btn" onClick={() => setShowAddModal(false)}>Cancel</button>
+                <button className="events-modal-btn pink" onClick={handleAddEvent}>Save</button>
+                <button className="events-modal-btn" onClick={() => setShowAddModal(false)}>Cancel</button>
               </div>
             </div>
           </div>
@@ -188,12 +206,15 @@ function Events() {
         {/* Accept Request Modal */}
         {showAcceptModal && (
           <div className="events-modal-overlay">
-            <div className="events-modal-content">
-              <h3>Confirm Add Event</h3>
+            <div className="events-modal">
+              <div className="events-modal-header">
+                <h3>Confirm Add Event</h3>
+                <button className="events-modal-close" onClick={() => setShowAcceptModal(false)}>×</button>
+              </div>
               <p>Are you sure you want to add this event to the overview?</p>
               <div className="events-modal-actions">
-                <button className="events-deny-btn" onClick={() => setShowAcceptModal(false)}>Cancel</button>
-                <button className="events-accept-btn" onClick={confirmAcceptRequest}>Confirm</button>
+                <button className="events-modal-btn" onClick={() => setShowAcceptModal(false)}>Cancel</button>
+                <button className="events-modal-btn pink" onClick={confirmAcceptRequest}>Confirm</button>
               </div>
             </div>
           </div>
