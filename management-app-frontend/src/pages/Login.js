@@ -18,8 +18,9 @@ const Login = () => {
     setError('');
 
     try {
-      // Call the Netlify Function instead of the backend URL directly
-      const res = await axios.post("/.netlify/functions/login", {
+      // Use environment variable for backend URL
+      const apiUrl = process.env.REACT_APP_API_URL || "https://eventify-backend-kgtm.onrender.com";
+      const res = await axios.post(`${apiUrl}/api/users/login`, {
         email,
         password
       });
