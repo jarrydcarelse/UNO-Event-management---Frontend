@@ -1,11 +1,11 @@
+// src/pages/Login.js
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Login.css';
 import logo from '../assets/logo.png';
 import pattern from '../assets/pink-pattern.png';
-
-const API_BASE = "https://eventify-backend-kgtm.onrender.com";
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -16,18 +16,23 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
     try {
-      const res = await axios.post(`${API_BASE}/api/Auth/login`, { email, password });
-      // Save the JWT token (for future authenticated requests)
+      // Call the Netlify Function instead of the backend URL directly
+      const res = await axios.post("/.netlify/functions/login", {
+        email,
+        password
+      });
+
+      // Save JWT token
       localStorage.setItem("token", res.data.token);
-      // Redirect to dashboard
       navigate('/dashboard');
     } catch (err) {
-      setError(
+      const msg =
         err.response?.data?.message ||
         err.response?.data?.title ||
-        "Login failed. Please check your credentials."
-      );
+        "Login failed. Please check your credentials.";
+      setError(msg);
     }
   };
 
