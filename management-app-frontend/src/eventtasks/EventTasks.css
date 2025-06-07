@@ -185,14 +185,23 @@ body {
   border-radius: 50%;
   display: inline-block;
 }
-.eventtasks-taskcard-meta {
+.eventtasks-taskcard-description {
+  margin: 8px 0;
   font-size: 14px;
-  color: #333;
-  margin-bottom: 8px;
-  margin-top: 4px;
+  color: #666;
+  line-height: 1.4;
+}
+.eventtasks-taskcard-meta {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: #666;
+}
+.eventtasks-taskcard-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 .eventtasks-taskcard-actions {
   display: flex;
@@ -282,6 +291,22 @@ body {
   border-radius: 8px;
   font-size: 15px;
   margin-bottom: 5px;
+}
+.eventtasks-modal-fields textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  resize: vertical;
+}
+.eventtasks-modal-fields input[type="date"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
 }
 .eventtasks-modal-actions {
   display: flex; gap: 14px; margin-top: 12px; justify-content: flex-end;

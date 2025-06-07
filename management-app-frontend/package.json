@@ -1,6 +1,8 @@
 {
   "name": "management-app-frontend",
   "version": "1.0.0",
+  "private": true,
+  "proxy": "https://eventify-backend-kgtm.onrender.com",
   "main": "main.js",
   "scripts": {
     "start": "react-scripts start",
