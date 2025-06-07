@@ -7,7 +7,6 @@ import {
   FiHome,
   FiCalendar,
   FiCheckSquare,
-  FiDollarSign,
   FiArchive,
   FiLogOut,
   FiUser
@@ -28,7 +27,6 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
     { name: "Dashboard", icon: <FiHome size={20} />, path: "/dashboard" },
     { name: "Events", icon: <FiCalendar size={20} />, path: "/events" },
     { name: "Tasks", icon: <FiCheckSquare size={20} />, path: "/tasks" },
-    { name: "Budget", icon: <FiDollarSign size={20} />, path: "/budget" },
     { name: "Archive", icon: <FiArchive size={20} />, path: "/archive" }
   ];
 
