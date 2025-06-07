@@ -17,15 +17,11 @@ export default function Events() {
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState('');
 
-  // full-form state for new event
+  // form state for new event: only the fields your API needs
   const [newEventData, setNewEventData] = useState({
-    id: '',
     title: '',
     description: '',
     date: '',
-    userId: '',
-    createdAt: '',
-    updatedAt: '',
   });
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -47,7 +43,7 @@ export default function Events() {
         const evts = res.data.map(e => ({
           id: e.id,
           name: e.title,
-          client: e.description, // or however you want to display it
+          client: e.description,
           date: new Date(e.date).toLocaleDateString(),
           status: 'In Progress',
           progress: 0,
@@ -71,29 +67,13 @@ export default function Events() {
     setNewEventData(prev => ({ ...prev, [name]: value }));
   };
 
-  // submit new event exactly matching your API schema
+  // submit new event matching your API schema
   const handleAddEvent = () => {
-    const {
-      id,
-      title,
-      description,
-      date,
-      userId,
-      createdAt,
-      updatedAt,
-    } = newEventData;
+    const { title, description, date } = newEventData;
 
     // basic validation
-    if (
-      !id ||
-      !title ||
-      !description ||
-      !date ||
-      !userId ||
-      !createdAt ||
-      !updatedAt
-    ) {
-      alert('Please fill out all fields.');
+    if (!title || !description || !date) {
+      alert('Please fill out Title, Description, and Date.');
       return;
     }
 
@@ -103,15 +83,11 @@ export default function Events() {
       return;
     }
 
-    // build payload, converting types where needed
+    // build payload
     const payload = {
-      id: Number(id),
       title,
       description,
       date: new Date(date).toISOString(),
-      userId: Number(userId),
-      createdAt: new Date(createdAt).toISOString(),
-      updatedAt: new Date(updatedAt).toISOString(),
     };
 
     axios
@@ -139,13 +115,9 @@ export default function Events() {
         ]);
         // reset form
         setNewEventData({
-          id: '',
           title: '',
           description: '',
           date: '',
-          userId: '',
-          createdAt: '',
-          updatedAt: '',
         });
         setShowAddModal(false);
       })
@@ -243,27 +215,10 @@ export default function Events() {
             </div>
 
             <div className="events-modal-fields">
-              {/* ID */}
-              <label>ID:</label>
-              <input
-                type="number"
-                name="id"
-                value={newEventData.id}
-                onChange={handleAddInputChange}
-              />
-
-              {/* User ID */}
-              <label>User ID:</label>
-              <input
-                type="number"
-                name="userId"
-                value={newEventData.userId}
-                onChange={handleAddInputChange}
-              />
-
               {/* Title */}
               <label>Title:</label>
               <input
+                type="text"
                 name="title"
                 value={newEventData.title}
                 onChange={handleAddInputChange}
@@ -272,35 +227,18 @@ export default function Events() {
               {/* Description */}
               <label>Description:</label>
               <input
+                type="text"
                 name="description"
                 value={newEventData.description}
                 onChange={handleAddInputChange}
               />
 
-              {/* Date (use datetime-local for full timestamp) */}
+              {/* Date */}
               <label>Date:</label>
               <input
                 type="datetime-local"
                 name="date"
                 value={newEventData.date}
-                onChange={handleAddInputChange}
-              />
-
-              {/* Created At */}
-              <label>Created At:</label>
-              <input
-                type="datetime-local"
-                name="createdAt"
-                value={newEventData.createdAt}
-                onChange={handleAddInputChange}
-              />
-
-              {/* Updated At */}
-              <label>Updated At:</label>
-              <input
-                type="datetime-local"
-                name="updatedAt"
-                value={newEventData.updatedAt}
                 onChange={handleAddInputChange}
               />
             </div>
