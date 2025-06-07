@@ -1,3 +1,6 @@
+/* src/dashboard/Dashboard.css */
+
+/* ---------------- Global Styles ---------------- */
 body {
   font-family: 'Manrope', sans-serif;
   font-size: 14px;
@@ -6,6 +9,7 @@ body {
   background: #f2f2f7;
 }
 
+/* ---------------- Layout ---------------- */
 .dashboard-layout {
   display: flex;
   height: 100vh;
@@ -23,7 +27,7 @@ body {
   margin-left: 100px;
 }
 
-/* Unified Page Header */
+/* ---------------- Page Header ---------------- */
 .dashboard-main-header {
   font-size: 2rem;
   font-weight: 800;
@@ -33,6 +37,7 @@ body {
   letter-spacing: -1px;
 }
 
+/* ---------------- Top Section ---------------- */
 .dashboard-top {
   display: flex;
   gap: 24px;
@@ -41,9 +46,9 @@ body {
 .overview-card { flex: 3; }
 .notifications-card { flex: 1; }
 
-/* Cards */
+/* ---------------- Card Base ---------------- */
 .card {
-  background: #fff;
+  background: #ffffff;
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
@@ -51,13 +56,8 @@ body {
   flex-direction: column;
   gap: 16px;
 }
-.card h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-  color: #FF5F8A;
-}
 
+/* Divider */
 .section-divider {
   border: none;
   height: 1px;
@@ -65,7 +65,7 @@ body {
   margin: 8px 0;
 }
 
-/* Scrollable with hidden scrollbars */
+/* Hide scrollbars but allow scrolling */
 .scroll-container {
   max-height: 260px;
   overflow-y: auto;
@@ -76,58 +76,109 @@ body {
   display: none;
 }
 
-/* Active Events Overview Rows */
+/* ---------------- Active Events Overview ---------------- */
+/* Override card header in this section */
+.overview-card h2 {
+  color: #FF5F8A;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(255, 95, 138, 0.3);
+}
+
+/* Layout each row as a 4-column grid */
 .overview-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr auto;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
   background: #f2f2f7;
   border-radius: 12px;
-  padding: 16px 16px;
+  padding: 16px;
   margin-bottom: 8px;
+}
+
+/* Event title & date */
+.overview-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.overview-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+.overview-details span {
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Status column */
+.overview-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
 }
 .status-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
+  display: inline-block;
 }
-.red { background: #FF3B30; }
-.yellow { background: #FFCC00; }
-.green { background: #34C759; }
+.status-dot.red    { background: #FF3B30; }
+.status-dot.yellow { background: #FFCC00; }
+.status-dot.green  { background: #34C759; }
 
-.overview-name {
-  flex: 2;
-  font-weight: 600;
-  color: #111827;
-}
-.overview-status {
-  flex: 1;
+/* Progress column */
+.overview-progress {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #374151;
-}
-.overview-progress {
-  flex: 2;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: flex-end;
 }
 .progress-bar-bg {
-  height: 10px;
   flex: 1;
+  height: 8px;
   background: #e5e7eb;
   border-radius: 9999px;
   overflow: hidden;
 }
 .progress-bar-fill {
-  height: 10px;
+  height: 100%;
+  background: #FFCC00;
   border-radius: 9999px;
   transition: width 0.3s ease;
 }
 
-/* Notifications */
+/* View button */
+.event-view-btn {
+  background: #FF5F8A;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.event-view-btn:hover {
+  background: #e94a73;
+}
+
+/* ---------------- Notifications ---------------- */
+.notifications-card h2 {
+  color: #FF5F8A;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(255, 95, 138, 0.3);
+}
+
 .notification-item {
   display: flex;
   align-items: center;
@@ -136,26 +187,24 @@ body {
   border-radius: 12px;
   font-size: 14px;
   font-weight: 500;
-  margin-bottom: 8px;
   background: #f2f2f7;
+  margin-bottom: 8px;
 }
-.notification-item.info {
-  color: #FF5F8A;
-}
-.notification-item.warning {
-  color: #f59f00;
-}
+.notification-item.info    { color: #FF5F8A; }
+.notification-item.warning { color: #f59f00; }
 .note-icon {
   font-size: 18px;
   font-weight: bold;
 }
 
-/* ================= TASK MANAGEMENT =============== */
-.tasks-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+/* ---------------- Task Management ---------------- */
+.tasks-card h2 {
+  color: #FF5F8A;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(255, 95, 138, 0.3);
 }
 .task-cards {
   display: grid;
@@ -163,12 +212,12 @@ body {
   gap: 22px;
   align-items: start;
 }
+
+/* Individual task block */
 .task-block {
   background: #f2f2f7;
   border-radius: 12px;
-  padding: 22px 18px 18px 18px;
-  min-width: 220px;
-  max-width: 360px;
+  padding: 22px 18px 18px;
   box-shadow: none;
   display: flex;
   flex-direction: column;
@@ -177,10 +226,14 @@ body {
   border: 2px solid transparent;
   transition: border 0.2s;
 }
+.task-block.completed {
+  background: #e8fff0;
+  border-color: #b6f2c0;
+}
+
 .task-header {
   display: flex;
   flex-direction: column;
-  gap: 2px;
 }
 .task-name {
   font-weight: 700;
@@ -192,14 +245,16 @@ body {
   border: none;
   height: 1px;
   background: #ddd;
-  margin: 14px 0 10px 0;
+  margin: 14px 0 10px;
 }
+
 .task-title {
-  margin: 0 0 4px 0;
+  margin: 0 0 4px;
   font-size: 15px;
   color: #374151;
   font-weight: 600;
 }
+
 .task-priority {
   display: flex;
   align-items: center;
@@ -207,16 +262,22 @@ body {
   font-size: 15px;
   color: #374151;
   font-weight: 600;
-  margin-top: 2px;
 }
+.task-priority .status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
 .task-meta {
   font-size: 14px;
   color: #333;
-  margin: 4px 0 9px 0;
   display: flex;
   flex-direction: column;
   gap: 3px;
+  margin: 4px 0 9px;
 }
+
 .task-actions {
   display: flex;
   gap: 13px;
@@ -233,7 +294,7 @@ body {
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  padding: 0 8px 0 0;
+  padding: 0;
   border-radius: 7px;
   transition: background 0.15s;
 }
@@ -241,11 +302,23 @@ body {
   background: #fce6ef;
 }
 .edit-btn::before { content: '✎'; }
+.reassign-btn::before { content: '👥'; }
 
-/* Responsive */
+/* ---------------- Responsive ---------------- */
 @media (max-width: 900px) {
-  .dashboard-page { margin-left: 80px; padding: 16px; }
-  .dashboard-top { flex-direction: column; gap: 16px; }
-  .task-cards { grid-template-columns: 1fr; gap: 13px; }
-  .task-block { padding: 18px 10px; }
+  .dashboard-page {
+    margin-left: 80px;
+    padding: 16px;
+  }
+  .dashboard-top {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .task-cards {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+  .task-block {
+    padding: 18px 10px;
+  }
 }
