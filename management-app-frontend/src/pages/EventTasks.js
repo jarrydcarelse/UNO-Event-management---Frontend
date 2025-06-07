@@ -5,10 +5,11 @@ import Navbar from '../components/Navbar';
 import { FiPlus, FiEdit, FiCheck, FiTrash2, FiX } from 'react-icons/fi';
 import '../eventtasks/EventTasks.css';
 
-// Update API_BASE to use relative URL
-const API_BASE = '';
+// Update API_BASE to use the deployed backend URL
+const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
 
 // Add axios default configuration
+axios.defaults.baseURL = API_BASE;
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,PATCH,OPTIONS';
 axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
@@ -67,16 +68,20 @@ export default function EventTasks() {
         }
 
         // Fetch event details
-        const eventResponse = await axios.get(`${API_BASE}/api/events/${eventId}`, {
+        const eventResponse = await axios.get(`/api/events/${eventId}`, {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
           }
         });
 
         // Fetch tasks separately
-        const tasksResponse = await axios.get(`${API_BASE}/api/events/${eventId}/tasks`, {
+        const tasksResponse = await axios.get(`/api/events/${eventId}/tasks`, {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
           }
         });
 
@@ -244,10 +249,7 @@ export default function EventTasks() {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'Accept': '*/*'
-        },
-        validateStatus: function (status) {
-          return status >= 200 && status < 500; // Accept all status codes less than 500
+          'Accept': 'application/json'
         }
       });
 
@@ -301,19 +303,9 @@ export default function EventTasks() {
         budget: `R${budgetRes.data.toLocaleString()}`,
         colorClass: completionPercentage === 100 ? 'green' : 'yellow'
       }));
-    } catch (err) {
-      console.error('Error adding task:', err);
-      if (err.response) {
-        console.error('Error response data:', err.response.data);
-        console.error('Error response status:', err.response.status);
-        setError(`Failed to add task: ${err.response.data.message || 'Please try again.'}`);
-      } else if (err.request) {
-        console.error('Error request:', err.request);
-        setError('No response received from server. Please check your connection and try again.');
-      } else {
-        console.error('Error message:', err.message);
-        setError(`Failed to add task: ${err.message}`);
-      }
+    } catch (error) {
+      console.error('Error adding task:', error);
+      setError(error.response?.data?.message || 'Failed to add task. Please try again.');
     }
   };
 
@@ -438,7 +430,7 @@ export default function EventTasks() {
       console.log('Completing task with data:', taskData);
 
       const response = await axios.put(
-        `${API_BASE}/api/events/${eventId}/tasks/${task.id}`,
+        `/api/events/${eventId}/tasks/${task.id}`,
         taskData,
         { 
           headers: { 
@@ -470,7 +462,7 @@ export default function EventTasks() {
       const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
       // Refresh budget
-      const budgetRes = await axios.get(`${API_BASE}/api/events/${eventId}/tasks/budget`, {
+      const budgetRes = await axios.get(`/api/events/${eventId}/tasks/budget`, {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -509,7 +501,7 @@ export default function EventTasks() {
       };
 
       await axios.put(
-        `${API_BASE}/api/events/${eventId}/tasks/${selectedTask.id}`,
+        `/api/events/${eventId}/tasks/${selectedTask.id}`,
         taskData,
         { 
           headers: { 
@@ -532,7 +524,7 @@ export default function EventTasks() {
       const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
       // Refresh budget
-      const budgetRes = await axios.get(`${API_BASE}/api/events/${eventId}/tasks/budget`, {
+      const budgetRes = await axios.get(`/api/events/${eventId}/tasks/budget`, {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
