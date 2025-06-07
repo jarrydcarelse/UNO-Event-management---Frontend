@@ -17,14 +17,16 @@ const Login = () => {
     e.preventDefault();
     setError('');
 
-    try {
-      // Call the Netlify Function instead of the backend URL directly
-      const res = await axios.post("/.netlify/functions/login", {
-        email,
-        password
-      });
+    // Determine API URL from environment or default
+    const apiUrl = process.env.REACT_APP_API_URL || "https://eventify-backend-kgtm.onrender.com";
 
-      // Save JWT token
+    try {
+      const res = await axios.post(
+        `${apiUrl}/api/users/login`,
+        { email, password }
+      );
+
+      // Save JWT token and navigate
       localStorage.setItem("token", res.data.token);
       navigate('/dashboard');
     } catch (err) {
