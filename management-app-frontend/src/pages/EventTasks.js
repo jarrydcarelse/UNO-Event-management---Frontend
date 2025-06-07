@@ -57,40 +57,33 @@ export default function EventTasks() {
 
   // Fetch event details and tasks
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setError('Not authenticated');
-      setLoading(false);
-      return;
-    }
-
-    const fetchEventAndTasks = async () => {
+    const fetchEventData = async () => {
       try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          navigate('/login');
+          return;
+        }
+
         // Fetch event details
-        const eventRes = await axios.get(`${API_BASE}/api/events/${eventId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        const event = eventRes.data;
-        
-        // Fetch tasks
-        const tasksRes = await axios.get(`${API_BASE}/api/events/${eventId}/tasks`, {
-          headers: { Authorization: `Bearer ${token}` }
+        const eventResponse = await axios.get(`${API_BASE}/api/events/${eventId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
 
-        // Fetch budget and completion stats
-        const [budgetRes, completionRes] = await Promise.all([
-          axios.get(`${API_BASE}/api/events/${eventId}/tasks/budget`, {
-            headers: { Authorization: `Bearer ${token}` }
-          }),
-          axios.get(`${API_BASE}/api/events/${eventId}/tasks/completion`, {
-            headers: { Authorization: `Bearer ${token}` }
-          })
-        ]);
+        // Fetch tasks separately
+        const tasksResponse = await axios.get(`${API_BASE}/api/events/${eventId}/tasks`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
 
-        const tasksData = tasksRes.data
-          .filter(task => !task.archived) // Only show non-archived tasks
-          .map(task => ({
+        // Validate and format tasks data
+        let tasks = [];
+        if (tasksResponse.data && Array.isArray(tasksResponse.data)) {
+          tasks = tasksResponse.data.map(task => ({
             id: task.id,
             title: task.title,
             priority: task.priority,
@@ -99,40 +92,40 @@ export default function EventTasks() {
             budget: task.budget,
             completed: task.completed,
             description: task.description,
-            dueDate: new Date(task.dueDate).toLocaleDateString(),
+            dueDate: formatDateForDisplay(task.dueDate),
             archived: task.archived
           }));
-
-        setTasks(tasksData);
+        }
 
         // Calculate completion percentage
-        const completedTasks = tasksData.filter(t => t.completed).length;
-        const totalTasks = tasksData.length;
+        const completedTasks = tasks.filter(t => t.completed).length;
+        const totalTasks = tasks.length;
         const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-        // Set event details with stats from the API
+        // Set event details
         setEventDetails({
-          name: event.title,
-          client: event.description,
-          deadline: new Date(event.date).toLocaleDateString(),
+          name: eventResponse.data.title || 'Untitled Event',
+          client: eventResponse.data.description || 'No description',
+          deadline: formatDateForDisplay(eventResponse.data.date) || 'No deadline',
           progress: completionPercentage,
           completed: completedTasks,
           totalTasks: totalTasks,
-          budget: `R${budgetRes.data.toLocaleString()}`,
-          spent: `R${budgetRes.data.toLocaleString()}`, // You might want to add a spent endpoint
+          budget: eventResponse.data.budget || 'R0',
+          spent: eventResponse.data.spent || 'R0',
           colorClass: completionPercentage === 100 ? 'green' : 'yellow'
         });
 
+        setTasks(tasks);
         setLoading(false);
-      } catch (err) {
-        console.error('Error fetching event data:', err);
-        setError('Failed to load event data');
+      } catch (error) {
+        console.error('Error fetching event data:', error);
+        setError('Failed to load event data. Please try again later.');
         setLoading(false);
       }
     };
 
-    fetchEventAndTasks();
-  }, [eventId]);
+    fetchEventData();
+  }, [eventId, navigate]);
 
   // Modal controls
   const openAddModal = () => {
@@ -294,10 +287,6 @@ export default function EventTasks() {
           return status >= 200 && status < 500;
         }
       });
-
-      if (budgetRes.status >= 400) {
-        throw new Error(budgetRes.data.message || 'Failed to fetch budget');
-      }
 
       // Calculate new completion stats
       const updatedTasks = [...tasks, newTask];
