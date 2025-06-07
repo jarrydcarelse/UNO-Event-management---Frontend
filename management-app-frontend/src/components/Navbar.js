@@ -1,5 +1,3 @@
-// src/components/Navbar.js
-
 import React, { useState } from "react";
 import { 
   FiChevronLeft, 
@@ -22,6 +20,12 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Get user email from localStorage (set this after login)
+  const userEmail = localStorage.getItem("userEmail") || "user@eventify.com";
+  // Extract name before @ and capitalize first letter
+  const userName = userEmail.split("@")[0];
+  const displayName = userName.charAt(0).toUpperCase() + userName.slice(1);
 
   const navItems = [
     { name: "Dashboard", icon: <FiHome size={20} />, path: "/dashboard" },
@@ -52,8 +56,8 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
         </div>
         {isOpen && (
           <div className="user-info">
-            <p className="name">Armand</p>
-            <p className="email">armand@eventify.com</p>
+            <p className="name">{displayName}</p>
+            <p className="email">{userEmail}</p>
           </div>
         )}
       </div>
