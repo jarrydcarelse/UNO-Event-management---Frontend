@@ -10,9 +10,11 @@ const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
 
 // Add axios default configuration
 axios.defaults.baseURL = API_BASE;
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+axios.defaults.withCredentials = true;
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://splendid-heliotrope-468d3a.netlify.app';
 axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,PATCH,OPTIONS';
 axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
+axios.defaults.headers.common['Access-Control-Allow-Credentials'] = 'true';
 
 // Add axios interceptor for debugging
 axios.interceptors.request.use(request => {
@@ -322,233 +324,117 @@ export default function EventTasks() {
     }
 
     try {
-      // Format the budget to ensure it's a string with R prefix
-      const formattedBudget = taskForm.budget.startsWith('R') 
-        ? taskForm.budget 
-        : `R${taskForm.budget}`;
-
       const taskData = {
-        title: taskForm.title,
-        priority: taskForm.priority,
-        assignedTo: taskForm.assignedTo,
-        budget: formattedBudget,
-        description: taskForm.description || '',
-        dueDate: formatDateForAPI(taskForm.dueDate),
-        completed: selectedTask.completed,
-        archived: false,
-        eventId: parseInt(eventId)
+        ...taskForm,
+        dueDate: formatDateForAPI(taskForm.dueDate)
       };
-
-      console.log('Updating task with data:', taskData);
 
       const response = await axios({
         method: 'put',
         url: `/api/events/${eventId}/tasks/${selectedTask.id}`,
         data: taskData,
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'Accept': '*/*'
-        }
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': 'https://splendid-heliotrope-468d3a.netlify.app',
+          'Access-Control-Allow-Credentials': 'true'
+        },
+        withCredentials: true
       });
 
-      console.log('Task updated successfully:', response.data);
-
-      // Update the task in the tasks list
-      const updatedTask = {
-        id: response.data.id,
-        title: response.data.title,
-        priority: response.data.priority,
-        priorityClass: response.data.priority === 'High' ? 'red' : response.data.priority === 'Medium' ? 'yellow' : 'green',
-        assignedTo: response.data.assignedTo,
-        budget: response.data.budget,
-        completed: response.data.completed,
-        description: response.data.description,
-        dueDate: formatDateForDisplay(response.data.dueDate),
-        archived: response.data.archived
-      };
-
-      setTasks(prev =>
-        prev.map(task =>
-          task.id === selectedTask.id ? updatedTask : task
-        )
-      );
-
-      // Close the modal
-      closeModal();
-
-      // Refresh event stats
-      const budgetRes = await axios({
-        method: 'get',
-        url: `/api/events/${eventId}/tasks/budget`,
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': '*/*'
-        }
-      });
-
-      // Calculate new completion stats
-      const updatedTasks = tasks.map(t => t.id === selectedTask.id ? updatedTask : t);
-      const completedTasks = updatedTasks.filter(t => t.completed).length;
-      const totalTasks = updatedTasks.length;
-      const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-      setEventDetails(prev => ({
-        ...prev,
-        progress: completionPercentage,
-        budget: `R${budgetRes.data.toLocaleString()}`,
-        colorClass: completionPercentage === 100 ? 'green' : 'yellow'
-      }));
-    } catch (err) {
-      console.error('Error updating task:', err);
-      if (err.response) {
-        console.error('Error response data:', err.response.data);
-        console.error('Error response status:', err.response.status);
-        setError(`Failed to update task: ${err.response.data.message || 'Please try again.'}`);
-      } else if (err.request) {
-        console.error('Error request:', err.request);
-        setError('No response received from server. Please check your connection and try again.');
-      } else {
-        console.error('Error message:', err.message);
-        setError(`Failed to update task: ${err.message}`);
+      if (response.status >= 400) {
+        throw new Error(response.data.message || 'Failed to update task');
       }
+
+      // Update the task in the state
+      setTasks(prev => prev.map(t => 
+        t.id === selectedTask.id ? {
+          ...t,
+          ...taskData,
+          dueDate: formatDateForDisplay(taskData.dueDate)
+        } : t
+      ));
+      closeModal();
+    } catch (error) {
+      console.error('Error updating task:', error);
+      setError(error.response?.data?.message || 'Failed to update task. Please try again.');
     }
   };
 
   const handleCompleteTask = async (task) => {
-    const token = localStorage.getItem('token');
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Authentication token not found. Please log in again.');
+        return;
+      }
+
       const taskData = {
         ...task,
-        completed: true,
-        eventId: parseInt(eventId),
-        archived: false,
-        dueDate: task.dueDate ? formatDateForAPI(task.dueDate) : new Date().toISOString()
+        completed: !task.completed,
+        dueDate: formatDateForAPI(task.dueDate)
       };
 
-      console.log('Completing task with data:', taskData);
-
-      const response = await axios.put(
-        `/api/events/${eventId}/tasks/${task.id}`,
-        taskData,
-        { 
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
-        }
-      );
-
-      console.log('Task completed successfully:', response.data);
-
-      // Update the task in the tasks list
-      const updatedTask = {
-        ...task,
-        completed: true
-      };
-
-      setTasks(prev =>
-        prev.map(t =>
-          t.id === task.id ? updatedTask : t
-        )
-      );
-
-      // Calculate new completion stats
-      const updatedTasks = tasks.map(t => t.id === task.id ? updatedTask : t);
-      const completedTasks = updatedTasks.filter(t => t.completed).length;
-      const totalTasks = updatedTasks.length;
-      const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-      // Refresh budget
-      const budgetRes = await axios.get(`/api/events/${eventId}/tasks/budget`, {
-        headers: { 
+      const response = await axios({
+        method: 'put',
+        url: `/api/events/${eventId}/tasks/${task.id}`,
+        data: taskData,
+        headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': 'https://splendid-heliotrope-468d3a.netlify.app',
+          'Access-Control-Allow-Credentials': 'true'
+        },
+        withCredentials: true
       });
 
-      setEventDetails(prev => ({
-        ...prev,
-        progress: completionPercentage,
-        completed: completedTasks,
-        budget: `R${budgetRes.data.toLocaleString()}`,
-        colorClass: completionPercentage === 100 ? 'green' : 'yellow'
-      }));
-    } catch (err) {
-      console.error('Error completing task:', err);
-      if (err.response) {
-        console.error('Error response:', err.response.data);
-        setError(`Failed to complete task: ${err.response.data.message || 'Please try again.'}`);
-      } else if (err.request) {
-        console.error('Error request:', err.request);
-        setError('No response received from server. Please check your connection.');
-      } else {
-        setError('Failed to complete task. Please try again.');
+      if (response.status >= 400) {
+        throw new Error(response.data.message || 'Failed to update task');
       }
+
+      // Update the task in the state
+      setTasks(prev => prev.map(t => 
+        t.id === task.id ? { ...t, completed: !t.completed } : t
+      ));
+    } catch (error) {
+      console.error('Error completing task:', error);
+      setError(error.response?.data?.message || 'Failed to update task. Please try again.');
     }
   };
 
   const handleDeleteTask = async () => {
-    const token = localStorage.getItem('token');
     try {
-      const taskData = {
-        ...selectedTask,
-        archived: true,
-        eventId: parseInt(eventId),
-        dueDate: formatDateForAPI(selectedTask.dueDate)
-      };
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Authentication token not found. Please log in again.');
+        return;
+      }
 
-      await axios.put(
-        `/api/events/${eventId}/tasks/${selectedTask.id}`,
-        taskData,
-        { 
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          withCredentials: true
-        }
-      );
-
-      // Remove the task from the UI
-      setTasks(prev => prev.filter(t => t.id !== selectedTask.id));
-      closeModal();
-
-      // Calculate new completion stats
-      const updatedTasks = tasks.filter(t => t.id !== selectedTask.id);
-      const completedTasks = updatedTasks.filter(t => t.completed).length;
-      const totalTasks = updatedTasks.length;
-      const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-      // Refresh budget
-      const budgetRes = await axios.get(`/api/events/${eventId}/tasks/budget`, {
-        headers: { 
+      const response = await axios({
+        method: 'delete',
+        url: `/api/events/${eventId}/tasks/${selectedTask.id}`,
+        headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': 'https://splendid-heliotrope-468d3a.netlify.app',
+          'Access-Control-Allow-Credentials': 'true'
+        },
+        withCredentials: true
       });
 
-      setEventDetails(prev => ({
-        ...prev,
-        progress: completionPercentage,
-        totalTasks: totalTasks,
-        budget: `R${budgetRes.data.toLocaleString()}`,
-        colorClass: completionPercentage === 100 ? 'green' : 'yellow'
-      }));
-    } catch (err) {
-      console.error('Error archiving task:', err);
-      if (err.response) {
-        console.error('Error response:', err.response.data);
-        setError(`Failed to archive task: ${err.response.data.message || 'Please try again.'}`);
-      } else if (err.request) {
-        console.error('Error request:', err.request);
-        setError('No response received from server. Please check your connection.');
-      } else {
-        setError('Failed to archive task. Please try again.');
+      if (response.status >= 400) {
+        throw new Error(response.data.message || 'Failed to delete task');
       }
+
+      // Remove the deleted task from the state
+      setTasks(prev => prev.filter(task => task.id !== selectedTask.id));
+      closeModal();
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      setError(error.response?.data?.message || 'Failed to delete task. Please try again.');
     }
   };
 
