@@ -88,7 +88,6 @@ export default function Dashboard() {
           {/* Active Events Overview */}
           <div className="card overview-card scroll-container">
             <h2>Active Events Overview</h2>
-            <hr className="section-divider" />
 
             {loading && <p>Loading events…</p>}
             {error && <p className="error-text">{error}</p>}
@@ -138,7 +137,6 @@ export default function Dashboard() {
           {/* Notifications */}
           <div className="card notifications-card scroll-container">
             <h2>Notifications</h2>
-            <hr className="section-divider" />
 
             {notifications.map((note, idx) => (
               <div key={idx} className={`notification-item ${note.variant}`}>
@@ -152,7 +150,6 @@ export default function Dashboard() {
         {/* Task Management */}
         <div className="card tasks-card">
           <h2>Task Management</h2>
-          <hr className="section-divider" />
           <div className="task-cards">
             {tasks.map((task, idx) => (
               <div key={idx} className="task-block">
