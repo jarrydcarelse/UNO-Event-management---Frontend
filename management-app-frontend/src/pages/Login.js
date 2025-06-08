@@ -41,8 +41,8 @@ export default function Login() {
     } catch (err) {
       setLoginError(
         err.response?.data?.message ||
-        err.response?.data?.title ||
-        'Login failed. Please check your credentials.'
+          err.response?.data?.title ||
+          'Login failed. Please check your credentials.'
       );
     }
   };
@@ -88,7 +88,7 @@ export default function Login() {
     } catch (err) {
       setRequestError(
         err.response?.data?.message ||
-        'Failed to submit request. Try again later.'
+          'Failed to submit request. Try again later.'
       );
     }
   };
@@ -102,7 +102,8 @@ export default function Login() {
         <div className="branding">
           <img src={logo} alt="Eventify Logo" className="logo-img" />
           <p className="welcome-text">
-            Welcome to Eventify. Log in to manage your events, or request one below.
+            Welcome to Eventify. Sign in or sign up to manage your events.
+            Or request a new event below.
           </p>
         </div>
       </div>
@@ -155,7 +156,7 @@ export default function Login() {
               setRequestSuccess(false);
             }}
           >
-            Request an Event
+            Request a New Event
           </button>
         </div>
       </div>
