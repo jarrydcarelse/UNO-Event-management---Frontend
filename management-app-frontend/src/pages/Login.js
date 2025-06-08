@@ -10,24 +10,25 @@ const API_BASE =
   'https://eventify-backend-kgtm.onrender.com';
 
 export default function Login() {
-  const [mode, setMode] = useState('login'); // 'login' or 'request'
-  // ─── LOGIN STATE ─────────────────────────────────
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
 
-  // ─── REQUEST STATE ────────────────────────────────
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [date, setDate] = useState('');
-  const [requesterName, setRequesterName] = useState('');
-  const [requesterEmail, setRequesterEmail] = useState('');
+  // Request‐Event Modal state
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [requestData, setRequestData] = useState({
+    title: '',
+    description: '',
+    date: '',
+    requesterName: '',
+    requesterEmail: '',
+  });
   const [requestError, setRequestError] = useState('');
   const [requestSuccess, setRequestSuccess] = useState(false);
 
-  // ─── HANDLE LOGIN ─────────────────────────────────
-  const handleLogin = async (e) => {
+  // LOGIN
+  const handleLogin = async e => {
     e.preventDefault();
     setLoginError('');
     try {
@@ -36,52 +37,58 @@ export default function Login() {
         password,
       });
       localStorage.setItem('token', res.data.token);
-      navigate('/dashboard');
+      navigate('/events');
     } catch (err) {
       setLoginError(
         err.response?.data?.message ||
-          err.response?.data?.title ||
-          'Login failed. Check your credentials.'
+        err.response?.data?.title ||
+        'Login failed. Please check your credentials.'
       );
     }
   };
 
-  // ─── HANDLE EVENT REQUEST ─────────────────────────
-  const handleRequest = async (e) => {
+  // EVENT REQUEST HANDLERS
+  const handleRequestChange = e => {
+    const { name, value } = e.target;
+    setRequestData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmitRequest = async e => {
     e.preventDefault();
     setRequestError('');
     setRequestSuccess(false);
 
-    if (
-      !title ||
-      !description ||
-      !date ||
-      !requesterName ||
-      !requesterEmail
-    ) {
+    const { title, description, date, requesterName, requesterEmail } = requestData;
+    if (!title || !description || !date || !requesterName || !requesterEmail) {
       setRequestError('All fields are required.');
       return;
     }
 
     try {
-      await axios.post(`${API_BASE}/api/event-requests`, {
-        title,
-        description,
-        date: new Date(date).toISOString(),
-        requesterName,
-        requesterEmail,
-        status: 'Pending',
-      });
+      await axios.post(
+        `${API_BASE}/api/event-requests`,
+        {
+          title,
+          description,
+          date: new Date(date).toISOString(),
+          requesterName,
+          requesterEmail,
+          status: 'Pending',
+        },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
       setRequestSuccess(true);
-      setTitle('');
-      setDescription('');
-      setDate('');
-      setRequesterName('');
-      setRequesterEmail('');
+      setRequestData({
+        title: '',
+        description: '',
+        date: '',
+        requesterName: '',
+        requesterEmail: '',
+      });
     } catch (err) {
       setRequestError(
         err.response?.data?.message ||
-          'Failed to submit request. Please try again later.'
+        'Failed to submit request. Try again later.'
       );
     }
   };
@@ -95,140 +102,139 @@ export default function Login() {
         <div className="branding">
           <img src={logo} alt="Eventify Logo" className="logo-img" />
           <p className="welcome-text">
-            {mode === 'login'
-              ? 'Welcome to Eventify. Securely log in to manage your events.'
-              : 'Submit your event idea, and we’ll get back to you shortly.'}
+            Welcome to Eventify. Log in to manage your events, or click below to request one.
           </p>
         </div>
       </div>
 
       <div className="login-right">
-        {mode === 'login' && (
-          <form className="login-form" onSubmit={handleLogin}>
-            <h2>Sign In</h2>
-            <hr className="login-divider" />
+        <form className="login-form" onSubmit={handleLogin}>
+          <h2>Sign In</h2>
+          <hr className="login-divider" />
 
-            {loginError && (
-              <div className="login-error">{loginError}</div>
-            )}
+          {loginError && <div className="login-error">{loginError}</div>}
 
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
 
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+          />
 
-            <hr className="login-divider" />
+          <hr className="login-divider" />
 
-            <div className="login-buttons">
-              <button type="submit" className="btn-signin">
-                Sign In
-              </button>
-              <button
-                type="button"
-                className="link-btn"
-                onClick={() => {
-                  setMode('request');
-                  setLoginError('');
-                }}
-              >
-                Request an Event
-              </button>
-            </div>
-          </form>
-        )}
-
-        {mode === 'request' && (
-          <form className="login-form" onSubmit={handleRequest}>
-            <h2>Event Request</h2>
-            <hr className="login-divider" />
-
-            {requestError && (
-              <div className="login-error">{requestError}</div>
-            )}
-            {requestSuccess && (
-              <div className="login-success">
-                Request submitted! We’ll be in touch.
-              </div>
-            )}
-
-            <label htmlFor="req-title">Title</label>
-            <input
-              id="req-title"
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-
-            <label htmlFor="req-desc">Description</label>
-            <textarea
-              id="req-desc"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-
-            <label htmlFor="req-date">Date</label>
-            <input
-              id="req-date"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-            />
-
-            <label htmlFor="req-name">Your Name</label>
-            <input
-              id="req-name"
-              type="text"
-              value={requesterName}
-              onChange={(e) => setRequesterName(e.target.value)}
-              required
-            />
-
-            <label htmlFor="req-email">Your Email</label>
-            <input
-              id="req-email"
-              type="email"
-              value={requesterEmail}
-              onChange={(e) => setRequesterEmail(e.target.value)}
-              required
-            />
-
-            <hr className="login-divider" />
-
-            <div className="login-buttons">
-              <button type="submit" className="btn-signin">
-                Submit Request
-              </button>
-              <button
-                type="button"
-                className="link-btn"
-                onClick={() => {
-                  setMode('login');
-                  setRequestError('');
-                  setRequestSuccess(false);
-                }}
-              >
-                Back to Sign In
-              </button>
-            </div>
-          </form>
-        )}
+          <div className="login-buttons">
+            <button type="submit" className="btn-signin">
+              Sign In
+            </button>
+            <button
+              type="button"
+              className="link-btn"
+              onClick={() => {
+                setShowRequestModal(true);
+                setRequestError('');
+                setRequestSuccess(false);
+              }}
+            >
+              Request an Event
+            </button>
+          </div>
+        </form>
       </div>
+
+      {/* ─── Request Event Modal ─── */}
+      {showRequestModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h3>Request New Event</h3>
+              <button
+                className="modal-close"
+                onClick={() => setShowRequestModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <form className="modal-form" onSubmit={handleSubmitRequest}>
+              {requestError && <div className="form-error">{requestError}</div>}
+              {requestSuccess && (
+                <div className="form-success">
+                  Thanks! Your request has been submitted.
+                </div>
+              )}
+
+              <label>Title</label>
+              <input
+                name="title"
+                type="text"
+                value={requestData.title}
+                onChange={handleRequestChange}
+                required
+              />
+
+              <label>Description</label>
+              <textarea
+                name="description"
+                value={requestData.description}
+                onChange={handleRequestChange}
+                required
+              />
+
+              <label>Date</label>
+              <input
+                name="date"
+                type="date"
+                value={requestData.date}
+                onChange={handleRequestChange}
+                required
+              />
+
+              <label>Your Name</label>
+              <input
+                name="requesterName"
+                type="text"
+                value={requestData.requesterName}
+                onChange={handleRequestChange}
+                required
+              />
+
+              <label>Your Email</label>
+              <input
+                name="requesterEmail"
+                type="email"
+                value={requestData.requesterEmail}
+                onChange={handleRequestChange}
+                required
+              />
+
+              <div className="modal-actions">
+                <button type="submit" className="btn-signin">
+                  Submit Request
+                </button>
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={() => setShowRequestModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
