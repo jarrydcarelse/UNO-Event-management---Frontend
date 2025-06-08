@@ -27,7 +27,7 @@ export default function Login() {
   const [requestError, setRequestError] = useState('');
   const [requestSuccess, setRequestSuccess] = useState(false);
 
-  // LOGIN
+  // ─── LOGIN ───────────────────────────────────────
   const handleLogin = async e => {
     e.preventDefault();
     setLoginError('');
@@ -47,7 +47,7 @@ export default function Login() {
     }
   };
 
-  // EVENT REQUEST HANDLERS
+  // ─── REQUEST EVENT ───────────────────────────────
   const handleRequestChange = e => {
     const { name, value } = e.target;
     setRequestData(prev => ({ ...prev, [name]: value }));
@@ -102,7 +102,7 @@ export default function Login() {
         <div className="branding">
           <img src={logo} alt="Eventify Logo" className="logo-img" />
           <p className="welcome-text">
-            Welcome to Eventify. Log in to manage your events, or click below to request one.
+            Welcome to Eventify. Log in to manage your events, or request one below.
           </p>
         </div>
       </div>
@@ -116,8 +116,7 @@ export default function Login() {
 
           <label htmlFor="email">Email</label>
           <input
-            id="email"
-            type="email"
+            id="email" type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
@@ -125,8 +124,7 @@ export default function Login() {
 
           <label htmlFor="password">Password</label>
           <input
-            id="password"
-            type="password"
+            id="password" type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
@@ -140,17 +138,26 @@ export default function Login() {
             </button>
             <button
               type="button"
-              className="link-btn"
-              onClick={() => {
-                setShowRequestModal(true);
-                setRequestError('');
-                setRequestSuccess(false);
-              }}
+              className="btn-signup"
+              onClick={() => navigate('/signup')}
             >
-              Request an Event
+              Sign Up
             </button>
           </div>
         </form>
+
+        <div className="login-request">
+          <button
+            className="link-btn"
+            onClick={() => {
+              setShowRequestModal(true);
+              setRequestError('');
+              setRequestSuccess(false);
+            }}
+          >
+            Request an Event
+          </button>
+        </div>
       </div>
 
       {/* ─── Request Event Modal ─── */}
@@ -177,8 +184,7 @@ export default function Login() {
 
               <label>Title</label>
               <input
-                name="title"
-                type="text"
+                name="title" type="text"
                 value={requestData.title}
                 onChange={handleRequestChange}
                 required
@@ -194,8 +200,7 @@ export default function Login() {
 
               <label>Date</label>
               <input
-                name="date"
-                type="date"
+                name="date" type="date"
                 value={requestData.date}
                 onChange={handleRequestChange}
                 required
@@ -203,8 +208,7 @@ export default function Login() {
 
               <label>Your Name</label>
               <input
-                name="requesterName"
-                type="text"
+                name="requesterName" type="text"
                 value={requestData.requesterName}
                 onChange={handleRequestChange}
                 required
@@ -212,8 +216,7 @@ export default function Login() {
 
               <label>Your Email</label>
               <input
-                name="requesterEmail"
-                type="email"
+                name="requesterEmail" type="email"
                 value={requestData.requesterEmail}
                 onChange={handleRequestChange}
                 required
