@@ -1,3 +1,5 @@
+// src/pages/Events.js
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -10,17 +12,23 @@ export default function Events() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
 
-  // Active events
+  //
+  // ─── ACTIVE EVENTS ─────────────────────────────────────
+  //
   const [overviewEvents, setOverviewEvents] = useState([]);
-  const [loadingEvents, setLoadingEvents] = useState(true);
-  const [eventsError, setEventsError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState('');
 
-  // Pending requests
+  //
+  // ─── PENDING REQUESTS ──────────────────────────────────
+  //
   const [pendingRequests, setPendingRequests] = useState([]);
-  const [loadingRequests, setLoadingRequests] = useState(true);
-  const [requestsError, setRequestsError] = useState('');
+  const [loadingReq, setLoadingReq] = useState(true);
+  const [reqError, setReqError] = useState('');
 
-  // “Add Event” modal
+  //
+  // ─── ADD-EVENT MODAL STATE ─────────────────────────────
+  //
   const [showAddModal, setShowAddModal] = useState(false);
   const [newEventData, setNewEventData] = useState({
     title: '',
@@ -28,30 +36,20 @@ export default function Events() {
     date: '',
   });
 
-  // “Request Event” modal
-  const [showReqModal, setShowReqModal] = useState(false);
-  const [reqData, setReqData] = useState({
-    title: '',
-    description: '',
-    date: '',
-    requesterName: '',
-    requesterEmail: '',
-  });
-  const [reqError, setReqError] = useState('');
-  const [reqSuccess, setReqSuccess] = useState(false);
-
-  // load events + requests
+  //
+  // ─── FETCH BOTH EVENTS & REQUESTS ON MOUNT ─────────────
+  //
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      setEventsError('Not authenticated.');
-      setRequestsError('Not authenticated.');
-      setLoadingEvents(false);
-      setLoadingRequests(false);
+      setFetchError('Not authenticated.');
+      setReqError('Not authenticated.');
+      setLoading(false);
+      setLoadingReq(false);
       return;
     }
 
-    // fetch active events
+    // ── fetch active events
     axios
       .get(`${API_BASE}/api/events`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -72,49 +70,62 @@ export default function Events() {
       })
       .catch(err => {
         console.error(err);
-        setEventsError('Failed to load events.');
+        setFetchError('Failed to load events.');
       })
-      .finally(() => setLoadingEvents(false));
+      .finally(() => setLoading(false));
 
-    // fetch pending requests
+    // ── fetch pending requests
     axios
-      .get(`${API_BASE}/api/event-requests`)
+      .get(`${API_BASE}/api/event-requests`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then(res => {
         setPendingRequests(
           res.data.map(r => ({
             id: r.id,
             title: r.title,
+            description: r.description,
             date: new Date(r.date).toLocaleDateString(),
             requesterName: r.requesterName,
-            requesterEmail: r.requesterEmail,
             status: r.status,
           }))
         );
       })
       .catch(err => {
         console.error(err);
-        setRequestsError('Failed to load requests.');
+        setReqError('Failed to load requests.');
       })
-      .finally(() => setLoadingRequests(false));
+      .finally(() => setLoadingReq(false));
   }, []);
 
-  // Add Event handlers
-  const handleAddChange = e => {
+  //
+  // ─── HANDLERS FOR ADD-EVENT ─────────────────────────────
+  //
+  const handleAddInputChange = e => {
     const { name, value } = e.target;
     setNewEventData(prev => ({ ...prev, [name]: value }));
   };
   const handleAddEvent = () => {
     const { title, description, date } = newEventData;
     if (!title || !description || !date) {
-      alert('Fill Title, Description & Date.');
+      alert('Please fill out Title, Description, and Date.');
       return;
     }
     const token = localStorage.getItem('token');
     axios
       .post(
         `${API_BASE}/api/events`,
-        { title, description, date: new Date(date).toISOString() },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          title,
+          description,
+          date: new Date(date).toISOString(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
       )
       .then(res => {
         const e = res.data;
@@ -141,59 +152,62 @@ export default function Events() {
       });
   };
 
-  // Request Event handlers
-  const handleReqChange = e => {
-    const { name, value } = e.target;
-    setReqData(prev => ({ ...prev, [name]: value }));
-  };
-  const handleSubmitReq = async e => {
-    e.preventDefault();
-    setReqError('');
-    setReqSuccess(false);
-
-    const { title, description, date, requesterName, requesterEmail } = reqData;
-    if (!title || !description || !date || !requesterName || !requesterEmail) {
-      setReqError('All fields required.');
-      return;
-    }
-
+  //
+  // ─── HANDLERS FOR REQUESTS ─────────────────────────────
+  //
+  const acceptRequest = async req => {
+    const token = localStorage.getItem('token');
     try {
-      const res = await axios.post(
-        `${API_BASE}/api/event-requests`,
+      // 1) create actual event
+      await axios.post(
+        `${API_BASE}/api/events`,
         {
-          title,
-          description,
-          date: new Date(date).toISOString(),
-          requesterName,
-          requesterEmail,
-          status: 'Pending',
+          title: req.title,
+          description: req.description,
+          date: new Date(req.date).toISOString(),
         },
-        { headers: { 'Content-Type': 'application/json' } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      setReqSuccess(true);
-      setPendingRequests(prev => [
+      // 2) delete request
+      await axios.delete(`${API_BASE}/api/event-requests/${req.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // 3) update client-side lists
+      setOverviewEvents(prev => [
         ...prev,
         {
-          id: res.data.id,
-          title: res.data.title,
-          date: new Date(res.data.date).toLocaleDateString(),
-          requesterName: res.data.requesterName,
-          requesterEmail: res.data.requesterEmail,
-          status: res.data.status,
+          id: req.id,
+          name: req.title,
+          client: req.description,
+          date: req.date,
+          status: 'In Progress',
+          progress: 0,
+          completed: 0,
+          total: 0,
+          colorClass: 'yellow',
         },
       ]);
-      setReqData({
-        title: '',
-        description: '',
-        date: '',
-        requesterName: '',
-        requesterEmail: '',
-      });
+      setPendingRequests(r => r.filter(x => x.id !== req.id));
     } catch (err) {
-      setReqError('Failed to submit request.');
+      console.error('Accept failed', err);
     }
   };
 
+  const denyRequest = async id => {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.delete(`${API_BASE}/api/event-requests/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setPendingRequests(r => r.filter(x => x.id !== id));
+    } catch (err) {
+      console.error('Deny failed', err);
+    }
+  };
+
+  //
+  // ─── RENDER ─────────────────────────────────────────────
+  //
   return (
     <div className="events-layout">
       <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
@@ -201,33 +215,12 @@ export default function Events() {
       <div className={`events-page${sidebarOpen ? '' : ' collapsed'}`}>
         <h1 className="events-main-header">Events</h1>
 
-        <div className="events-toolbar">
-          <button
-            className="events-add-btn"
-            onClick={() => setShowAddModal(true)}
-          >
-            + Add New Event
-          </button>
-          <button
-            className="events-request-btn"
-            onClick={() => {
-              setShowReqModal(true);
-              setReqError('');
-              setReqSuccess(false);
-            }}
-          >
-            + Request Event
-          </button>
-        </div>
-
-        <hr className="section-divider" />
-
-        {/* Pending Requests */}
+        {/* ─── Pending Requests ────────────────────────── */}
         <div className="card requests-overview-card scroll-container">
           <h2>Pending Event Requests</h2>
-          {loadingRequests && <p>Loading requests…</p>}
-          {requestsError && <p className="error-text">{requestsError}</p>}
-          {!loadingRequests && pendingRequests.length === 0 && (
+          {loadingReq && <p>Loading requests…</p>}
+          {reqError && <p className="error-text">{reqError}</p>}
+          {!loadingReq && pendingRequests.length === 0 && (
             <p>No pending requests.</p>
           )}
           {pendingRequests.map(req => (
@@ -235,50 +228,101 @@ export default function Events() {
               <div className="events-overview-main">
                 <span className="events-overview-name">{req.title}</span>
                 <div className="events-overview-details">
-                  <span><b>Date:</b> {req.date}</span>
-                  <span><b>By:</b> {req.requesterName}</span>
+                  <span>
+                    <b>Date:</b> {req.date}
+                  </span>
+                  <span>
+                    <b>By:</b> {req.requesterName}
+                  </span>
                 </div>
               </div>
-              <div className="events-overview-status">
-                <span className="status-dot yellow"></span>
-                <span>{req.status}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Active Events */}
-        <div className="card events-overview-card scroll-container">
-          <h2>Events Overview</h2>
-          {loadingEvents && <p>Loading events…</p>}
-          {eventsError && <p className="error-text">{eventsError}</p>}
-          {!loadingEvents && overviewEvents.map((evt, i) => (
-            <div key={i} className="events-overview-row">
-              <div className="events-overview-main">
-                <span className="events-overview-name">{evt.name}</span>
-                <div className="events-overview-details">
-                  <span><b>Client:</b> {evt.client}</span>
-                  <span><b>Date:</b> {evt.date}</span>
-                </div>
-              </div>
-              <div className="events-overview-status">
-                <span className={`status-dot ${evt.colorClass}`}></span>
-                <span>{evt.status}</span>
-              </div>
-              <div className="events-overview-viewbtn-block">
+              <div className="request-actions">
                 <button
-                  className="events-view-btn"
-                  onClick={() => navigate(`/event-tasks/${evt.id}`)}
+                  className="btn-accept"
+                  onClick={() => acceptRequest(req)}
                 >
-                  View
+                  Accept
+                </button>
+                <button
+                  className="btn-deny"
+                  onClick={() => denyRequest(req.id)}
+                >
+                  Deny
                 </button>
               </div>
             </div>
           ))}
         </div>
+
+        <hr className="section-divider" />
+
+        {/* ─── Active Events Overview ──────────────────── */}
+        <div className="card events-overview-card scroll-container">
+          <div className="events-overview-header">
+            <h2>Events Overview</h2>
+            <button
+              className="events-add-btn"
+              onClick={() => setShowAddModal(true)}
+            >
+              + Add New Event
+            </button>
+          </div>
+          <hr className="section-divider" />
+
+          {loading && <p>Loading events…</p>}
+          {fetchError && <p className="error-text">{fetchError}</p>}
+
+          {!loading &&
+            overviewEvents.map((evt, i) => (
+              <div key={i} className="events-overview-row">
+                <div className="events-overview-main">
+                  <span className="events-overview-name">{evt.name}</span>
+                  <div className="events-overview-details">
+                    <span>
+                      <b>Client:</b> {evt.client}
+                    </span>
+                    <span>
+                      <b>Event Date:</b> {evt.date}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="events-overview-status">
+                  <span className={`status-dot ${evt.colorClass}`}></span>
+                  <span>{evt.status}</span>
+                </div>
+
+                <div className="events-overview-progress">
+                  <div className="progress-bar-bg">
+                    <div
+                      className={`progress-bar-fill ${evt.colorClass}`}
+                      style={{ width: `${evt.progress}%` }}
+                    />
+                  </div>
+                  <span>{evt.progress}%</span>
+                </div>
+
+                <div className="events-overview-tasks">
+                  <span className="tasks-label">Tasks Completed:</span>
+                  <span className="tasks-value">
+                    {evt.completed} | {evt.total}
+                  </span>
+                </div>
+
+                <div className="events-overview-viewbtn-block">
+                  <button
+                    className="events-view-btn"
+                    onClick={() => navigate(`/event-tasks/${evt.id}`)}
+                  >
+                    View
+                  </button>
+                </div>
+              </div>
+            ))}
+        </div>
       </div>
 
-      {/* Add Event Modal */}
+      {/* ─── Add Event Modal ──────────────────────────── */}
       {showAddModal && (
         <div className="events-modal-overlay">
           <div className="events-modal">
@@ -291,27 +335,33 @@ export default function Events() {
                 ×
               </button>
             </div>
+
             <div className="events-modal-fields">
               <label>Title:</label>
               <input
+                type="text"
                 name="title"
                 value={newEventData.title}
-                onChange={handleAddChange}
+                onChange={handleAddInputChange}
               />
+
               <label>Description:</label>
               <input
+                type="text"
                 name="description"
                 value={newEventData.description}
-                onChange={handleAddChange}
+                onChange={handleAddInputChange}
               />
+
               <label>Date:</label>
               <input
                 type="datetime-local"
                 name="date"
                 value={newEventData.date}
-                onChange={handleAddChange}
+                onChange={handleAddInputChange}
               />
             </div>
+
             <div className="events-modal-actions">
               <button
                 className="events-modal-btn pink"
@@ -329,76 +379,9 @@ export default function Events() {
           </div>
         </div>
       )}
-
-      {/* Request Event Modal */}
-      {showReqModal && (
-        <div className="events-modal-overlay">
-          <div className="events-modal">
-            <div className="events-modal-header">
-              <h3>Request New Event</h3>
-              <button
-                className="events-modal-close"
-                onClick={() => setShowReqModal(false)}
-              >
-                ×
-              </button>
-            </div>
-            <form className="events-modal-fields" onSubmit={handleSubmitReq}>
-              {reqError && <div className="form-error">{reqError}</div>}
-              {reqSuccess && (
-                <div className="form-success">Request submitted!</div>
-              )}
-              <label>Title:</label>
-              <input
-                name="title"
-                value={reqData.title}
-                onChange={handleReqChange}
-              />
-              <label>Description:</label>
-              <input
-                name="description"
-                value={reqData.description}
-                onChange={handleReqChange}
-              />
-              <label>Date:</label>
-              <input
-                type="datetime-local"
-                name="date"
-                value={reqData.date}
-                onChange={handleReqChange}
-              />
-              <label>Your Name:</label>
-              <input
-                name="requesterName"
-                value={reqData.requesterName}
-                onChange={handleReqChange}
-              />
-              <label>Your Email:</label>
-              <input
-                name="requesterEmail"
-                type="email"
-                value={reqData.requesterEmail}
-                onChange={handleReqChange}
-              />
-
-              <div className="events-modal-actions">
-                <button type="submit" className="events-modal-btn pink">
-                  Submit
-                </button>
-                <button
-                  type="button"
-                  className="events-modal-btn"
-                  onClick={() => setShowReqModal(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
+
 
 
