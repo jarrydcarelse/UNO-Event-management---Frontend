@@ -12,23 +12,17 @@ export default function Events() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
 
-  //
-  // ─── ACTIVE EVENTS ─────────────────────────────────────
-  //
+  // ── Active Events state
   const [overviewEvents, setOverviewEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState('');
+  const [loadingEvents, setLoadingEvents] = useState(true);
+  const [eventsError, setEventsError] = useState('');
 
-  //
-  // ─── PENDING REQUESTS ──────────────────────────────────
-  //
+  // ── Pending Requests state
   const [pendingRequests, setPendingRequests] = useState([]);
   const [loadingReq, setLoadingReq] = useState(true);
   const [reqError, setReqError] = useState('');
 
-  //
-  // ─── ADD-EVENT MODAL STATE ─────────────────────────────
-  //
+  // ── Add‐Event Modal state
   const [showAddModal, setShowAddModal] = useState(false);
   const [newEventData, setNewEventData] = useState({
     title: '',
@@ -36,45 +30,44 @@ export default function Events() {
     date: '',
   });
 
-  //
-  // ─── FETCH BOTH EVENTS & REQUESTS ON MOUNT ─────────────
-  //
+  // ── Fetch both Events and Requests on mount
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      setFetchError('Not authenticated.');
+      setEventsError('Not authenticated.');
       setReqError('Not authenticated.');
-      setLoading(false);
+      setLoadingEvents(false);
       setLoadingReq(false);
       return;
     }
 
-    // ── fetch active events
+    // Fetch active events
     axios
       .get(`${API_BASE}/api/events`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(res => {
-        const evts = res.data.map(e => ({
-          id: e.id,
-          name: e.title,
-          client: e.description,
-          date: new Date(e.date).toLocaleDateString(),
-          status: 'In Progress',
-          progress: 0,
-          completed: 0,
-          total: 0,
-          colorClass: 'yellow',
-        }));
-        setOverviewEvents(evts);
+        setOverviewEvents(
+          res.data.map(e => ({
+            id: e.id,
+            name: e.title,
+            client: e.description,
+            date: new Date(e.date).toLocaleDateString(),
+            status: 'In Progress',
+            progress: 0,
+            completed: 0,
+            total: 0,
+            colorClass: 'yellow',
+          }))
+        );
       })
       .catch(err => {
         console.error(err);
-        setFetchError('Failed to load events.');
+        setEventsError('Failed to load events.');
       })
-      .finally(() => setLoading(false));
+      .finally(() => setLoadingEvents(false));
 
-    // ── fetch pending requests
+    // Fetch pending event requests
     axios
       .get(`${API_BASE}/api/EventRequests`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -98,19 +91,19 @@ export default function Events() {
       .finally(() => setLoadingReq(false));
   }, []);
 
-  //
-  // ─── HANDLERS FOR ADD-EVENT ─────────────────────────────
-  //
+  // ── Add‐Event Modal Handlers
   const handleAddInputChange = e => {
     const { name, value } = e.target;
     setNewEventData(prev => ({ ...prev, [name]: value }));
   };
+
   const handleAddEvent = () => {
     const { title, description, date } = newEventData;
     if (!title || !description || !date) {
       alert('Please fill out Title, Description, and Date.');
       return;
     }
+
     const token = localStorage.getItem('token');
     axios
       .post(
@@ -152,13 +145,11 @@ export default function Events() {
       });
   };
 
-  //
-  // ─── HANDLERS FOR REQUESTS ─────────────────────────────
-  //
+  // ── Handlers for Pending Requests
   const acceptRequest = async req => {
     const token = localStorage.getItem('token');
     try {
-      // 1) create actual event
+      // 1) Create actual event
       await axios.post(
         `${API_BASE}/api/events`,
         {
@@ -168,11 +159,13 @@ export default function Events() {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // 2) delete request
-      await axios.delete(`${API_BASE}/api/event-requests/${req.id}`, {
+
+      // 2) Delete the EventRequest
+      await axios.delete(`${API_BASE}/api/EventRequests/${req.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // 3) update client-side lists
+
+      // 3) Update client state
       setOverviewEvents(prev => [
         ...prev,
         {
@@ -190,24 +183,24 @@ export default function Events() {
       setPendingRequests(r => r.filter(x => x.id !== req.id));
     } catch (err) {
       console.error('Accept failed', err);
+      alert('Could not accept request.');
     }
   };
 
   const denyRequest = async id => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`${API_BASE}/api/event-requests/${id}`, {
+      await axios.delete(`${API_BASE}/api/EventRequests/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPendingRequests(r => r.filter(x => x.id !== id));
     } catch (err) {
       console.error('Deny failed', err);
+      alert('Could not deny request.');
     }
   };
 
-  //
-  // ─── RENDER ─────────────────────────────────────────────
-  //
+  // ── Render
   return (
     <div className="events-layout">
       <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
@@ -269,10 +262,10 @@ export default function Events() {
           </div>
           <hr className="section-divider" />
 
-          {loading && <p>Loading events…</p>}
-          {fetchError && <p className="error-text">{fetchError}</p>}
+          {loadingEvents && <p>Loading events…</p>}
+          {eventsError && <p className="error-text">{eventsError}</p>}
 
-          {!loading &&
+          {!loadingEvents &&
             overviewEvents.map((evt, i) => (
               <div key={i} className="events-overview-row">
                 <div className="events-overview-main">
@@ -363,10 +356,7 @@ export default function Events() {
             </div>
 
             <div className="events-modal-actions">
-              <button
-                className="events-modal-btn pink"
-                onClick={handleAddEvent}
-              >
+              <button className="events-modal-btn pink" onClick={handleAddEvent}>
                 Save
               </button>
               <button
