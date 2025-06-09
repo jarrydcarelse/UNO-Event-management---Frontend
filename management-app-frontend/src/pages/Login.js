@@ -11,13 +11,21 @@ const API_BASE =
   process.env.REACT_APP_API_URL ||
   'https://eventify-backend-kgtm.onrender.com';
 
+const ADMIN_PIN = '123123'; // 6-digit admin PIN
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
 
-  // ─── Request‐Event Modal state
+  // PIN Verification Modal state
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [pin, setPin] = useState('');
+  const [pinError, setPinError] = useState('');
+
+  // Request‐Event Modal state
+
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestData, setRequestData] = useState({
     title: '',
@@ -46,6 +54,19 @@ export default function Login() {
         err.response?.data?.message ||
           'Login failed. Please check your credentials.'
       );
+    }
+  };
+
+  // ─── PIN VERIFICATION ─────────────────────────────
+  const handlePinSubmit = (e) => {
+    e.preventDefault();
+    if (pin === ADMIN_PIN) {
+      setShowPinModal(false);
+      setPin('');
+      setPinError('');
+      navigate('/signup');
+    } else {
+      setPinError('Invalid PIN. Please try again.');
     }
   };
 
@@ -126,8 +147,17 @@ export default function Login() {
           <img src={logo} alt="Eventify Logo" className="logo-img" />
           <p className="welcome-text">
             Welcome to Eventify. Sign in or sign up to manage your events.
-            Or request a new event below.
           </p>
+          <button
+            className="link-btn"
+            onClick={() => {
+              setShowRequestModal(true);
+              setRequestError('');
+              setRequestSuccess(false);
+            }}
+          >
+            Request a New Event
+          </button>
         </div>
       </div>
 
@@ -165,26 +195,71 @@ export default function Login() {
             <button
               type="button"
               className="btn-signup"
-              onClick={() => navigate('/signup')}
+              onClick={() => {
+                setShowPinModal(true);
+                setPin('');
+                setPinError('');
+              }}
             >
               Sign Up
             </button>
           </div>
         </form>
-
-        <div className="login-request">
-          <button
-            className="link-btn"
-            onClick={() => {
-              setShowRequestModal(true);
-              setRequestError('');
-              setRequestSuccess(false);
-            }}
-          >
-            Request a New Event
-          </button>
-        </div>
       </div>
+
+      {/* ─── PIN Verification Modal ─── */}
+      {showPinModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h3>Admin PIN Verification</h3>
+              <button
+                className="modal-close"
+                onClick={() => {
+                  setShowPinModal(false);
+                  setPin('');
+                  setPinError('');
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            <form className="modal-form" onSubmit={handlePinSubmit}>
+              {pinError && <div className="form-error">{pinError}</div>}
+
+              <label>Enter 6-digit Admin PIN</label>
+              <input
+                type="password"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+                maxLength={6}
+                pattern="[0-9]*"
+                inputMode="numeric"
+                required
+                placeholder="Enter PIN"
+              />
+
+              <div className="modal-actions">
+                <button type="submit" className="btn-signin">
+                  Verify
+                </button>
+                <button
+                  type="button"
+                  className="btn-signup"
+                  onClick={() => {
+                    setShowPinModal(false);
+                    setPin('');
+                    setPinError('');
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* ─── Request Event Modal ──────────────────────────── */}
       {showRequestModal && (
