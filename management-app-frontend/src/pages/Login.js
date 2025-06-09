@@ -1,3 +1,5 @@
+// src/pages/Login.js
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -23,6 +25,7 @@ export default function Login() {
   const [pinError, setPinError] = useState('');
 
   // Request‐Event Modal state
+
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestData, setRequestData] = useState({
     title: '',
@@ -39,16 +42,16 @@ export default function Login() {
     e.preventDefault();
     setLoginError('');
     try {
-      const res = await axios.post(`${API_BASE}/api/users/login`, {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${API_BASE}/api/users/login`,
+        { email, password },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
       localStorage.setItem('token', res.data.token);
       navigate('/events');
     } catch (err) {
       setLoginError(
         err.response?.data?.message ||
-          err.response?.data?.title ||
           'Login failed. Please check your credentials.'
       );
     }
@@ -78,25 +81,45 @@ export default function Login() {
     setRequestError('');
     setRequestSuccess(false);
 
-    const { title, description, date, requesterName, requesterEmail } = requestData;
-    if (!title || !description || !date || !requesterName || !requesterEmail) {
+    const {
+      title,
+      description,
+      date,
+      requesterName,
+      requesterEmail,
+    } = requestData;
+
+    if (
+      !title ||
+      !description ||
+      !date ||
+      !requesterName ||
+      !requesterEmail
+    ) {
       setRequestError('All fields are required.');
       return;
     }
 
     try {
       await axios.post(
-        `${API_BASE}/api/event-requests`,
+        // <- CAPITAL E & R in EventRequests
+        `${API_BASE}/api/EventRequests`,
         {
           title,
           description,
+          // include full ISO timestamp if you want time too:
           date: new Date(date).toISOString(),
           requesterName,
           requesterEmail,
-          status: 'Pending',
+          status: 'Pending'
         },
-        { headers: { 'Content-Type': 'application/json' } }
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
+
       setRequestSuccess(true);
       setRequestData({
         title: '',
@@ -106,6 +129,7 @@ export default function Login() {
         requesterEmail: '',
       });
     } catch (err) {
+      console.error('Request submission error:', err);
       setRequestError(
         err.response?.data?.message ||
           'Failed to submit request. Try again later.'
@@ -146,7 +170,8 @@ export default function Login() {
 
           <label htmlFor="email">Email</label>
           <input
-            id="email" type="email"
+            id="email"
+            type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
@@ -154,7 +179,8 @@ export default function Login() {
 
           <label htmlFor="password">Password</label>
           <input
-            id="password" type="password"
+            id="password"
+            type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
@@ -235,7 +261,7 @@ export default function Login() {
         </div>
       )}
 
-      {/* ─── Request Event Modal ─── */}
+      {/* ─── Request Event Modal ──────────────────────────── */}
       {showRequestModal && (
         <div className="modal-overlay">
           <div className="modal">
@@ -250,7 +276,9 @@ export default function Login() {
             </div>
 
             <form className="modal-form" onSubmit={handleSubmitRequest}>
-              {requestError && <div className="form-error">{requestError}</div>}
+              {requestError && (
+                <div className="form-error">{requestError}</div>
+              )}
               {requestSuccess && (
                 <div className="form-success">
                   Thanks! Your request has been submitted.
@@ -259,7 +287,8 @@ export default function Login() {
 
               <label>Title</label>
               <input
-                name="title" type="text"
+                name="title"
+                type="text"
                 value={requestData.title}
                 onChange={handleRequestChange}
                 required
@@ -275,7 +304,8 @@ export default function Login() {
 
               <label>Date</label>
               <input
-                name="date" type="date"
+                name="date"
+                type="date"
                 value={requestData.date}
                 onChange={handleRequestChange}
                 required
@@ -283,7 +313,8 @@ export default function Login() {
 
               <label>Your Name</label>
               <input
-                name="requesterName" type="text"
+                name="requesterName"
+                type="text"
                 value={requestData.requesterName}
                 onChange={handleRequestChange}
                 required
@@ -291,7 +322,8 @@ export default function Login() {
 
               <label>Your Email</label>
               <input
-                name="requesterEmail" type="email"
+                name="requesterEmail"
+                type="email"
                 value={requestData.requesterEmail}
                 onChange={handleRequestChange}
                 required
