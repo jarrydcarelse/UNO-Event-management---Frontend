@@ -41,7 +41,7 @@ export default function Events() {
     }
     try {
       const res = await axios.get(
-        `${API_BASE}/api/events`,
+        `${API_BASE}/api/events/all`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setEvents(
