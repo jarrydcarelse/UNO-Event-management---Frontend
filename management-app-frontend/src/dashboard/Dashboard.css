@@ -41,7 +41,7 @@ body {
 .dashboard-top {
   display: flex;
   gap: 24px;
-  margin-bottom: 24px;
+  margin-bottom: -3px;
 }
 .overview-card { flex: 3; }
 .notifications-card { flex: 1; }
