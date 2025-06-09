@@ -76,7 +76,7 @@ export default function Events() {
 
     // ── fetch pending requests
     axios
-      .get(`${API_BASE}/api/event-requests`, {
+      .get(`${API_BASE}/api/EventRequests`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(res => {
