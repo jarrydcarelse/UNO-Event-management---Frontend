@@ -61,7 +61,7 @@ export default function Dashboard() {
     }
 
     axios
-      .get(`${API_BASE}/api/events`, {
+      .get(`${API_BASE}/api/events/all`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
