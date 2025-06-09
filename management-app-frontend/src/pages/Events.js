@@ -116,7 +116,7 @@ export default function Events() {
     const token = localStorage.getItem('token');
     try {
       await axios.post(
-        `${API_BASE}/api/events`,
+        `${API_BASE}/api/events/all`,
         { title, description, date: new Date(date).toISOString() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -203,7 +203,7 @@ export default function Events() {
         {/* ───── Active Events ───────── */}
         <div className="card events-overview-card scroll-container">
           <div className="events-overview-header">
-            <h2>Events Overview</h2>
+            <h2>All Events</h2>
             <button className="events-add-btn" onClick={() => setShowAddModal(true)}>
               + Add New Event
             </button>
