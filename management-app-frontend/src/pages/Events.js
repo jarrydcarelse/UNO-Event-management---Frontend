@@ -12,38 +12,42 @@ export default function Events() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
 
-  // ── Active Events ─────────────────────────────
+  // ── Filter state ─────────────────────────────
+  const [filter, setFilter] = useState('mine'); // 'mine' or 'all'
+
+  // ── Active Events ────────────────────────────
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [eventsError, setEventsError] = useState('');
 
-  // ── Pending Requests ──────────────────────────
+  // ── Pending Requests ─────────────────────────
   const [requests, setRequests] = useState([]);
   const [loadingReq, setLoadingReq] = useState(true);
   const [reqError, setReqError] = useState('');
 
-  // ── Add-Event Modal ───────────────────────────
+  // ── Add-Event Modal ──────────────────────────
   const [showAddModal, setShowAddModal] = useState(false);
   const [newEvent, setNewEvent] = useState({
     title: '',
     description: '',
-    date: ''
+    date: '',
   });
 
-  // Fetch helpers
+  // ── Fetch events based on filter ─────────────
   const fetchEvents = async () => {
     setLoadingEvents(true);
+    setEventsError('');
     const token = localStorage.getItem('token');
     if (!token) {
       setEventsError('Not authenticated');
       setLoadingEvents(false);
       return;
     }
+    const url = filter === 'all' ? '/api/events/all' : '/api/events';
     try {
-      const res = await axios.get(
-        `${API_BASE}/api/events/all`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await axios.get(API_BASE + url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setEvents(
         res.data.map(e => ({
           id: e.id,
@@ -54,7 +58,7 @@ export default function Events() {
           progress: 0,
           completed: 0,
           total: 0,
-          colorClass: 'yellow'
+          colorClass: 'yellow',
         }))
       );
     } catch (err) {
@@ -65,8 +69,10 @@ export default function Events() {
     }
   };
 
+  // ── Fetch pending requests ────────────────────
   const fetchRequests = async () => {
     setLoadingReq(true);
+    setReqError('');
     const token = localStorage.getItem('token');
     if (!token) {
       setReqError('Not authenticated');
@@ -74,10 +80,9 @@ export default function Events() {
       return;
     }
     try {
-      const res = await axios.get(
-        `${API_BASE}/api/EventRequests`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await axios.get(`${API_BASE}/api/EventRequests`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setRequests(
         res.data.map(r => ({
           id: r.id,
@@ -85,7 +90,7 @@ export default function Events() {
           description: r.description,
           date: new Date(r.date).toLocaleDateString(),
           requesterName: r.requesterName,
-          status: r.status
+          status: r.status,
         }))
       );
     } catch (err) {
@@ -96,13 +101,16 @@ export default function Events() {
     }
   };
 
-  // On mount load both lists
+  // ── Effects ──────────────────────────────────
   useEffect(() => {
     fetchEvents();
+  }, [filter]);
+
+  useEffect(() => {
     fetchRequests();
   }, []);
 
-  // ── Add Event Handlers ────────────────────────
+  // ── Add Event Handlers ───────────────────────
   const onNewChange = e => {
     const { name, value } = e.target;
     setNewEvent(prev => ({ ...prev, [name]: value }));
@@ -120,7 +128,6 @@ export default function Events() {
         { title, description, date: new Date(date).toISOString() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Refresh list to include the new event
       await fetchEvents();
       setNewEvent({ title: '', description: '', date: '' });
       setShowAddModal(false);
@@ -130,7 +137,7 @@ export default function Events() {
     }
   };
 
-  // ── Request Handlers ──────────────────────────
+  // ── Request Handlers ────────────────────────
   const acceptRequest = async id => {
     const token = localStorage.getItem('token');
     try {
@@ -139,7 +146,6 @@ export default function Events() {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Refresh both lists
       await fetchRequests();
       await fetchEvents();
     } catch (err) {
@@ -155,7 +161,6 @@ export default function Events() {
         `${API_BASE}/api/EventRequests/${id}/deny`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Refresh requests list
       await fetchRequests();
     } catch (err) {
       console.error('Error denying request:', err);
@@ -163,7 +168,7 @@ export default function Events() {
     }
   };
 
-  // ── Render ────────────────────────────────────
+  // ── Render ───────────────────────────────────
   return (
     <div className="events-layout">
       <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
@@ -171,7 +176,23 @@ export default function Events() {
       <div className={`events-page${sidebarOpen ? '' : ' collapsed'}`}>
         <h1 className="events-main-header">Events</h1>
 
-        {/* ───── Pending Requests ───────── */}
+        {/* ── Filter Toggle ──────────────────────── */}
+        <div className="events-filter">
+          <button
+            className={`filter-btn ${filter === 'mine' ? 'active' : ''}`}
+            onClick={() => setFilter('mine')}
+          >
+            My Events
+          </button>
+          <button
+            className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
+            onClick={() => setFilter('all')}
+          >
+            All Events
+          </button>
+        </div>
+
+        {/* ── Pending Requests ──────────────────── */}
         <div className="card requests-overview-card scroll-container">
           <h2>Pending Event Requests</h2>
           {loadingReq && <p>Loading requests…</p>}
@@ -187,12 +208,8 @@ export default function Events() {
                 </div>
               </div>
               <div className="request-actions">
-                <button className="btn-accept" onClick={() => acceptRequest(r.id)}>
-                  Accept
-                </button>
-                <button className="btn-deny" onClick={() => denyRequest(r.id)}>
-                  Deny
-                </button>
+                <button className="btn-accept" onClick={() => acceptRequest(r.id)}>Accept</button>
+                <button className="btn-deny" onClick={() => denyRequest(r.id)}>Deny</button>
               </div>
             </div>
           ))}
@@ -200,10 +217,10 @@ export default function Events() {
 
         <hr className="section-divider" />
 
-        {/* ───── Active Events ───────── */}
+        {/* ── Active Events ──────────────────────── */}
         <div className="card events-overview-card scroll-container">
           <div className="events-overview-header">
-            <h2>All Events</h2>
+            <h2>{filter === 'all' ? 'All Events' : 'My Events'}</h2>
             <button className="events-add-btn" onClick={() => setShowAddModal(true)}>
               + Add New Event
             </button>
@@ -229,26 +246,18 @@ export default function Events() {
 
               <div className="events-overview-progress">
                 <div className="progress-bar-bg">
-                  <div
-                    className={`progress-bar-fill ${e.colorClass}`}
-                    style={{ width: `${e.progress}%` }}
-                  />
+                  <div className={`progress-bar-fill ${e.colorClass}`} style={{ width: `${e.progress}%` }} />
                 </div>
                 <span>{e.progress}%</span>
               </div>
 
               <div className="events-overview-tasks">
                 <span className="tasks-label">Tasks Completed:</span>
-                <span className="tasks-value">
-                  {e.completed} | {e.total}
-                </span>
+                <span className="tasks-value">{e.completed} | {e.total}</span>
               </div>
 
               <div className="events-overview-viewbtn-block">
-                <button
-                  className="events-view-btn"
-                  onClick={() => navigate(`/event-tasks/${e.id}`)}
-                >
+                <button className="events-view-btn" onClick={() => navigate(`/event-tasks/${e.id}`)}>
                   View
                 </button>
               </div>
@@ -257,50 +266,29 @@ export default function Events() {
         </div>
       </div>
 
-      {/* ───── Add Event Modal ───────── */}
+      {/* ── Add Event Modal ────────────────────── */}
       {showAddModal && (
         <div className="events-modal-overlay">
           <div className="events-modal">
             <div className="events-modal-header">
               <h3>Add New Event</h3>
-              <button className="events-modal-close" onClick={() => setShowAddModal(false)}>
-                ×
-              </button>
+              <button className="events-modal-close" onClick={() => setShowAddModal(false)}>×</button>
             </div>
 
             <div className="events-modal-fields">
               <label>Title:</label>
-              <input
-                type="text"
-                name="title"
-                value={newEvent.title}
-                onChange={onNewChange}
-              />
+              <input type="text" name="title" value={newEvent.title} onChange={onNewChange} />
 
               <label>Description:</label>
-              <input
-                type="text"
-                name="description"
-                value={newEvent.description}
-                onChange={onNewChange}
-              />
+              <input type="text" name="description" value={newEvent.description} onChange={onNewChange} />
 
               <label>Date:</label>
-              <input
-                type="datetime-local"
-                name="date"
-                value={newEvent.date}
-                onChange={onNewChange}
-              />
+              <input type="datetime-local" name="date" value={newEvent.date} onChange={onNewChange} />
             </div>
 
             <div className="events-modal-actions">
-              <button className="events-modal-btn pink" onClick={addEvent}>
-                Save
-              </button>
-              <button className="events-modal-btn" onClick={() => setShowAddModal(false)}>
-                Cancel
-              </button>
+              <button className="events-modal-btn pink" onClick={addEvent}>Save</button>
+              <button className="events-modal-btn" onClick={() => setShowAddModal(false)}>Cancel</button>
             </div>
           </div>
         </div>
@@ -308,5 +296,6 @@ export default function Events() {
     </div>
   );
 }
+
 
 

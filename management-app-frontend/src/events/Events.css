@@ -1,3 +1,5 @@
+/* src/events/Events.css */
+
 /* ==== Base Layout ==== */
 .events-layout {
   display: flex;
@@ -21,6 +23,30 @@
   color: #232336;
   margin: 0 0 34px 0;
   letter-spacing: -1px;
+}
+
+/* ==== Filter Toggle ==== */
+.events-filter {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.filter-btn {
+  background: #e5e7eb;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.filter-btn.active {
+  background: #FF5F8A;
+  color: #fff;
+}
+.filter-btn:hover:not(.active) {
+  background: #d1d5db;
 }
 
 /* ==== Cards ==== */
@@ -162,64 +188,28 @@
 }
 .events-view-btn:hover { background: #e94a73; }
 
-/* ==== New Event Requests (Horizontal) ==== */
-.events-requests-list-horizontal {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.events-request-horizontal {
-  background: #f9fafb;
-  border-radius: 11px;
-  padding: 14px 20px;
-  box-shadow: 0 2px 3px rgba(0,0,0,0.01);
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  border: 1.5px solid #f3e9ee;
-  width: 100%;
-}
-.events-request-horizontal-info {
-  display: flex;
-  flex-direction: row;
-  gap: 22px;
-  align-items: center;
-  flex: 6;
-  min-width: 0;
-}
-.events-request-horizontal-title {
-  font-weight: 700;
-  color: #232336;
-  font-size: 15.5px;
-  margin-right: 14px;
-}
-.events-request-horizontal-info span {
-  font-size: 14px;
-  color: #353535;
-  min-width: 90px;
-  white-space: nowrap;
-}
-.events-request-horizontal-actions {
-  display: flex;
-  gap: 10px;
-  flex-direction: column;
-  flex: 1;
-  min-width: 120px;
-}
-.events-accept-btn, .events-deny-btn {
+/* ==== New Event Requests ==== */
+/* (re-use events-overview styles for horizontal) */
+.request-actions .btn-accept,
+.request-actions .btn-deny {
   font-size: 15px;
   font-weight: 700;
   border: none;
   border-radius: 999px;
-  padding: 10px 0;
-  width: 100%;
+  padding: 8px 16px;
   cursor: pointer;
-  transition: background 0.16s;
+  transition: background 0.2s;
 }
-.events-accept-btn { background: #FF5F8A; color: #fff; }
-.events-deny-btn { background: #ececec; color: #d20043; }
-.events-accept-btn:hover { background: #e94a73; }
-.events-deny-btn:hover { background: #ffe2ec; }
+.request-actions .btn-accept {
+  background: #34C759;
+  color: #fff;
+}
+.request-actions .btn-deny {
+  background: #FF3B30;
+  color: #fff;
+}
+.request-actions .btn-accept:hover { background: #28a745; }
+.request-actions .btn-deny:hover { background: #e02e1f; }
 
 /* ==== Modals ==== */
 .events-modal-overlay {
@@ -227,9 +217,7 @@
   z-index: 9999;
   left: 0; top: 0; width: 100vw; height: 100vh;
   background: rgba(34, 34, 54, 0.24);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   animation: fadeIn 0.18s;
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -240,9 +228,7 @@
   min-width: 320px;
   max-width: 95vw;
   box-shadow: 0 4px 40px rgba(34,34,54,0.13), 0 0px 2px rgba(255,95,138,0.04);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  display: flex; flex-direction: column; gap: 14px;
   animation: popIn 0.19s;
 }
 @keyframes popIn { from { transform: scale(0.93); opacity: 0.6; } to { transform: scale(1); opacity: 1; } }
@@ -261,22 +247,18 @@
   color: #FF5F8A;
   font-size: 22px;
   cursor: pointer;
-  margin-left: 6px;
   transition: color 0.17s;
 }
 .events-modal-close:hover { color: #d61a51; }
 .events-modal-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
+  display: flex; flex-direction: column; gap: 9px;
 }
 .events-modal-fields label {
   font-size: 14px;
   color: #888;
   margin-top: 3px;
 }
-.events-modal-fields input[type="text"],
-.events-modal-fields input[type="date"] {
+.events-modal-fields input {
   padding: 10px 10px;
   border: 1.5px solid #eee;
   border-radius: 8px;
@@ -301,31 +283,20 @@
   background: #FF5F8A;
   color: #fff;
 }
-.events-modal-btn.pink:hover {
-  background: #e94a73;
-}
-.events-modal-btn:hover {
-  background: #e9e9ee;
-}
+.events-modal-btn.pink:hover { background: #e94a73; }
+.events-modal-btn:hover { background: #e9e9ee; }
 
 /* ==== Responsive ==== */
 @media (max-width: 900px) {
   .events-page { margin-left: 80px; padding: 16px; }
   .card { padding: 16px 8px; }
-  .events-overview-row,
-  .events-request-horizontal {
+  .events-overview-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  .events-request-horizontal-info {
+  .events-filter {
     flex-direction: column;
-    gap: 6px;
-  }
-  .events-request-horizontal-actions {
-    flex-direction: row;
-    width: 100%;
-    gap: 9px;
-    min-width: 0;
+    gap: 8px;
   }
 }
