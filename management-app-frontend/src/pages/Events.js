@@ -13,7 +13,7 @@ export default function Events() {
   const navigate = useNavigate();
 
   // ── Filter state ─────────────────────────────
-  const [filter, setFilter] = useState('mine'); // 'mine' or 'all'
+  const [filter, setFilter] = useState('all'); // 'mine' or 'all'
 
   // ── Active Events ────────────────────────────
   const [events, setEvents] = useState([]);
@@ -179,16 +179,16 @@ export default function Events() {
         {/* ── Filter Toggle ──────────────────────── */}
         <div className="events-filter">
           <button
-            className={`filter-btn ${filter === 'mine' ? 'active' : ''}`}
-            onClick={() => setFilter('mine')}
-          >
-            My Events
-          </button>
-          <button
             className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
             onClick={() => setFilter('all')}
           >
             All Events
+          </button>
+          <button
+            className={`filter-btn ${filter === 'mine' ? 'active' : ''}`}
+            onClick={() => setFilter('mine')}
+          >
+            My Events
           </button>
         </div>
 

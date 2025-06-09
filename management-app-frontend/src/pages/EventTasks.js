@@ -47,14 +47,43 @@ export default function EventTasks() {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('add');
   const [selectedTask, setSelectedTask] = useState(null);
+  const [users, setUsers] = useState([]);
   const [taskForm, setTaskForm] = useState({
     title: '',
     priority: 'Low',
-    assignedTo: '',
+    assignedToEmail: '',
     budget: '',
     description: '',
     dueDate: ''
   });
+
+  // Fetch users on component mount
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          navigate('/login');
+          return;
+        }
+
+        const response = await axios.get('/api/users', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        });
+
+        setUsers(response.data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        setError('Failed to load users. Please try again later.');
+      }
+    };
+
+    fetchUsers();
+  }, [navigate]);
 
   // Fetch event details and tasks
   useEffect(() => {
@@ -138,7 +167,7 @@ export default function EventTasks() {
     setTaskForm({
       title: '',
       priority: 'Low',
-      assignedTo: '',
+      assignedToEmail: '',
       budget: '',
       description: '',
       dueDate: ''
@@ -152,7 +181,7 @@ export default function EventTasks() {
     setTaskForm({
       title: task.title,
       priority: task.priority,
-      assignedTo: task.assignedTo,
+      assignedToEmail: task.assignedTo,
       budget: task.budget,
       description: task.description,
       dueDate: task.dueDate
@@ -173,7 +202,7 @@ export default function EventTasks() {
     setTaskForm({
       title: '',
       priority: 'Low',
-      assignedTo: '',
+      assignedToEmail: '',
       budget: '',
       description: '',
       dueDate: ''
@@ -210,7 +239,7 @@ export default function EventTasks() {
 
   // Task operations
   const handleAddTask = async () => {
-    if (!taskForm.title || !taskForm.assignedTo || !taskForm.budget) {
+    if (!taskForm.title || !taskForm.assignedToEmail || !taskForm.budget) {
       setError('Please fill in all required fields');
       return;
     }
@@ -231,7 +260,7 @@ export default function EventTasks() {
       const taskData = {
         title: taskForm.title,
         priority: taskForm.priority,
-        assignedTo: taskForm.assignedTo,
+        assignedToEmail: taskForm.assignedToEmail,
         budget: formattedBudget,
         description: taskForm.description || '',
         dueDate: formatDateForAPI(taskForm.dueDate),
@@ -244,7 +273,7 @@ export default function EventTasks() {
 
       const response = await axios({
         method: 'post',
-        url: `/api/events/${eventId}/tasks`,
+        url: `/api/eventtasks`,
         data: taskData,
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -265,7 +294,7 @@ export default function EventTasks() {
         title: response.data.title,
         priority: response.data.priority,
         priorityClass: response.data.priority === 'High' ? 'red' : response.data.priority === 'Medium' ? 'yellow' : 'green',
-        assignedTo: response.data.assignedTo,
+        assignedTo: response.data.assignedUser?.email || 'Unassigned',
         budget: response.data.budget,
         completed: response.data.completed,
         description: response.data.description,
@@ -310,7 +339,7 @@ export default function EventTasks() {
   };
 
   const handleEditTask = async () => {
-    if (!taskForm.title || !taskForm.assignedTo || !taskForm.budget) {
+    if (!taskForm.title || !taskForm.assignedToEmail || !taskForm.budget) {
       setError('Please fill in all required fields');
       return;
     }
@@ -330,7 +359,7 @@ export default function EventTasks() {
       const taskData = {
         title: taskForm.title,
         priority: taskForm.priority,
-        assignedTo: taskForm.assignedTo,
+        assignedToEmail: taskForm.assignedToEmail,
         budget: formattedBudget,
         description: taskForm.description || '',
         dueDate: formatDateForAPI(taskForm.dueDate),
@@ -360,7 +389,7 @@ export default function EventTasks() {
         title: response.data.title,
         priority: response.data.priority,
         priorityClass: response.data.priority === 'High' ? 'red' : response.data.priority === 'Medium' ? 'yellow' : 'green',
-        assignedTo: response.data.assignedTo,
+        assignedTo: response.data.assignedUser?.email || 'Unassigned',
         budget: response.data.budget,
         completed: response.data.completed,
         description: response.data.description,
@@ -743,13 +772,19 @@ export default function EventTasks() {
                     </select>
 
                     <label>Assigned To: *</label>
-                    <input
-                      name="assignedTo"
-                      value={taskForm.assignedTo}
+                    <select
+                      name="assignedToEmail"
+                      value={taskForm.assignedToEmail}
                       onChange={handleFormChange}
-                      placeholder="Assignee name"
                       required
-                    />
+                    >
+                      <option value="">Select a user</option>
+                      {users.map(user => (
+                        <option key={user.id} value={user.email}>
+                          {user.email}
+                        </option>
+                      ))}
+                    </select>
 
                     <label>Budget: *</label>
                     <input
