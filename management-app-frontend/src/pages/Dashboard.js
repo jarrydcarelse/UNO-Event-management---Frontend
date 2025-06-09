@@ -61,7 +61,7 @@ export default function Dashboard() {
     }
 
     axios
-      .get(`${API_BASE}/api/events/all`, {
+      .get(`${API_BASE}/api/events`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -87,7 +87,7 @@ export default function Dashboard() {
         <div className="dashboard-top">
           {/* Active Events Overview */}
           <div className="card overview-card scroll-container">
-            <h2>Active Events Overview</h2>
+            <h2>My Events</h2>
 
             {loading && <p>Loading events…</p>}
             {error && <p className="error-text">{error}</p>}
@@ -149,7 +149,7 @@ export default function Dashboard() {
 
         {/* Task Management */}
         <div className="card tasks-card">
-          <h2>Task Management</h2>
+          <h2>My Tasks</h2>
           <div className="task-cards">
             {tasks.map((task, idx) => (
               <div key={idx} className="task-block">
