@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { setUserData } from '../utils/localStorage';
 import '../styles/Login.css';
 import logo from '../assets/logo.png';
 import pattern from '../assets/pink-pattern.png';
@@ -47,7 +48,11 @@ export default function Login() {
         { email, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
+      
+      // Store token and user email
       localStorage.setItem('token', res.data.token);
+      setUserData(email);
+      
       navigate('/events');
     } catch (err) {
       setLoginError(

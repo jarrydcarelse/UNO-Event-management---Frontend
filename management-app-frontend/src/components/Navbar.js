@@ -1,6 +1,6 @@
 // src/components/Navbar.js
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   FiChevronLeft, 
   FiChevronRight,
@@ -12,16 +12,51 @@ import {
   FiUser
 } from "react-icons/fi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getUserData, clearUserData } from "../utils/localStorage";
+import axios from "axios";
 import "../styles/Navbar.css";
+
+const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
 
 const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
   // Allow controlled or internal open/collapse state
   const [internalIsOpen, internalSetIsOpen] = useState(true);
   const isOpen = propIsOpen !== undefined ? propIsOpen : internalIsOpen;
   const setIsOpen = propSetIsOpen !== undefined ? propSetIsOpen : internalSetIsOpen;
+  const [userData, setUserData] = useState({ email: '', userId: '' });
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const response = await axios.get(`${API_BASE}/api/users`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        });
+
+        // Find the current user by email
+        const currentUser = response.data.find(user => user.email === getUserData().email);
+        if (currentUser) {
+          setUserData({
+            email: currentUser.email,
+            userId: currentUser.id
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const navItems = [
     { name: "Dashboard", icon: <FiHome size={20} />, path: "/dashboard" },
@@ -52,8 +87,8 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
         </div>
         {isOpen && (
           <div className="user-info">
-            <p className="name">Armand</p>
-            <p className="email">armand@eventify.com</p>
+            <p className="email">{userData.email}</p>
+            <p className="user-id">ID: {userData.userId}</p>
           </div>
         )}
       </div>
@@ -77,7 +112,10 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
       <div className="logout">
         <button
           title={!isOpen ? "Logout" : ""}
-          onClick={() => navigate("/login")}
+          onClick={() => {
+            clearUserData();
+            navigate("/login");
+          }}
         >
           <FiLogOut size={18} />
           {isOpen && <span>Logout</span>}
