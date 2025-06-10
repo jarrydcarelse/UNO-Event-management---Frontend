@@ -25,16 +25,24 @@ All four members contributed to the frontend, resulting in a cohesive and consis
 
 ## 🛠️ Tech Stack
 
-**Frontend:**
-- React
-- TypeScript
-- JavaScript
-- CSS
-- Avien (UI components and utilities)
+### 💻 Languages Used
 
-**Backend & Integration:**
-- Electron (for packaging and desktop support)
-- C# (for backend logic and system-level operations)
+![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+
+### 🧰 Tools & Platforms
+
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Electron](https://img.shields.io/badge/Electron-2C2E3B?style=for-the-badge&logo=electron&logoColor=white)
+![Avien](https://img.shields.io/badge/Avien-000000?style=for-the-badge) <!-- Placeholder badge -->
+![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
+![Visual Studio Code](https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
+![Aiven](https://img.shields.io/badge/Aiven-FD4B2D?style=for-the-badge&logo=aiven&logoColor=white)
 
 ---
 
