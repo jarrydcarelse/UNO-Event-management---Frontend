@@ -6,7 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Events from './pages/Events';
 import EventTasks from './pages/EventTasks';
 import Tasks from './pages/Tasks';
-import Archive from './pages/Archive';
+import EmployeeStats from './pages/EmployeeStats';
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
         <Route path="/events" element={<Events />} />
         <Route path="/event-tasks/:eventId" element={<EventTasks />} />
         <Route path="/tasks" element={<Tasks />} />
-        <Route path="/archive" element={<Archive />} />
+        <Route path="/employees" element={<EmployeeStats />} />
       </Routes>
     </BrowserRouter>
   );

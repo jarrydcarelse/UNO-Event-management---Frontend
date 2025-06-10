@@ -7,7 +7,7 @@ import {
   FiHome,
   FiCalendar,
   FiCheckSquare,
-  FiArchive,
+  FiUsers,
   FiLogOut,
   FiUser
 } from "react-icons/fi";
@@ -62,7 +62,7 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
     { name: "Dashboard", icon: <FiHome size={20} />, path: "/dashboard" },
     { name: "Events", icon: <FiCalendar size={20} />, path: "/events" },
     { name: "Tasks", icon: <FiCheckSquare size={20} />, path: "/tasks" },
-    { name: "Archive", icon: <FiArchive size={20} />, path: "/archive" }
+    { name: "Employees", icon: <FiUsers size={20} />, path: "/employees" }
   ];
 
   return (
