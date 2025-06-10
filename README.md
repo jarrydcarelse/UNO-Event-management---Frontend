@@ -42,7 +42,6 @@ All four members contributed to the frontend, resulting in a cohesive and consis
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
-![Aiven](https://img.shields.io/badge/Aiven-FD4B2D?style=for-the-badge&logo=aiven&logoColor=white)
 
 ---
 
