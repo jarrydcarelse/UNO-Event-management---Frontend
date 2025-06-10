@@ -131,10 +131,24 @@ export default function EventTasks() {
           }));
         }
 
-        // Calculate completion percentage
+        // Calculate completion percentage and budget totals
         const completedTasks = tasks.filter(t => t.completed).length;
         const totalTasks = tasks.length;
         const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+        // Calculate overall budget (sum of all task budgets)
+        const overallBudget = tasks.reduce((total, task) => {
+          const budget = task.budget.replace(/[^0-9]/g, ''); // Remove 'R' and any other non-numeric characters
+          return total + parseInt(budget || 0);
+        }, 0);
+
+        // Calculate spent amount (sum of completed task budgets)
+        const spentAmount = tasks
+          .filter(task => task.completed)
+          .reduce((total, task) => {
+            const budget = task.budget.replace(/[^0-9]/g, '');
+            return total + parseInt(budget || 0);
+          }, 0);
 
         // Set event details
         setEventDetails({
@@ -144,8 +158,8 @@ export default function EventTasks() {
           progress: completionPercentage,
           completed: completedTasks,
           totalTasks: totalTasks,
-          budget: eventResponse.data.budget || 'R0',
-          spent: eventResponse.data.spent || 'R0',
+          budget: `R${overallBudget.toLocaleString()}`,
+          spent: `R${spentAmount.toLocaleString()}`,
           colorClass: completionPercentage === 100 ? 'green' : 'yellow'
         });
 
