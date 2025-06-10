@@ -96,10 +96,10 @@ Edit
 npm run electron:pack
 ⚠️ Note: Backend services written in C# should be running alongside the frontend if applicable to ensure full functionality.
 
-📝 License
+## 📝 License
 This project was developed for academic purposes as part of a final software development integration module. For further information, contributions, or collaboration, feel free to reach out to any of the listed contributors.
 
-📣 Final Words
+## 📣 Final Words
 Eventify demonstrates the strength of teamwork, modern software tools, and iterative design. This application is the result of dedicated effort from all four developers, with shared responsibilities across the frontend and seamless integration of powerful technologies.
 
 We are proud to present a solution that not only meets our client’s expectations but also showcases our skills in building full-scale applications.
