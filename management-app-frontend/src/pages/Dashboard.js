@@ -154,13 +154,6 @@ export default function Dashboard() {
                     </div>
                     <span>0%</span>
                   </div>
-
-                  <button
-                    className="event-view-btn"
-                    onClick={() => navigate(`/event-tasks/${evt.id}`)}
-                  >
-                    View
-                  </button>
                 </div>
               ))}
           </div>

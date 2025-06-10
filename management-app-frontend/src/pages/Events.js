@@ -8,12 +8,31 @@ import '../events/Events.css';
 
 const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
 
+// Search icon SVG component
+const SearchIcon = () => (
+  <svg 
+    className="search-icon" 
+    width="16" 
+    height="16" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  >
+    <circle cx="11" cy="11" r="8"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+);
+
 export default function Events() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
 
   // ── Filter state ─────────────────────────────
   const [filter, setFilter] = useState('all'); // 'mine' or 'all'
+  const [searchQuery, setSearchQuery] = useState('');
 
   // ── Active Events ────────────────────────────
   const [events, setEvents] = useState([]);
@@ -93,16 +112,18 @@ export default function Events() {
       const res = await axios.get(`${API_BASE}/api/EventRequests`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setRequests(
-        res.data.map(r => ({
+      // Filter to only show pending requests
+      const pendingRequests = res.data
+        .filter(r => r.status === 'Pending')
+        .map(r => ({
           id: r.id,
           title: r.title,
           description: r.description,
           date: new Date(r.date).toLocaleDateString(),
           requesterName: r.requesterName,
           status: r.status,
-        }))
-      );
+        }));
+      setRequests(pendingRequests);
     } catch (err) {
       console.error('Error loading requests:', err);
       setReqError('Failed to load requests');
@@ -234,7 +255,11 @@ export default function Events() {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      await fetchRequests();
+      
+      // Remove the accepted request from the requests list
+      setRequests(prevRequests => prevRequests.filter(request => request.id !== id));
+      
+      // Refresh the events list to show the newly accepted event
       await fetchEvents();
     } catch (err) {
       console.error('Error accepting request:', err);
@@ -249,12 +274,24 @@ export default function Events() {
         `${API_BASE}/api/EventRequests/${id}/deny`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      await fetchRequests();
+      
+      // Remove the denied request from the requests list
+      setRequests(prevRequests => prevRequests.filter(request => request.id !== id));
     } catch (err) {
       console.error('Error denying request:', err);
       alert('Could not deny request');
     }
   };
+
+  // Filter events based on search query
+  const filteredEvents = events.filter(event => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      event.name.toLowerCase().includes(searchLower) ||
+      event.client.toLowerCase().includes(searchLower) ||
+      event.date.toLowerCase().includes(searchLower)
+    );
+  });
 
   // ── Render ───────────────────────────────────
   return (
@@ -315,9 +352,24 @@ export default function Events() {
           </div>
           <hr className="section-divider" />
 
+          {/* Search Bar */}
+          <div className="events-search-container">
+            <SearchIcon />
+            <input
+              type="text"
+              placeholder="Search by name, client, or date..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="events-search-input"
+            />
+          </div>
+
           {loadingEvents && <p>Loading events…</p>}
           {eventsError && <p className="error-text">{eventsError}</p>}
-          {!loadingEvents && events.map((e, idx) => (
+          {!loadingEvents && filteredEvents.length === 0 && (
+            <p>No events found matching your search.</p>
+          )}
+          {!loadingEvents && filteredEvents.map((e, idx) => (
             <div key={idx} className="events-overview-row">
               <div className="events-overview-main">
                 <span className="events-overview-name">{e.name}</span>

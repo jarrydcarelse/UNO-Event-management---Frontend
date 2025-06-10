@@ -325,4 +325,86 @@ body {
   .tasks-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Progress Bar Section */
+.tasks-progress-section {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.progress-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.progress-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.progress-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 10px;
+}
+
+.progress-bar-bg {
+  flex: 1;
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+  min-width: 90px;
+  max-width: none;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.progress-percentage {
+  font-size: 15px;
+  font-weight: 600;
+  color: #232336;
+  min-width: 48px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tasks-progress-section {
+    padding: 20px;
+  }
+  
+  .progress-stats {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .progress-stat {
+    flex: 1;
+    min-width: 120px;
+  }
 } 
