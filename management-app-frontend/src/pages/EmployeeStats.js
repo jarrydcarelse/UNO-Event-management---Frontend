@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import { FaUser, FaTasks, FaCheckCircle, FaClock, FaTimes } from 'react-icons/fa';
 import { FiChevronDown, FiX } from 'react-icons/fi';
 import axios from 'axios';
-import '../archive/Archive.css';
+import '../employees/Employees.css';
 
 // Update API_BASE to use the deployed backend URL
 const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
@@ -130,13 +130,13 @@ export default function EmployeeStats() {
 
   if (loading) {
     return (
-      <div className="archive-layout">
+      <div className="employees-layout">
         <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        <div className={`archive-page${sidebarOpen ? '' : ' collapsed'}`}>
-          <div className="archive-header-row">
-            <h2 className="archive-title">Employee Statistics</h2>
+        <div className={`employees-page${sidebarOpen ? '' : ' collapsed'}`}>
+          <div className="employees-header-row">
+            <h2 className="employees-title">Employee Statistics</h2>
           </div>
-          <div className="archive-cards-grid">
+          <div className="employees-cards-grid">
             <p>Loading employee statistics...</p>
           </div>
         </div>
@@ -146,13 +146,13 @@ export default function EmployeeStats() {
 
   if (error) {
     return (
-      <div className="archive-layout">
+      <div className="employees-layout">
         <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        <div className={`archive-page${sidebarOpen ? '' : ' collapsed'}`}>
-          <div className="archive-header-row">
-            <h2 className="archive-title">Employee Statistics</h2>
+        <div className={`employees-page${sidebarOpen ? '' : ' collapsed'}`}>
+          <div className="employees-header-row">
+            <h2 className="employees-title">Employee Statistics</h2>
           </div>
-          <div className="archive-cards-grid">
+          <div className="employees-cards-grid">
             <p className="error-message">{error}</p>
           </div>
         </div>
@@ -161,69 +161,69 @@ export default function EmployeeStats() {
   }
 
   return (
-    <div className="archive-layout">
+    <div className="employees-layout">
       <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
-      <div className={`archive-page${sidebarOpen ? '' : ' collapsed'}`}>
+      <div className={`employees-page${sidebarOpen ? '' : ' collapsed'}`}>
         {/* Header */}
-        <div className="archive-header-row">
-          <h2 className="archive-title">Employee Statistics</h2>
-          <div className="archive-sort" onClick={handleSortChange}>
+        <div className="employees-header-row">
+          <h2 className="employees-title">Employee Statistics</h2>
+          <div className="employees-sort" onClick={handleSortChange}>
             <span>Sort By {sortBy === 'completion' ? 'Completion Rate' : 'Total Tasks'}</span>
             <FiChevronDown className="sort-icon" />
           </div>
         </div>
 
         {/* Cards Grid */}
-        <div className="archive-cards-grid">
+        <div className="employees-cards-grid">
           {employees.length === 0 ? (
-            <div className="archive-empty-state">
+            <div className="employees-empty-state">
               <h3>No Employee Data Available</h3>
               <p>There are no employees registered in the system yet.</p>
             </div>
           ) : (
             employees.map((employee) => (
               <div 
-                className="archive-card" 
+                className="employees-card" 
                 key={employee.id}
                 onClick={() => handleEmployeeClick(employee)}
                 style={{ cursor: 'pointer' }}
               >
-                <div className="archive-card-title">
+                <div className="employees-card-title">
                   <div className="profile-icon">
                     <img 
-                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(employee.name)}&background=random`} 
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(employee.name)}&background=FF8FAB&color=fff`} 
                       alt={employee.name}
                       className="profile-image"
                     />
                   </div>
                   {employee.name}
                 </div>
-                <div className="archive-meta-row">
-                  <span className="archive-label">Email:</span>
-                  <span className="archive-value">{employee.email}</span>
+                <div className="employees-meta-row">
+                  <span className="employees-label">Email:</span>
+                  <span className="employees-value">{employee.email}</span>
                 </div>
-                <div className="archive-meta-row">
-                  <span className="archive-label">User ID:</span>
-                  <span className="archive-value">{employee.id}</span>
+                <div className="employees-meta-row">
+                  <span className="employees-label">User ID:</span>
+                  <span className="employees-value">{employee.id}</span>
                 </div>
-                <div className="archive-meta-row">
-                  <span className="archive-label">Total Tasks:</span>
-                  <span className="archive-value">
+                <div className="employees-meta-row">
+                  <span className="employees-label">Total Tasks:</span>
+                  <span className="employees-value">
                     <FaTasks style={{ marginRight: 8 }} />
                     {employee.totalTasks}
                   </span>
                 </div>
-                <div className="archive-meta-row">
-                  <span className="archive-label">Completed:</span>
-                  <span className="archive-value">
+                <div className="employees-meta-row">
+                  <span className="employees-label">Completed:</span>
+                  <span className="employees-value">
                     <FaCheckCircle style={{ marginRight: 8, color: '#34C759' }} />
                     {employee.completedTasks}
                   </span>
                 </div>
-                <div className="archive-notes-section">
-                  <span className="archive-label">Completion Rate:</span>
-                  <div className="archive-notes">
+                <div className="employees-notes-section">
+                  <span className="employees-label">Completion Rate:</span>
+                  <div className="employees-notes">
                     <div className="progress-bar">
                       <div 
                         className="progress-fill" 
