@@ -1,10 +1,8 @@
-// src/pages/Login.js
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { setUserData } from '../utils/localStorage';
-import '../styles/Login.css';
+import '../login/Login.css';
 import logo from '../assets/logo.png';
 import pattern from '../assets/pink-pattern.png';
 
@@ -20,13 +18,13 @@ export default function Login() {
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
 
-  // PIN Verification Modal state
+  // PIN (OTP) Modal state
   const [showPinModal, setShowPinModal] = useState(false);
-  const [pin, setPin] = useState('');
+  const [pin, setPin] = useState(Array(6).fill(''));
   const [pinError, setPinError] = useState('');
+  const inputRefs = useRef([]);
 
-  // Request‐Event Modal state
-
+  // Request-Event Modal state
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestData, setRequestData] = useState({
     title: '',
@@ -48,12 +46,9 @@ export default function Login() {
         { email, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
-      
-      // Store token and user email
       localStorage.setItem('token', res.data.token);
       setUserData(email);
-      
-      navigate('/events');
+      navigate('/dashboard');
     } catch (err) {
       setLoginError(
         err.response?.data?.message ||
@@ -62,12 +57,27 @@ export default function Login() {
     }
   };
 
-  // ─── PIN VERIFICATION ─────────────────────────────
-  const handlePinSubmit = (e) => {
+  // ─── PIN (OTP) HANDLERS ───────────────────────────
+  const handlePinChange = (e, idx) => {
+    const val = e.target.value.replace(/\D/, '');
+    if (val.length <= 1) {
+      const next = [...pin];
+      next[idx] = val;
+      setPin(next);
+      if (val && idx < 5) inputRefs.current[idx + 1].focus();
+    }
+  };
+  const handlePinKeyDown = (e, idx) => {
+    if (e.key === 'Backspace' && !pin[idx] && idx > 0) {
+      inputRefs.current[idx - 1].focus();
+    }
+  };
+  const handlePinSubmit = e => {
     e.preventDefault();
-    if (pin === ADMIN_PIN) {
+    const pinString = pin.join('');
+    if (pinString === ADMIN_PIN) {
       setShowPinModal(false);
-      setPin('');
+      setPin(Array(6).fill(''));
       setPinError('');
       navigate('/signup');
     } else {
@@ -75,56 +85,34 @@ export default function Login() {
     }
   };
 
-  // ─── REQUEST EVENT ───────────────────────────────
+  // ─── REQUEST-EVENT HANDLERS ────────────────────────
   const handleRequestChange = e => {
     const { name, value } = e.target;
     setRequestData(prev => ({ ...prev, [name]: value }));
   };
-
   const handleSubmitRequest = async e => {
     e.preventDefault();
     setRequestError('');
     setRequestSuccess(false);
-
-    const {
-      title,
-      description,
-      date,
-      requesterName,
-      requesterEmail,
-    } = requestData;
-
-    if (
-      !title ||
-      !description ||
-      !date ||
-      !requesterName ||
-      !requesterEmail
-    ) {
+    const { title, description, date, requesterName, requesterEmail } =
+      requestData;
+    if (!title || !description || !date || !requesterName || !requesterEmail) {
       setRequestError('All fields are required.');
       return;
     }
-
     try {
       await axios.post(
-        // <- CAPITAL E & R in EventRequests
         `${API_BASE}/api/EventRequests`,
         {
           title,
           description,
-          // include full ISO timestamp if you want time too:
           date: new Date(date).toISOString(),
           requesterName,
           requesterEmail,
-          status: 'Pending'
+          status: 'Pending',
         },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
+        { headers: { 'Content-Type': 'application/json' } }
       );
-
       setRequestSuccess(true);
       setRequestData({
         title: '',
@@ -144,6 +132,7 @@ export default function Login() {
 
   return (
     <div className="login-page">
+      {/* ─── LEFT PANEL ──────────────────────────── */}
       <div
         className="login-left"
         style={{ backgroundImage: `url(${pattern})` }}
@@ -151,7 +140,8 @@ export default function Login() {
         <div className="branding">
           <img src={logo} alt="Eventify Logo" className="logo-img" />
           <p className="welcome-text">
-            Welcome to Eventify. Sign in or sign up to manage your events.
+            Welcome to Eventify Events Management System.<br/>
+            Sign up to manage your events, track tasks, and stay connected.
           </p>
           <button
             className="link-btn"
@@ -166,12 +156,12 @@ export default function Login() {
         </div>
       </div>
 
+      {/* ─── RIGHT PANEL ──────────────────────────── */}
       <div className="login-right">
         <form className="login-form" onSubmit={handleLogin}>
           <h2>Sign In</h2>
           <hr className="login-divider" />
-
-          {loginError && <div className="login-error">{loginError}</div>}
+          {loginError && <div className="form-error">{loginError}</div>}
 
           <label htmlFor="email">Email</label>
           <input
@@ -192,7 +182,6 @@ export default function Login() {
           />
 
           <hr className="login-divider" />
-
           <div className="login-buttons">
             <button type="submit" className="btn-signin">
               Sign In
@@ -202,7 +191,7 @@ export default function Login() {
               className="btn-signup"
               onClick={() => {
                 setShowPinModal(true);
-                setPin('');
+                setPin(Array(6).fill(''));
                 setPinError('');
               }}
             >
@@ -212,39 +201,37 @@ export default function Login() {
         </form>
       </div>
 
-      {/* ─── PIN Verification Modal ─── */}
+      {/* ─── PIN (OTP) VERIFICATION MODAL ───────────── */}
       {showPinModal && (
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">
               <h3>Admin PIN Verification</h3>
-              <button
-                className="modal-close"
-                onClick={() => {
-                  setShowPinModal(false);
-                  setPin('');
-                  setPinError('');
-                }}
-              >
-                ×
-              </button>
             </div>
+            <hr className="login-divider" />
 
             <form className="modal-form" onSubmit={handlePinSubmit}>
               {pinError && <div className="form-error">{pinError}</div>}
 
-              <label>Enter 6-digit Admin PIN</label>
-              <input
-                type="password"
-                value={pin}
-                onChange={(e) => setPin(e.target.value)}
-                maxLength={6}
-                pattern="[0-9]*"
-                inputMode="numeric"
-                required
-                placeholder="Enter PIN"
-              />
+              <div className="otp-container">
+                {pin.map((digit, idx) => (
+                  <input
+                    key={idx}
+                    type="password"
+                    maxLength="1"
+                    className="otp-input"
+                    value={digit}
+                    onChange={e => handlePinChange(e, idx)}
+                    onKeyDown={e => handlePinKeyDown(e, idx)}
+                    ref={el => (inputRefs.current[idx] = el)}
+                    inputMode="numeric"
+                    pattern="\d*"
+                    required
+                  />
+                ))}
+              </div>
 
+              <hr className="login-divider" />
               <div className="modal-actions">
                 <button type="submit" className="btn-signin">
                   Verify
@@ -254,7 +241,7 @@ export default function Login() {
                   className="btn-signup"
                   onClick={() => {
                     setShowPinModal(false);
-                    setPin('');
+                    setPin(Array(6).fill(''));
                     setPinError('');
                   }}
                 >
@@ -262,28 +249,32 @@ export default function Login() {
                 </button>
               </div>
             </form>
+
+            <button
+              className="modal-close"
+              onClick={() => {
+                setShowPinModal(false);
+                setPin(Array(6).fill(''));
+                setPinError('');
+              }}
+            >
+              ×
+            </button>
           </div>
         </div>
       )}
 
-      {/* ─── Request Event Modal ──────────────────────────── */}
+      {/* ─── Request Event Modal ─────────────────────── */}
       {showRequestModal && (
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">
               <h3>Request New Event</h3>
-              <button
-                className="modal-close"
-                onClick={() => setShowRequestModal(false)}
-              >
-                ×
-              </button>
             </div>
+            <hr className="login-divider" />
 
             <form className="modal-form" onSubmit={handleSubmitRequest}>
-              {requestError && (
-                <div className="form-error">{requestError}</div>
-              )}
+              {requestError && <div className="form-error">{requestError}</div>}
               {requestSuccess && (
                 <div className="form-success">
                   Thanks! Your request has been submitted.
@@ -334,22 +325,31 @@ export default function Login() {
                 required
               />
 
+              <hr className="login-divider" />
               <div className="modal-actions">
                 <button type="submit" className="btn-signin">
                   Submit Request
                 </button>
                 <button
                   type="button"
-                  className="btn-cancel"
+                  className="btn-signup"
                   onClick={() => setShowRequestModal(false)}
                 >
                   Cancel
                 </button>
               </div>
             </form>
+
+            <button
+              className="modal-close"
+              onClick={() => setShowRequestModal(false)}
+            >
+              ×
+            </button>
           </div>
         </div>
       )}
     </div>
   );
 }
+

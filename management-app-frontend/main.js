@@ -3,7 +3,7 @@ const path = require('path');
 
 // Allow for using an environment variable for the dev URL
 const isDev = !app.isPackaged;
-const devURL = process.env.ELECTRON_START_URL || 'http://localhost:3000';
+const devURL = process.env.ELECTRON_START_URL || 'https://splendid-heliotrope-468d3a.netlify.app/';
 
 function createWindow() {
   const win = new BrowserWindow({
