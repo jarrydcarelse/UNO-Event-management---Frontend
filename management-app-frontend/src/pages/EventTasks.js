@@ -106,7 +106,7 @@ export default function EventTasks() {
         });
 
         // Fetch tasks separately
-        const tasksResponse = await axios.get(`/api/events/${eventId}/tasks`, {
+        const tasksResponse = await axios.get(`${API_BASE}/api/eventtasks/byevent/${eventId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ export default function EventTasks() {
             title: task.title,
             priority: task.priority,
             priorityClass: task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'yellow' : 'green',
-            assignedTo: task.assignedTo,
+            assignedTo: task.assignedToEmail,
             budget: task.budget,
             completed: task.completed,
             description: task.description,
@@ -581,9 +581,125 @@ export default function EventTasks() {
     }
   };
 
+  const toggleTaskCompletion = async (task) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Not authenticated');
+      return;
+    }
+    try {
+      await axios.put(
+        `${API_BASE}/api/eventtasks/${task.id}`,
+        {
+          ...task,
+          completed: !task.completed
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+      // Refresh tasks after updating
+      fetchTasks();
+    } catch (err) {
+      console.error('Error updating task:', err);
+      if (err.response?.data?.error) {
+        alert(`Failed to update task: ${err.response.data.error}`);
+      } else {
+        alert('Failed to update task. Please try again.');
+      }
+    }
+  };
+
+  const deleteTask = async (taskId) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Not authenticated');
+      return;
+    }
+    try {
+      // Archive the task on the backend
+      await axios.put(
+        `${API_BASE}/api/eventtasks/${taskId}`,
+        {
+          ...tasks.find(t => t.id === taskId),
+          archived: true
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+      // Remove the task from the frontend state
+      setTasks(tasks.filter(task => task.id !== taskId));
+    } catch (err) {
+      console.error('Error archiving task:', err);
+      if (err.response?.data?.error) {
+        alert(`Failed to archive task: ${err.response.data.error}`);
+      } else {
+        alert('Failed to archive task. Please try again.');
+      }
+    }
+  };
+
+  const fetchTasks = async () => {
+    setLoading(true);
+    setError('');
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('Not authenticated');
+      setLoading(false);
+      return;
+    }
+    try {
+      const res = await axios.get(`${API_BASE}/api/eventtasks/byevent/${eventId}`, {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      });
+      
+      // Map the response data to our task format
+      const formattedTasks = res.data.map(task => ({
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        dueDate: new Date(task.dueDate).toLocaleDateString(),
+        priority: task.priority,
+        assignedTo: task.assignedToEmail,
+        completed: task.completed,
+        budget: task.budget,
+        eventId: task.eventId,
+        archived: task.archived
+      }));
+
+      setTasks(formattedTasks);
+    } catch (err) {
+      console.error('Error loading tasks:', err);
+      if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else {
+        setError('Failed to load tasks');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Make sure we fetch tasks when the component mounts
+  useEffect(() => {
+    fetchTasks();
+  }, [eventId]);
+
   // Task lists
-  const tasksInProgress = tasks.filter(task => !task.completed);
-  const completedTasks = tasks.filter(task => task.completed);
+  const tasksInProgress = tasks.filter(task => !task.completed && !task.archived);
+  const completedTasks = tasks.filter(task => task.completed && !task.archived);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -645,8 +761,8 @@ export default function EventTasks() {
             </button>
           </div>
 
-          {/* In Progress Tasks */}
-          <div className="eventtasks-task-status-heading">Tasks To Do</div>
+          {/* Pending Tasks */}
+          <div className="eventtasks-task-status-heading">Pending Tasks</div>
           <div className="eventtasks-tasks-grid">
             {tasksInProgress.length === 0 ? (
               <span className="eventtasks-empty-msg">No tasks in progress.</span>
@@ -665,8 +781,8 @@ export default function EventTasks() {
                     </div>
                   </div>
                   <div className="eventtasks-taskcard-priority-row">
-                    <span className={`eventtasks-status-dot ${task.priorityClass}`} />
-                    Priority: {task.priority}
+                    <span className={`eventtasks-status-dot ${task.priority ? task.priority.toLowerCase() : 'low'}`} />
+                    Priority: {task.priority || 'Low'}
                   </div>
                   <div className="eventtasks-taskcard-meta">
                     <span>Assigned To: {task.assignedTo}</span>
@@ -701,8 +817,8 @@ export default function EventTasks() {
                     </span>
                   </div>
                   <div className="eventtasks-taskcard-priority-row">
-                    <span className={`eventtasks-status-dot ${task.priorityClass}`} />
-                    Priority: {task.priority}
+                    <span className={`eventtasks-status-dot ${task.priority ? task.priority.toLowerCase() : 'low'}`} />
+                    Priority: {task.priority || 'Low'}
                   </div>
                   <div className="eventtasks-taskcard-meta">
                     <span>Assigned To: {task.assignedTo}</span>
@@ -813,7 +929,7 @@ export default function EventTasks() {
                   </div>
 
                   <div className="eventtasks-modal-actions">
-                    <button
+                    <button 
                       className="eventtasks-modal-btn pink"
                       onClick={modalType === 'add' ? handleAddTask : handleEditTask}
                     >

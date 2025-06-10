@@ -49,6 +49,7 @@ const tasks = [
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [events, setEvents] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -60,17 +61,47 @@ export default function Dashboard() {
       return;
     }
 
+    // Fetch events
     axios
       .get(`${API_BASE}/api/events`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
         setEvents(res.data || []);
-        setLoading(false);
       })
       .catch((err) => {
         console.error('Fetch events error:', err);
         setError('Could not load active events.');
+      });
+
+    // Fetch tasks
+    axios
+      .get(`${API_BASE}/api/eventtasks`, {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      })
+      .then((res) => {
+        const formattedTasks = res.data.map(task => ({
+          id: task.id,
+          title: task.title,
+          description: task.description,
+          dueDate: task.dueDate,
+          priority: task.priority,
+          priorityClass: task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'yellow' : 'green',
+          assignedTo: task.assignedToEmail,
+          completed: task.completed,
+          budget: task.budget,
+          eventId: task.eventId
+        }));
+        setTasks(formattedTasks);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Fetch tasks error:', err);
+        setError('Could not load tasks.');
         setLoading(false);
       });
   }, [navigate]);
@@ -151,27 +182,32 @@ export default function Dashboard() {
         <div className="card tasks-card">
           <h2>My Tasks</h2>
           <div className="task-cards">
-            {tasks.map((task, idx) => (
-              <div key={idx} className="task-block">
-                <div className="task-header">
-                  <h3 className="task-name">{task.event}</h3>
-                  <hr className="inner-divider" />
+            {loading && <p>Loading tasks...</p>}
+            {error && <p className="error-text">{error}</p>}
+            {!loading && !error && tasks.length === 0 && (
+              <p>No tasks found.</p>
+            )}
+            {!loading && !error && tasks
+              .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate)) // Sort by due date, newest first
+              .slice(0, 3) // Take only the first 3 tasks
+              .map((task) => (
+                <div key={task.id} className="task-block">
+                  <div className="task-header">
+                    <h3 className="task-name">{task.title}</h3>
+                    <hr className="inner-divider" />
+                  </div>
+                  <p className="task-title">{task.description}</p>
+                  <p className="task-priority">
+                    <span className={`status-dot ${task.priorityClass}`}></span>
+                    Priority: {task.priority}
+                  </p>
+                  <div className="task-meta">
+                    <p>Assigned To: {task.assignedTo}</p>
+                    <p>Due Date: {new Date(task.dueDate).toLocaleDateString()}</p>
+                    <p>Status: {task.completed ? 'Completed' : 'In Progress'}</p>
+                  </div>
                 </div>
-                <p className="task-title">{task.title}</p>
-                <p className="task-priority">
-                  <span className={`status-dot ${task.priorityClass}`}></span>
-                  Priority: {task.priority}
-                </p>
-                <div className="task-meta">
-                  <p>Assigned To: {task.assignedTo}</p>
-                  <p>Due Date: {task.dueDate}</p>
-                  <p>Status: {task.status}</p>
-                </div>
-                <div className="task-actions">
-                  <button className="edit-btn">Edit</button>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>
