@@ -57,6 +57,10 @@ export default function EventTasks() {
     dueDate: ''
   });
 
+  // Computed values for tasks
+  const tasksInProgress = tasks.filter(task => !task.completed);
+  const completedTasks = tasks.filter(task => task.completed);
+
   // Fetch users on component mount
   useEffect(() => {
     const fetchUsers = async () => {
@@ -106,7 +110,7 @@ export default function EventTasks() {
         });
 
         // Fetch tasks separately
-        const tasksResponse = await axios.get(`/api/events/${eventId}/tasks`, {
+        const tasksResponse = await axios.get(`${API_BASE}/api/eventtasks/byevent/${eventId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -122,7 +126,7 @@ export default function EventTasks() {
             title: task.title,
             priority: task.priority,
             priorityClass: task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'yellow' : 'green',
-            assignedTo: task.assignedTo,
+            assignedTo: task.assignedToEmail,
             budget: task.budget,
             completed: task.completed,
             description: task.description,
@@ -131,10 +135,24 @@ export default function EventTasks() {
           }));
         }
 
-        // Calculate completion percentage
+        // Calculate completion percentage and budget totals
         const completedTasks = tasks.filter(t => t.completed).length;
         const totalTasks = tasks.length;
         const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+        // Calculate overall budget (sum of all task budgets)
+        const overallBudget = tasks.reduce((total, task) => {
+          const budget = task.budget.replace(/[^0-9]/g, ''); // Remove 'R' and any other non-numeric characters
+          return total + parseInt(budget || 0);
+        }, 0);
+
+        // Calculate spent amount (sum of completed task budgets)
+        const spentAmount = tasks
+          .filter(task => task.completed)
+          .reduce((total, task) => {
+            const budget = task.budget.replace(/[^0-9]/g, '');
+            return total + parseInt(budget || 0);
+          }, 0);
 
         // Set event details
         setEventDetails({
@@ -144,8 +162,8 @@ export default function EventTasks() {
           progress: completionPercentage,
           completed: completedTasks,
           totalTasks: totalTasks,
-          budget: eventResponse.data.budget || 'R0',
-          spent: eventResponse.data.spent || 'R0',
+          budget: `R${overallBudget.toLocaleString()}`,
+          spent: `R${spentAmount.toLocaleString()}`,
           colorClass: completionPercentage === 100 ? 'green' : 'yellow'
         });
 
@@ -251,90 +269,58 @@ export default function EventTasks() {
     }
 
     try {
-      // Format the budget to ensure it's a string with R prefix
       const formattedBudget = taskForm.budget.startsWith('R') 
-        ? taskForm.budget 
-        : `R${taskForm.budget}`;
+        ? taskForm.budget.replace('R', '')
+        : taskForm.budget;
 
-      // Create task data matching the API requirements exactly
       const taskData = {
         title: taskForm.title,
         priority: taskForm.priority,
-        assignedToEmail: taskForm.assignedToEmail,
-        budget: formattedBudget,
+        completed: false,
         description: taskForm.description || '',
         dueDate: formatDateForAPI(taskForm.dueDate),
-        completed: false,
-        archived: false,
-        eventId: parseInt(eventId)
+        eventId: parseInt(eventId),
+        assignedToEmail: taskForm.assignedToEmail,
+        budget: formattedBudget
       };
 
-      console.log('Sending task data:', taskData);
-
-      const response = await axios({
-        method: 'post',
-        url: `/api/eventtasks`,
-        data: taskData,
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+      const response = await axios.post(
+        `${API_BASE}/api/eventtasks`,
+        taskData,
+        { 
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': '*/*'
+          }
         }
-      });
+      );
 
-      if (response.status >= 400) {
-        throw new Error(response.data.message || 'Failed to add task');
-      }
-
-      console.log('Task added successfully:', response.data);
-
-      // Create new task object from response data
+      // Add new task immediately
       const newTask = {
         id: response.data.id,
         title: response.data.title,
         priority: response.data.priority,
-        priorityClass: response.data.priority === 'High' ? 'red' : response.data.priority === 'Medium' ? 'yellow' : 'green',
-        assignedTo: response.data.assignedUser?.email || 'Unassigned',
-        budget: response.data.budget,
-        completed: response.data.completed,
         description: response.data.description,
-        dueDate: formatDateForDisplay(response.data.dueDate),
-        archived: response.data.archived
+        dueDate: response.data.dueDate ? formatDateForDisplay(response.data.dueDate) : null,
+        assignedTo: response.data.assignedUser?.email || 'Unassigned',
+        completed: false,
+        budget: response.data.budget,
+        eventId: response.data.eventId,
+        archived: false
       };
 
-      setTasks(prev => [...prev, newTask]);
-      closeModal();
-
-      // Refresh event stats
-      const budgetRes = await axios({
-        method: 'get',
-        url: `/api/events/${eventId}/tasks/budget`,
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': '*/*'
-        },
-        validateStatus: function (status) {
-          return status >= 200 && status < 500;
-        }
-      });
-
-      // Calculate new completion stats
       const updatedTasks = [...tasks, newTask];
-      const completedTasks = updatedTasks.filter(t => t.completed).length;
-      const totalTasks = updatedTasks.length;
-      const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-      setEventDetails(prev => ({
-        ...prev,
-        progress: completionPercentage,
-        totalTasks: totalTasks,
-        budget: `R${budgetRes.data.toLocaleString()}`,
-        colorClass: completionPercentage === 100 ? 'green' : 'yellow'
-      }));
-    } catch (error) {
-      console.error('Error adding task:', error);
-      setError(error.response?.data?.message || 'Failed to add task. Please try again.');
+      setTasks(updatedTasks);
+      closeModal();
+    } catch (err) {
+      console.error('Error adding task:', err);
+      if (err.response) {
+        console.error('Error response:', err.response.data);
+        setError(`Failed to add task: ${err.response.data.message || 'Please try again.'}`);
+      } else {
+        setError('Failed to add task. Please try again.');
+      }
     }
   };
 
@@ -351,96 +337,54 @@ export default function EventTasks() {
     }
 
     try {
-      // Format the budget to ensure it's a string with R prefix
       const formattedBudget = taskForm.budget.startsWith('R') 
-        ? taskForm.budget 
-        : `R${taskForm.budget}`;
+        ? taskForm.budget.replace('R', '')
+        : taskForm.budget;
 
       const taskData = {
         title: taskForm.title,
         priority: taskForm.priority,
-        assignedToEmail: taskForm.assignedToEmail,
-        budget: formattedBudget,
+        completed: selectedTask.completed,
         description: taskForm.description || '',
         dueDate: formatDateForAPI(taskForm.dueDate),
-        completed: selectedTask.completed,
-        archived: false,
-        eventId: parseInt(eventId)
+        eventId: parseInt(eventId),
+        assignedToEmail: taskForm.assignedToEmail,
+        budget: formattedBudget
       };
 
-      console.log('Updating task with data:', taskData);
-
-      const response = await axios({
-        method: 'put',
-        url: `/api/events/${eventId}/tasks/${selectedTask.id}`,
-        data: taskData,
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': '*/*'
+      await axios.put(
+        `${API_BASE}/api/eventtasks/${selectedTask.id}`,
+        taskData,
+        { 
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': '*/*'
+          }
         }
-      });
-
-      console.log('Task updated successfully:', response.data);
-
-      // Update the task in the tasks list
-      const updatedTask = {
-        id: response.data.id,
-        title: response.data.title,
-        priority: response.data.priority,
-        priorityClass: response.data.priority === 'High' ? 'red' : response.data.priority === 'Medium' ? 'yellow' : 'green',
-        assignedTo: response.data.assignedUser?.email || 'Unassigned',
-        budget: response.data.budget,
-        completed: response.data.completed,
-        description: response.data.description,
-        dueDate: formatDateForDisplay(response.data.dueDate),
-        archived: response.data.archived
-      };
-
-      setTasks(prev =>
-        prev.map(task =>
-          task.id === selectedTask.id ? updatedTask : task
-        )
       );
 
-      // Close the modal
+      // Update tasks immediately
+      const updatedTasks = tasks.map(t => 
+        t.id === selectedTask.id ? {
+          ...t,
+          title: taskForm.title,
+          priority: taskForm.priority,
+          description: taskForm.description || '',
+          dueDate: taskForm.dueDate,
+          assignedTo: taskForm.assignedToEmail,
+          budget: formattedBudget
+        } : t
+      );
+      setTasks(updatedTasks);
       closeModal();
-
-      // Refresh event stats
-      const budgetRes = await axios({
-        method: 'get',
-        url: `/api/events/${eventId}/tasks/budget`,
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': '*/*'
-        }
-      });
-
-      // Calculate new completion stats
-      const updatedTasks = tasks.map(t => t.id === selectedTask.id ? updatedTask : t);
-      const completedTasks = updatedTasks.filter(t => t.completed).length;
-      const totalTasks = updatedTasks.length;
-      const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-      setEventDetails(prev => ({
-        ...prev,
-        progress: completionPercentage,
-        budget: `R${budgetRes.data.toLocaleString()}`,
-        colorClass: completionPercentage === 100 ? 'green' : 'yellow'
-      }));
     } catch (err) {
       console.error('Error updating task:', err);
       if (err.response) {
-        console.error('Error response data:', err.response.data);
-        console.error('Error response status:', err.response.status);
+        console.error('Error response:', err.response.data);
         setError(`Failed to update task: ${err.response.data.message || 'Please try again.'}`);
-      } else if (err.request) {
-        console.error('Error request:', err.request);
-        setError('No response received from server. Please check your connection and try again.');
       } else {
-        console.error('Error message:', err.message);
-        setError(`Failed to update task: ${err.message}`);
+        setError('Failed to update task. Please try again.');
       }
     }
   };
@@ -449,141 +393,183 @@ export default function EventTasks() {
     const token = localStorage.getItem('token');
     try {
       const taskData = {
-        ...task,
+        title: task.title,
+        priority: task.priority,
         completed: true,
+        description: task.description,
+        dueDate: task.dueDate ? formatDateForAPI(task.dueDate) : new Date().toISOString(),
         eventId: parseInt(eventId),
-        archived: false,
-        dueDate: task.dueDate ? formatDateForAPI(task.dueDate) : new Date().toISOString()
+        assignedToEmail: task.assignedTo,
+        budget: task.budget
       };
 
-      console.log('Completing task with data:', taskData);
-
-      const response = await axios.put(
-        `/api/events/${eventId}/tasks/${task.id}`,
+      await axios.put(
+        `${API_BASE}/api/eventtasks/${task.id}`,
         taskData,
         { 
           headers: { 
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': '*/*'
           }
         }
       );
 
-      console.log('Task completed successfully:', response.data);
-
-      // Update the task in the tasks list
-      const updatedTask = {
-        ...task,
-        completed: true
-      };
-
-      setTasks(prev =>
-        prev.map(t =>
-          t.id === task.id ? updatedTask : t
-        )
+      // Update tasks immediately
+      const updatedTasks = tasks.map(t => 
+        t.id === task.id ? { ...t, completed: true } : t
       );
-
-      // Calculate new completion stats
-      const updatedTasks = tasks.map(t => t.id === task.id ? updatedTask : t);
-      const completedTasks = updatedTasks.filter(t => t.completed).length;
-      const totalTasks = updatedTasks.length;
-      const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-      // Refresh budget
-      const budgetRes = await axios.get(`/api/events/${eventId}/tasks/budget`, {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      setEventDetails(prev => ({
-        ...prev,
-        progress: completionPercentage,
-        completed: completedTasks,
-        budget: `R${budgetRes.data.toLocaleString()}`,
-        colorClass: completionPercentage === 100 ? 'green' : 'yellow'
-      }));
+      setTasks(updatedTasks);
     } catch (err) {
       console.error('Error completing task:', err);
       if (err.response) {
         console.error('Error response:', err.response.data);
         setError(`Failed to complete task: ${err.response.data.message || 'Please try again.'}`);
-      } else if (err.request) {
-        console.error('Error request:', err.request);
-        setError('No response received from server. Please check your connection.');
       } else {
         setError('Failed to complete task. Please try again.');
       }
     }
   };
 
-  const handleDeleteTask = async () => {
+  const handleDeleteTask = async (taskId) => {
     const token = localStorage.getItem('token');
     try {
-      const taskData = {
-        ...selectedTask,
-        archived: true,
-        eventId: parseInt(eventId),
-        dueDate: formatDateForAPI(selectedTask.dueDate)
-      };
-
-      await axios.put(
-        `/api/events/${eventId}/tasks/${selectedTask.id}`,
-        taskData,
+      await axios.delete(
+        `${API_BASE}/api/eventtasks/${taskId}`,
         { 
           headers: { 
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          withCredentials: true
+            'Accept': '*/*'
+          }
         }
       );
 
-      // Remove the task from the UI
-      setTasks(prev => prev.filter(t => t.id !== selectedTask.id));
+      // Update tasks immediately
+      const updatedTasks = tasks.filter(t => t.id !== taskId);
+      setTasks(updatedTasks);
       closeModal();
-
-      // Calculate new completion stats
-      const updatedTasks = tasks.filter(t => t.id !== selectedTask.id);
-      const completedTasks = updatedTasks.filter(t => t.completed).length;
-      const totalTasks = updatedTasks.length;
-      const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-      // Refresh budget
-      const budgetRes = await axios.get(`/api/events/${eventId}/tasks/budget`, {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      setEventDetails(prev => ({
-        ...prev,
-        progress: completionPercentage,
-        totalTasks: totalTasks,
-        budget: `R${budgetRes.data.toLocaleString()}`,
-        colorClass: completionPercentage === 100 ? 'green' : 'yellow'
-      }));
     } catch (err) {
-      console.error('Error archiving task:', err);
+      console.error('Error deleting task:', err);
       if (err.response) {
         console.error('Error response:', err.response.data);
-        setError(`Failed to archive task: ${err.response.data.message || 'Please try again.'}`);
-      } else if (err.request) {
-        console.error('Error request:', err.request);
-        setError('No response received from server. Please check your connection.');
+        setError(`Failed to delete task: ${err.response.data.message || 'Please try again.'}`);
       } else {
-        setError('Failed to archive task. Please try again.');
+        setError('Failed to delete task. Please try again.');
       }
     }
   };
 
-  // Task lists
-  const tasksInProgress = tasks.filter(task => !task.completed);
-  const completedTasks = tasks.filter(task => task.completed);
+  const toggleTaskCompletion = async (task) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Not authenticated');
+      return;
+    }
+    try {
+      await axios.put(
+        `${API_BASE}/api/eventtasks/${task.id}`,
+        {
+          ...task,
+          completed: !task.completed
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+      // Refresh tasks after updating
+      fetchTasks();
+    } catch (err) {
+      console.error('Error updating task:', err);
+      if (err.response?.data?.error) {
+        alert(`Failed to update task: ${err.response.data.error}`);
+      } else {
+        alert('Failed to update task. Please try again.');
+      }
+    }
+  };
+
+  const deleteTask = async (taskId) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Not authenticated');
+      return;
+    }
+    try {
+      // Archive the task on the backend
+      await axios.put(
+        `${API_BASE}/api/eventtasks/${taskId}`,
+        {
+          ...tasks.find(t => t.id === taskId),
+          archived: true
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+      // Remove the task from the frontend state
+      setTasks(tasks.filter(task => task.id !== taskId));
+    } catch (err) {
+      console.error('Error archiving task:', err);
+      if (err.response?.data?.error) {
+        alert(`Failed to archive task: ${err.response.data.error}`);
+      } else {
+        alert('Failed to archive task. Please try again.');
+      }
+    }
+  };
+
+  const fetchTasks = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get(
+        `${API_BASE}/api/eventtasks/byevent/${eventId}`,
+        { 
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': '*/*'
+          }
+        }
+      );
+
+      const formattedTasks = response.data.map(task => ({
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        dueDate: task.dueDate ? formatDateForDisplay(task.dueDate) : null,
+        priority: task.priority,
+        assignedTo: task.assignedUser?.email || 'Unassigned',
+        completed: task.completed,
+        budget: task.budget,
+        eventId: task.eventId,
+        archived: task.archived
+      }));
+
+      setTasks(formattedTasks);
+    } catch (err) {
+      console.error('Error loading tasks:', err);
+      if (err.response) {
+        console.error('Error response:', err.response.data);
+        setError(`Failed to load tasks: ${err.response.data.message || 'Please try again.'}`);
+      } else {
+        setError('Failed to load tasks. Please try again.');
+      }
+    }
+  };
+
+  // Make sure we fetch tasks when the component mounts
+  useEffect(() => {
+    fetchTasks();
+  }, [eventId]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -645,8 +631,8 @@ export default function EventTasks() {
             </button>
           </div>
 
-          {/* In Progress Tasks */}
-          <div className="eventtasks-task-status-heading">Tasks To Do</div>
+          {/* Pending Tasks */}
+          <div className="eventtasks-task-status-heading">Pending Tasks</div>
           <div className="eventtasks-tasks-grid">
             {tasksInProgress.length === 0 ? (
               <span className="eventtasks-empty-msg">No tasks in progress.</span>
@@ -665,8 +651,8 @@ export default function EventTasks() {
                     </div>
                   </div>
                   <div className="eventtasks-taskcard-priority-row">
-                    <span className={`eventtasks-status-dot ${task.priorityClass}`} />
-                    Priority: {task.priority}
+                    <span className={`eventtasks-status-dot ${task.priority ? task.priority.toLowerCase() : 'low'}`} />
+                    Priority: {task.priority || 'Low'}
                   </div>
                   <div className="eventtasks-taskcard-meta">
                     <span>Assigned To: {task.assignedTo}</span>
@@ -701,8 +687,8 @@ export default function EventTasks() {
                     </span>
                   </div>
                   <div className="eventtasks-taskcard-priority-row">
-                    <span className={`eventtasks-status-dot ${task.priorityClass}`} />
-                    Priority: {task.priority}
+                    <span className={`eventtasks-status-dot ${task.priority ? task.priority.toLowerCase() : 'low'}`} />
+                    Priority: {task.priority || 'Low'}
                   </div>
                   <div className="eventtasks-taskcard-meta">
                     <span>Assigned To: {task.assignedTo}</span>
@@ -739,7 +725,7 @@ export default function EventTasks() {
                 <div className="eventtasks-modal-content">
                   <p>Are you sure you want to delete this task?</p>
                   <div className="eventtasks-modal-actions">
-                    <button className="eventtasks-modal-btn pink" onClick={handleDeleteTask}>
+                    <button className="eventtasks-modal-btn pink" onClick={() => handleDeleteTask(selectedTask.id)}>
                       Delete
                     </button>
                     <button className="eventtasks-modal-btn" onClick={closeModal}>
@@ -813,7 +799,7 @@ export default function EventTasks() {
                   </div>
 
                   <div className="eventtasks-modal-actions">
-                    <button
+                    <button 
                       className="eventtasks-modal-btn pink"
                       onClick={modalType === 'add' ? handleAddTask : handleEditTask}
                     >

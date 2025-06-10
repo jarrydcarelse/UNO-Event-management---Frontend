@@ -64,6 +64,9 @@ export default function Tasks() {
 
   const inProgressTasks = tasks.filter(task => !task.completed);
   const completedTasks = tasks.filter(task => task.completed);
+  const totalTasks = tasks.length;
+  const completedCount = completedTasks.length;
+  const progressPercentage = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
 
   if (loading) {
     return (
@@ -103,6 +106,36 @@ export default function Tasks() {
       <div className={`tasks-page${sidebarOpen ? '' : ' collapsed'}`}>
         <div className="tasks-header">
           <h1>Tasks Overview</h1>
+        </div>
+
+        {/* Progress Bar Section */}
+        <div className="tasks-progress-section">
+          <div className="progress-stats">
+            <div className="progress-stat">
+              <span className="stat-label">Total Tasks</span>
+              <span className="stat-value">{totalTasks}</span>
+            </div>
+            <div className="progress-stat">
+              <span className="stat-label">Completed</span>
+              <span className="stat-value">{completedCount}</span>
+            </div>
+            <div className="progress-stat">
+              <span className="stat-label">In Progress</span>
+              <span className="stat-value">{inProgressTasks.length}</span>
+            </div>
+          </div>
+          <div className="progress-bar-container">
+            <div className="progress-bar-bg">
+              <div 
+                className="progress-bar-fill"
+                style={{ 
+                  width: `${progressPercentage}%`,
+                  backgroundColor: progressPercentage === 100 ? '#34C759' : progressPercentage > 50 ? '#FFCC00' : '#FF3B30'
+                }}
+              />
+            </div>
+            <span className="progress-percentage">{progressPercentage}%</span>
+          </div>
         </div>
 
         {/* In Progress Tasks Section */}
