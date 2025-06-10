@@ -1,5 +1,3 @@
-// src/pages/Dashboard.js
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -7,44 +5,6 @@ import Navbar from '../components/Navbar';
 import '../dashboard/Dashboard.css';
 
 const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
-
-const notifications = [
-  { text: 'New Event Request', variant: 'info' },
-  { text: 'New Event Request', variant: 'info' },
-  { text: 'Budget Warning', variant: 'warning' },
-  { text: 'Task Deadline Tomorrow', variant: 'warning' },
-  { text: 'Client Feedback Received', variant: 'info' },
-];
-
-const tasks = [
-  {
-    event: 'Wedding Reception',
-    title: 'Confirm Guest List',
-    priority: 'High',
-    priorityClass: 'red',
-    assignedTo: 'Sarah Thompson',
-    dueDate: '01 Jan 2025',
-    status: 'In Progress',
-  },
-  {
-    event: 'Corporate Year-End Gala',
-    title: 'Caterer Selection',
-    priority: 'Medium',
-    priorityClass: 'yellow',
-    assignedTo: 'Sarah Thompson',
-    dueDate: '21 Jan 2025',
-    status: 'In Progress',
-  },
-  {
-    event: 'Tech Product Launch',
-    title: 'Social Media Promotion',
-    priority: 'Low',
-    priorityClass: 'green',
-    assignedTo: 'Not Assigned',
-    dueDate: '01 Jan 2025',
-    status: 'In Progress',
-  },
-];
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -66,9 +26,7 @@ export default function Dashboard() {
       .get(`${API_BASE}/api/events`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => {
-        setEvents(res.data || []);
-      })
+      .then((res) => setEvents(res.data || []))
       .catch((err) => {
         console.error('Fetch events error:', err);
         setError('Could not load active events.');
@@ -77,26 +35,22 @@ export default function Dashboard() {
     // Fetch tasks
     axios
       .get(`${API_BASE}/api/eventtasks`, {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
+          Accept: 'application/json',
+        },
       })
       .then((res) => {
-        const formattedTasks = res.data.map(task => ({
-          id: task.id,
-          title: task.title,
-          description: task.description,
-          dueDate: task.dueDate,
-          priority: task.priority,
-          priorityClass: task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'yellow' : 'green',
-          assignedTo: task.assignedToEmail,
-          completed: task.completed,
-          budget: task.budget,
-          eventId: task.eventId
+        const formatted = res.data.map((t) => ({
+          id: t.id,
+          title: t.title,
+          description: t.description,
+          dueDate: t.dueDate,
+          completed: t.completed,
+          assignedTo: t.assignedToEmail,
         }));
-        setTasks(formattedTasks);
+        setTasks(formatted);
         setLoading(false);
       })
       .catch((err) => {
@@ -114,21 +68,34 @@ export default function Dashboard() {
         {/* Page Header */}
         <h1 className="dashboard-main-header">Dashboard</h1>
 
-        {/* Top Row: Events + Notifications */}
-        <div className="dashboard-top">
-          {/* Active Events Overview */}
-          <div className="card overview-card scroll-container">
+        {/* Quick Stats */}
+        <div className="dashboard-stats">
+          <div className="stat-card">
+            <h3>{events.length}</h3>
+            <p>Active Events</p>
+          </div>
+          <div className="stat-card">
+            <h3>{tasks.filter((t) => !t.completed).length}</h3>
+            <p>Open Tasks</p>
+          </div>
+          <div className="stat-card">
+            <h3>{tasks.filter((t) => t.completed).length}</h3>
+            <p>Completed Tasks</p>
+          </div>
+        </div>
+
+        {/* Events + Tasks Container */}
+        <div className="dashboard-content">
+          {/* Active Events */}
+          <div className="card overview-card">
             <h2>My Events</h2>
-
-            {loading && <p>Loading events…</p>}
-            {error && <p className="error-text">{error}</p>}
-            {!loading && !error && events.length === 0 && (
-              <p>No active events found.</p>
-            )}
-
-            {!loading &&
-              !error &&
-              events.map((evt) => (
+            <div className="scroll-container">
+              {loading && <p>Loading events…</p>}
+              {error && <p className="error-text">{error}</p>}
+              {!loading && !error && events.length === 0 && (
+                <p>No active events found.</p>
+              )}
+              {events.map((evt) => (
                 <div key={evt.id} className="overview-row">
                   <div className="overview-main">
                     <span className="overview-name">{evt.title}</span>
@@ -139,68 +106,66 @@ export default function Dashboard() {
                       </span>
                     </div>
                   </div>
-
                   <div className="overview-status">
-                    <span className="status-dot yellow"></span>
-                    <span>In Progress</span>
+                    <span
+                      className={`status-dot ${
+                        evt.status === 'Completed' ? 'green' : 'yellow'
+                      }`}
+                    />
+                    <span>{evt.status || 'In Progress'}</span>
                   </div>
-
                   <div className="overview-progress">
                     <div className="progress-bar-bg">
                       <div
-                        className="progress-bar-fill yellow"
-                        style={{ width: '0%' }}
+                        className={`progress-bar-fill ${
+                          evt.status === 'Completed' ? 'green' : 'yellow'
+                        }`}
+                        style={{ width: evt.progress + '%' }}
                       />
                     </div>
-                    <span>0%</span>
+                    <span>{evt.progress || 0}%</span>
                   </div>
                 </div>
               ))}
+            </div>
           </div>
 
-          {/* Notifications */}
-          <div className="card notifications-card scroll-container">
-            <h2>Notifications</h2>
+          {/* Task Management */}
+          <div className="card tasks-card">
+            <h2>My Tasks</h2>
+            <div className="scroll-container">
+              {loading && <p>Loading tasks...</p>}
+              {error && <p className="error-text">{error}</p>}
+              {!loading && !error && tasks.length === 0 && <p>No tasks found.</p>}
+              <div className="task-cards">
+                {tasks
+                  .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate))
+                  .slice(0, 4)
+                  .map((task) => (
+                    <div key={task.id} className="task-block">
+                      <h3 className="task-name">{task.title}</h3>
+                      <hr className="inner-divider" />
 
-            {notifications.map((note, idx) => (
-              <div key={idx} className={`notification-item ${note.variant}`}>
-                <span className="note-icon">•</span>
-                <span>{note.text}</span>
+                      <p className="task-desc">
+                        Description: <strong>{task.description}</strong>
+                      </p>
+                      <hr className="inner-divider" />
+
+                      <div className="task-meta">
+                        <p>
+                          Assigned To: <strong>{task.assignedTo}</strong>
+                        </p>
+                        <p>
+                          Due Date: <strong>{new Date(task.dueDate).toLocaleDateString()}</strong>
+                        </p>
+                        <p>
+                          Status: <strong>{task.completed ? 'Completed' : 'In Progress'}</strong>
+                        </p>
+                      </div>
+                    </div>
+                  ))}
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Task Management */}
-        <div className="card tasks-card">
-          <h2>My Tasks</h2>
-          <div className="task-cards">
-            {loading && <p>Loading tasks...</p>}
-            {error && <p className="error-text">{error}</p>}
-            {!loading && !error && tasks.length === 0 && (
-              <p>No tasks found.</p>
-            )}
-            {!loading && !error && tasks
-              .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate)) // Sort by due date, newest first
-              .slice(0, 3) // Take only the first 3 tasks
-              .map((task) => (
-                <div key={task.id} className="task-block">
-                  <div className="task-header">
-                    <h3 className="task-name">{task.title}</h3>
-                    <hr className="inner-divider" />
-                  </div>
-                  <p className="task-title">{task.description}</p>
-                  <p className="task-priority">
-                    <span className={`status-dot ${task.priorityClass}`}></span>
-                    Priority: {task.priority}
-                  </p>
-                  <div className="task-meta">
-                    <p>Assigned To: {task.assignedTo}</p>
-                    <p>Due Date: {new Date(task.dueDate).toLocaleDateString()}</p>
-                    <p>Status: {task.completed ? 'Completed' : 'In Progress'}</p>
-                  </div>
-                </div>
-              ))}
+            </div>
           </div>
         </div>
       </div>

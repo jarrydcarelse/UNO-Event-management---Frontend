@@ -33,10 +33,12 @@ html {
 }
 
 .signup-left .branding .welcome-text {
-    max-width: 600px;
-    font-size: 16px;
-    line-height: 1.6;
-    font-weight: 500;
+  color: white;
+  font-size: 18px;
+  text-align: left;
+  line-height: 1.5;
+  max-width: 550px;
+  margin-bottom: 30px;
 }
 
 .signup-right {
