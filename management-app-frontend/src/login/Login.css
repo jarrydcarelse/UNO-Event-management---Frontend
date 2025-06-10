@@ -250,7 +250,6 @@ html {
 /* ─── FEEDBACK MESSAGES ───────────────────────────── */
 .form-error,
 .form-success {
-  width: 100%;
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 16px;
