@@ -67,7 +67,7 @@ This version of **Eventify** represents the **final integration** of all major c
 
 ### 1. Clone the repository
 
-git clone https://github.com/your-org/eventify.git
+git clone [https://github.com/your-org/eventify.git](https://github.com/jarrydcarelse/UNO-Event-management---Frontend.git)
 cd eventify
 ---
 
@@ -77,19 +77,19 @@ cd eventify
 
 npm install
 
-###2. Start the App (Development Mode)
+### 2. Start the App (Development Mode)
 bash
 Copy
 Edit
 npm run start
 
-###3. Build for Production
+### 3. Build for Production
 bash
 Copy
 Edit
 npm run build
 
-###4. Package Electron App
+### 4. Package Electron App
 bash
 Copy
 Edit
