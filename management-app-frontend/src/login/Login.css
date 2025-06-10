@@ -14,7 +14,7 @@ html {
   width: 100%;
 }
 
-/* LEFT PANEL */
+/* ─── LEFT PANEL ──────────────────────────────────── */
 .login-left {
   flex: 1;
   background-color: #FF8FAB;
@@ -73,7 +73,7 @@ html {
   color: #fff;
 }
 
-/* RIGHT PANEL */
+/* ─── RIGHT PANEL ─────────────────────────────────── */
 .login-right {
   flex: 1;
   background-color: #fff;
@@ -83,7 +83,7 @@ html {
   padding: 60px;
 }
 
-/* LOGIN FORM */
+/* ─── LOGIN FORM ──────────────────────────────────── */
 .login-form {
   width: 100%;
   max-width: 320px;
@@ -168,7 +168,7 @@ html {
   z-index: 1000;
 }
 
-/* MODAL BASE */
+/* ─── MODAL BASE ──────────────────────────────────── */
 .modal {
   background: #fff;
   border-radius: 16px;
@@ -181,7 +181,7 @@ html {
   flex-direction: column;
 }
 
-/* MODAL HEADER */
+/* ─── MODAL HEADER ────────────────────────────────── */
 .modal-header {
   text-align: center;
   margin-bottom: 12px;
@@ -193,24 +193,43 @@ html {
   font-weight: 600;
 }
 
-/* OTP / REQUEST DIVIDER */
-.login-divider {
-  /* reused for modals too */
+/* ─── DIVIDER ─────────────────────────────────────── */
+.modal-header + .login-divider {
+  /* same pink-text divider from login form */
 }
 
-/* MODAL FORM */
+/* ─── MODAL FORM (shared) ─────────────────────────── */
 .modal-form {
+  display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: center;   /* center everything */
+  text-align: left;
 }
 
-/* OTP INPUTS */
+/* Inputs & Textarea match login inputs */
+.modal-form input,
+.modal-form textarea {
+  width: 100%;
+  padding: 18px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background: #fff;
+}
+.modal-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* OTP-specific container still applies */
 .otp-container {
   display: flex;
   gap: 12px;
   margin-bottom: 24px;
 }
+
+/* OTP inputs masked and styled */
 .otp-input {
   width: 48px;
   height: 60px;
@@ -228,20 +247,10 @@ html {
   box-shadow: 0 0 0 3px rgba(255,143,171,0.2);
 }
 
-/* REQUEST-EVENT INPUTS */
-.modal-form input,
-.modal-form textarea {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 16px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-}
-
-/* FEEDBACK MESSAGES */
+/* ─── FEEDBACK MESSAGES ───────────────────────────── */
 .form-error,
 .form-success {
+  width: 100%;
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -257,17 +266,18 @@ html {
   color: #047857;
 }
 
-/* MODAL ACTION BUTTONS */
+/* ─── MODAL ACTION BUTTONS ───────────────────────── */
 .modal-actions {
   display: flex;
   gap: 10px;
+  width: 100%;     /* align with inputs */
 }
 .modal-actions .btn-signin,
 .modal-actions .btn-signup {
   flex: 1;
 }
 
-/* CLOSE BUTTON */
+/* ─── CLOSE BUTTON ────────────────────────────────── */
 .modal-close {
   position: absolute;
   top: 16px;
@@ -293,4 +303,5 @@ html {
 .modal-close:active {
   transform: scale(0.95) rotate(90deg);
 }
+
 

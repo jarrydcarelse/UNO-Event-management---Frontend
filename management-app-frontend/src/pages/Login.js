@@ -52,7 +52,7 @@ export default function Login() {
     } catch (err) {
       setLoginError(
         err.response?.data?.message ||
-          'Login failed. Please check your credentials.'
+        'Login failed. Please check your credentials.'
       );
     }
   };
@@ -125,7 +125,7 @@ export default function Login() {
       console.error('Request submission error:', err);
       setRequestError(
         err.response?.data?.message ||
-          'Failed to submit request. Try again later.'
+        'Failed to submit request. Try again later.'
       );
     }
   };
@@ -140,7 +140,7 @@ export default function Login() {
         <div className="branding">
           <img src={logo} alt="Eventify Logo" className="logo-img" />
           <p className="welcome-text">
-            Welcome to Eventify Events Management System.<br/>
+            Welcome to Eventify Events Management System.<br />
             Sign up to manage your events, track tasks, and stay connected.
           </p>
           <button
@@ -281,8 +281,8 @@ export default function Login() {
                 </div>
               )}
 
-              <label>Title</label>
               <input
+                placeholder='Title'
                 name="title"
                 type="text"
                 value={requestData.title}
@@ -290,15 +290,14 @@ export default function Login() {
                 required
               />
 
-              <label>Description</label>
               <textarea
+                placeholder='Description'
                 name="description"
                 value={requestData.description}
                 onChange={handleRequestChange}
                 required
               />
 
-              <label>Date</label>
               <input
                 name="date"
                 type="date"
@@ -307,8 +306,8 @@ export default function Login() {
                 required
               />
 
-              <label>Your Name</label>
               <input
+                placeholder='Name'
                 name="requesterName"
                 type="text"
                 value={requestData.requesterName}
@@ -316,8 +315,8 @@ export default function Login() {
                 required
               />
 
-              <label>Your Email</label>
               <input
+                placeholder='Email'
                 name="requesterEmail"
                 type="email"
                 value={requestData.requesterEmail}
