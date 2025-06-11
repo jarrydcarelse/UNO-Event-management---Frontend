@@ -10,12 +10,14 @@ body {
 }
 .eventtasks-page {
   flex: 1;
-  padding: 32px;
+  padding: 16px 32px;
   margin-left: 250px;
   box-sizing: border-box;
   transition: margin-left 0.3s ease;
   width: 100%;
   background: #f2f2f7;
+  height: 100%;
+  overflow-y: auto;
 }
 .eventtasks-page.collapsed {
   margin-left: 100px;
@@ -26,16 +28,18 @@ body {
   background: #fff;
   border-radius: 16px;
   padding: 26px 32px 18px 32px;
-  margin-bottom: 18px;
+  margin-bottom: 24px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 .eventtasks-event-title {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #232336;
   margin: 0;
+  letter-spacing: -1px;
 }
 .eventtasks-event-client {
   color: #757575;
@@ -52,20 +56,21 @@ body {
 .eventtasks-progress-card {
   background: #fff;
   border-radius: 16px;
-  padding: 22px 32px 16px 32px;
-  margin-bottom: 26px;
+  padding: 24px 32px;
+  margin-bottom: 24px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 .eventtasks-progress-bar-bg {
   width: 100%;
-  height: 15px;
-  background: #f2f2f7;
+  height: 8px;
+  background: #e5e7eb;
   border-radius: 9999px;
   overflow: hidden;
   margin-bottom: 14px;
 }
 .eventtasks-progress-bar-fill {
   height: 100%;
+  background: #FF8FAB;
   border-radius: 9999px;
   transition: width 0.3s;
 }
@@ -87,7 +92,7 @@ body {
   border-radius: 16px;
   padding: 28px 32px 32px 32px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 .eventtasks-tasksection-header {
   display: flex;
@@ -96,14 +101,14 @@ body {
   margin-bottom: 18px;
 }
 .eventtasks-add-btn {
-  background: #FF5F8A;
+  background: #FF8FAB;
   color: #fff;
   font-weight: 700;
   border: none;
-  border-radius: 999px;
-  font-size: 16px;
-  padding: 10px 22px;
-  box-shadow: 0 2px 8px rgba(255,95,138,0.15);
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 12px 24px;
+  box-shadow: 0 2px 8px rgba(255,143,171,0.15);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -111,15 +116,17 @@ body {
   cursor: pointer;
 }
 .eventtasks-add-btn:hover {
-  background: #e94a73;
+  background: #ff7a9a;
 }
 
 /* Headings */
 .eventtasks-task-status-heading {
-  margin: 34px 0 16px 0;
-  font-size: 17px;
+  color: #FF8FAB;
+  font-size: 20px;
   font-weight: 700;
-  color: #232336;
+  margin: 0 0 18px 0;
+  padding: 0 0 8px;
+  border-bottom: 2px solid #FF8FAB;
 }
 .eventtasks-empty-msg {
   color: #B7B7B7;
@@ -129,9 +136,8 @@ body {
 }
 .eventtasks-tasks-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  align-items: start;
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
   justify-content: left;
 }
 
@@ -139,16 +145,17 @@ body {
 .eventtasks-taskcard {
   background: #f2f2f7;
   border-radius: 12px;
-  padding: 22px 18px 18px 18px;
-  min-width: 220px;
-  max-width: 360px;
-  box-shadow: none;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
-  gap: 13px;
-  position: relative;
-  border: 2px solid transparent;
-  transition: border 0.2s;
+  gap: 16px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.eventtasks-taskcard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 .eventtasks-taskcard.completed {
   border: 2px solid #b6f2c0;
@@ -158,9 +165,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-weight: 600;
-  font-size: 16px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+}
+.eventtasks-taskcard-title-row h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #111827;
 }
 .eventtasks-check-circle {
   background: #34c759;
@@ -179,52 +189,66 @@ body {
   gap: 7px;
   font-size: 15px;
 }
-.eventtasks-status-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  display: inline-block;
+.priority-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.priority-badge.low {
+  background: rgba(255, 235, 59, 0.2);
+  color: #000000;
+}
+.priority-badge.medium {
+  background: rgba(255, 152, 0, 0.2);
+  color: #000000;
+}
+.priority-badge.high {
+  background: rgba(244, 67, 54, 0.2);
+  color: #000000;
 }
 .eventtasks-taskcard-description {
-  margin: 8px 0;
-  font-size: 14px;
-  color: #666;
-  line-height: 1.4;
+  margin: 0;
+  font-size: 0.95rem;
+  color: #374151;
+  line-height: 1.5;
 }
 .eventtasks-taskcard-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 13px;
-  color: #666;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
 }
-.eventtasks-taskcard-meta span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+.eventtasks-taskcard-meta p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #555;
+}
+.eventtasks-taskcard-meta p strong {
+  font-weight: 700;
+  color: #111827;
 }
 .eventtasks-taskcard-actions {
   display: flex;
-  gap: 13px;
-  margin-top: auto;
-  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
 }
 .eventtasks-taskbtn {
   display: flex;
   align-items: center;
   gap: 5px;
   border: none;
-  background: none;
-  color: #FF5F8A;
+  background: #f2f2f7;
+  color: #FF8FAB;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  padding: 0;
-  border-radius: 7px;
-  transition: background 0.2s;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background 0.16s;
 }
 .eventtasks-taskbtn:hover {
-  background: #fce6ef;
+  background: #fde2ed;
 }
 .eventtasks-taskbtn svg {
   font-size: 16px;
@@ -248,7 +272,7 @@ body {
   padding: 34px 32px;
   min-width: 320px;
   max-width: 95vw;
-  box-shadow: 0 4px 40px rgba(34,34,54,0.13), 0 0px 2px rgba(255,95,138,0.04);
+  box-shadow: 0 4px 40px rgba(34,34,54,0.13), 0 0 2px rgba(255,143,171,0.04);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -267,80 +291,79 @@ body {
 .eventtasks-modal-close {
   background: none;
   border: none;
-  color: #FF5F8A;
+  color: #FF8FAB;
   font-size: 22px;
   cursor: pointer;
   margin-left: 6px;
   transition: color 0.17s;
 }
-.eventtasks-modal-close:hover { color: #d61a51; }
+.eventtasks-modal-close:hover { color: #ff7a9a; }
 .eventtasks-modal-fields {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 16px;
 }
 .eventtasks-modal-fields label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #232336;
   font-size: 14px;
-  color: #888;
-  margin-top: 3px;
 }
 .eventtasks-modal-fields input,
+.eventtasks-modal-fields textarea,
 .eventtasks-modal-fields select {
-  padding: 10px 10px;
+  width: 100%;
+  padding: 10px;
   border: 1.5px solid #eee;
   border-radius: 8px;
   font-size: 15px;
-  margin-bottom: 5px;
+  transition: border-color 0.2s;
+}
+.eventtasks-modal-fields input:focus,
+.eventtasks-modal-fields textarea:focus,
+.eventtasks-modal-fields select:focus {
+  outline: none;
+  border-color: #FF8FAB;
 }
 .eventtasks-modal-fields textarea {
-  width: 100%;
-  min-height: 80px;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+  min-height: 100px;
   resize: vertical;
 }
-.eventtasks-modal-fields input[type="date"] {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
 .eventtasks-modal-actions {
-  display: flex; gap: 14px; margin-top: 12px; justify-content: flex-end;
+  display: flex;
+  gap: 14px;
+  margin-top: 16px;
+  justify-content: flex-end;
 }
 .eventtasks-modal-btn {
-  background: #f2f2f7;
-  color: #111827;
-  border: none;
-  font-weight: 700;
+  padding: 12px 24px;
   border-radius: 8px;
   font-size: 15px;
-  padding: 9px 18px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.17s;
+  transition: background 0.2s;
+  border: none;
 }
 .eventtasks-modal-btn.pink {
-  background: #FF5F8A;
-  color: #fff;
+  background: #FF8FAB;
+  color: white;
 }
 .eventtasks-modal-btn.pink:hover {
-  background: #e94a73;
+  background: #ff7a9a;
 }
 .eventtasks-modal-btn:hover {
-  background: #e9e9ee;
+  background: #f2f2f7;
 }
 
 /* Responsive */
 @media (max-width: 900px) {
   .eventtasks-header-card, .eventtasks-progress-card, .eventtasks-tasksection-card {
-    padding: 16px 8px;
+    padding: 20px;
   }
   .eventtasks-page { margin-left: 80px; padding: 12px; }
   .eventtasks-tasks-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 16px;
   }
 }

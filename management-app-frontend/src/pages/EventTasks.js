@@ -393,6 +393,7 @@ export default function EventTasks() {
     const token = localStorage.getItem('token');
     try {
       const taskData = {
+        id: task.id,
         title: task.title,
         priority: task.priority,
         completed: true,
@@ -400,7 +401,8 @@ export default function EventTasks() {
         dueDate: task.dueDate ? formatDateForAPI(task.dueDate) : new Date().toISOString(),
         eventId: parseInt(eventId),
         assignedToEmail: task.assignedTo,
-        budget: task.budget
+        budget: task.budget,
+        archived: task.archived || false
       };
 
       await axios.put(
@@ -410,7 +412,7 @@ export default function EventTasks() {
           headers: { 
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
-            'Accept': '*/*'
+            'Accept': 'application/json'
           }
         }
       );

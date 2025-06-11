@@ -130,7 +130,7 @@ export default function Tasks() {
                 className="progress-bar-fill"
                 style={{ 
                   width: `${progressPercentage}%`,
-                  backgroundColor: progressPercentage === 100 ? '#34C759' : progressPercentage > 50 ? '#FFCC00' : '#FF3B30'
+                  backgroundColor: progressPercentage === 100 ? '#FF8FAB' : progressPercentage > 50 ? '#FF8FAB' : '#FF8FAB'
                 }}
               />
             </div>
@@ -148,16 +148,28 @@ export default function Tasks() {
               inProgressTasks.map(task => (
                 <div key={task.id} className="task-card">
                   <div className="task-header">
-                    <h3>{task.title}</h3>
+                    <h3 className="task-name">{task.title}</h3>
                     <span className={`priority-badge ${task.priority.toLowerCase()}`}>
                       {task.priority}
                     </span>
                   </div>
-                  <p className="task-description">{task.description}</p>
+                  <hr className="inner-divider" />
+                  
+                  <p className="task-desc">
+                    Description: <strong>{task.description}</strong>
+                  </p>
+                  <hr className="inner-divider" />
+                  
                   <div className="task-meta">
-                    <span>Budget: {task.budget}</span>
-                    <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span>
-                    <span>Assigned to: {task.assignedTo}</span>
+                    <p>
+                      Assigned To: <strong>{task.assignedTo}</strong>
+                    </p>
+                    <p>
+                      Due Date: <strong>{new Date(task.dueDate).toLocaleDateString()}</strong>
+                    </p>
+                    <p>
+                      Budget: <strong>{task.budget}</strong>
+                    </p>
                   </div>
                 </div>
               ))
@@ -175,16 +187,28 @@ export default function Tasks() {
               completedTasks.map(task => (
                 <div key={task.id} className="task-card completed">
                   <div className="task-header">
-                    <h3>{task.title}</h3>
+                    <h3 className="task-name">{task.title}</h3>
                     <span className={`priority-badge ${task.priority.toLowerCase()}`}>
                       {task.priority}
                     </span>
                   </div>
-                  <p className="task-description">{task.description}</p>
+                  <hr className="inner-divider" />
+                  
+                  <p className="task-desc">
+                    Description: <strong>{task.description}</strong>
+                  </p>
+                  <hr className="inner-divider" />
+                  
                   <div className="task-meta">
-                    <span>Budget: {task.budget}</span>
-                    <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span>
-                    <span>Assigned to: {task.assignedTo}</span>
+                    <p>
+                      Assigned To: <strong>{task.assignedTo}</strong>
+                    </p>
+                    <p>
+                      Due Date: <strong>{new Date(task.dueDate).toLocaleDateString()}</strong>
+                    </p>
+                    <p>
+                      Budget: <strong>{task.budget}</strong>
+                    </p>
                   </div>
                 </div>
               ))
