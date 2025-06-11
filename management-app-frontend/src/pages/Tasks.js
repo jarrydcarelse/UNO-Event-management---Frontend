@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
+import LoadingSpinner from '../components/LoadingSpinner';
 import axios from 'axios';
 import '../tasks/Tasks.css';
 
@@ -73,12 +74,7 @@ export default function Tasks() {
       <div className="tasks-layout">
         <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
         <div className={`tasks-page${sidebarOpen ? '' : ' collapsed'}`}>
-          <div className="tasks-header">
-            <h1>Tasks Overview</h1>
-          </div>
-          <div className="tasks-section">
-            <p>Loading tasks...</p>
-          </div>
+          <LoadingSpinner />
         </div>
       </div>
     );

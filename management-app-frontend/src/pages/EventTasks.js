@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { FiPlus, FiEdit, FiCheck, FiTrash2, FiX } from 'react-icons/fi';
 import '../eventtasks/EventTasks.css';
 
@@ -573,7 +574,17 @@ export default function EventTasks() {
     fetchTasks();
   }, [eventId]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="eventtasks-layout">
+        <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+        <div className={`eventtasks-page${sidebarOpen ? '' : ' collapsed'}`}>
+          <LoadingSpinner />
+        </div>
+      </div>
+    );
+  }
+
   if (error) return <div>Error: {error}</div>;
   if (!eventDetails) return <div>Event not found</div>;
 

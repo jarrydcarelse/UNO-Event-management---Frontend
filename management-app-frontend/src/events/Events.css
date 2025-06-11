@@ -392,3 +392,54 @@ html {
     gap: 12px;
   }
 }
+
+.success-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.success-modal .events-modal-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.success-modal .events-modal-header h3 {
+  color: #FF5F8B;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.success-modal .events-modal-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.success-modal .events-modal-content p {
+  color: #333;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.success-modal .events-modal-actions {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
