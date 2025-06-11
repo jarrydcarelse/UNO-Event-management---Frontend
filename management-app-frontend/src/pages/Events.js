@@ -295,7 +295,7 @@ export default function Events() {
               <div className="events-overview-main">
                 <span className="events-overview-name">{e.name}</span>
                 <div className="events-overview-details">
-                  <span><b>Client:</b> {e.client}</span>
+                  <span><b>Description:</b> {e.client}</span>
                   <span><b>Date:</b> {e.date}</span>
                 </div>
               </div>
