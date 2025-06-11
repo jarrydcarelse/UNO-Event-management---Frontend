@@ -109,4 +109,7 @@ This project was developed for academic purposes as part of a final software dev
 ## 📣 Final Words
 Eventify demonstrates the strength of teamwork, modern software tools, and iterative design. This application is the result of dedicated effort from all four developers, with shared responsibilities across the frontend and seamless integration of powerful technologies.
 
+
+https://youtu.be/XKqQxPNQnso
+
 We are proud to present a solution that not only meets our client’s expectations but also showcases our skills in building full-scale applications.
