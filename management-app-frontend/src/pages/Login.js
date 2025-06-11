@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { setUserData } from '../utils/localStorage';
+import LoadingSpinner from '../components/LoadingSpinner';
 import '../login/Login.css';
 import logo from '../assets/logo.png';
 import pattern from '../assets/pink-pattern.png';
@@ -16,6 +17,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   // PIN (OTP) Modal state
@@ -40,6 +42,7 @@ export default function Login() {
   const handleLogin = async e => {
     e.preventDefault();
     setLoginError('');
+    setIsLoading(true);
     try {
       const res = await axios.post(
         `${API_BASE}/api/users/login`,
@@ -54,6 +57,8 @@ export default function Login() {
         err.response?.data?.message ||
         'Login failed. Please check your credentials.'
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -160,9 +165,14 @@ export default function Login() {
       <div className="login-right">
         <form className="login-form" onSubmit={handleLogin}>
           <h2>Sign In</h2>
+          
           <hr className="login-divider" />
           {loginError && <div className="form-error">{loginError}</div>}
-
+{isLoading && (
+            <div className="login-loading">
+              <LoadingSpinner />
+            </div>
+          )}
           <label htmlFor="email">Email</label>
           <input
             id="email"
@@ -170,6 +180,7 @@ export default function Login() {
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
+            disabled={isLoading}
           />
 
           <label htmlFor="password">Password</label>
@@ -179,11 +190,16 @@ export default function Login() {
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
+            disabled={isLoading}
           />
 
           <hr className="login-divider" />
           <div className="login-buttons">
-            <button type="submit" className="btn-signin">
+            <button 
+              type="submit" 
+              className="btn-signin"
+              disabled={isLoading}
+            >
               Sign In
             </button>
             <button
@@ -194,6 +210,7 @@ export default function Login() {
                 setPin(Array(6).fill(''));
                 setPinError('');
               }}
+              disabled={isLoading}
             >
               Sign Up
             </button>

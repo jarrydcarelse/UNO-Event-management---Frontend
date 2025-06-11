@@ -83,7 +83,7 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
       {/* Profile Section */}
       <div className="profile">
         <div className="avatar">
-          <FiUser size={18} />
+          <FiUser size={24} />
         </div>
         {isOpen && (
           <div className="user-info">
@@ -117,7 +117,7 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
             navigate("/login");
           }}
         >
-          <FiLogOut size={18} />
+          <FiLogOut size={22} />
           {isOpen && <span>Logout</span>}
         </button>
       </div>

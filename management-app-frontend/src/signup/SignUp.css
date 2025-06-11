@@ -132,3 +132,61 @@ html {
     background-color: #FF8FAB;
     color: #fff;
 }
+
+/* Request Event Modal Styles */
+.modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 25%;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  color: #FF5F8B;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.modal-form {
+  padding: 20px;
+}
+
+.modal-form input,
+.modal-form textarea {
+  width: 90%;
+  margin: 0 auto 20px;
+  display: block;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.modal-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.modal-form label {
+  display: block;
+  margin: 0 auto 8px;
+  width: 90%;
+  color: #333;
+  font-size: 14px;
+}
+
+.modal-actions {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}

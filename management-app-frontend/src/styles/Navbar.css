@@ -70,8 +70,8 @@
   background-color: #FF8FAB;
   color: white;
   border-radius: 50%;
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -79,8 +79,8 @@
 }
 
 .sidebar.collapsed .avatar {
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
 }
 
 .user-info {
@@ -177,26 +177,28 @@
   border: none;
   color: #FF5F8A;
   cursor: pointer;
-  padding: 12px 14px;
+  padding: 14px 16px;
   border-radius: 8px;
   width: 100%;
   display: flex;
   align-items: center;
   transition: all 0.2s ease;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .sidebar.collapsed .logout button {
-  padding: 12px;
+  padding: 14px;
   justify-content: center;
 }
 
 .logout button span {
-  margin-left: 12px;
+  margin-left: 14px;
 }
 
 .logout button:hover {
   background-color: #FFE4EC;
+  transform: scale(1.02);
 }
 
 .logout button:hover svg {
