@@ -143,7 +143,7 @@ export default function Dashboard() {
 
               {/* Task Management */}
               <div className="card tasks-card">
-                <h2>My Tasks</h2>
+                <h2>Recent Tasks</h2>
                 <div className="scroll-container">
                   {error && <p className="error-text">{error}</p>}
                   {!error && tasks.length === 0 && <p>No tasks found.</p>}
