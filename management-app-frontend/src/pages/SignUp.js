@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import LoadingSpinner from '../components/LoadingSpinner';
 import '../signup/SignUp.css';
 import logo from '../assets/logo.png';
 import pattern from '../assets/pink-pattern.png';
@@ -15,6 +16,7 @@ export default function SignUp() {
   const [repeatPassword, setRepeatPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   // ─── REQUEST-EVENT MODAL STATE ─────────────────────
@@ -34,9 +36,11 @@ export default function SignUp() {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setIsLoading(true);
 
     if (password !== repeatPassword) {
       setError("Passwords do not match.");
+      setIsLoading(false);
       return;
     }
 
@@ -58,6 +62,8 @@ export default function SignUp() {
         err.response?.data?.title ||
         "Registration failed. Please try again.";
       setError(msg);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -147,6 +153,11 @@ export default function SignUp() {
 
           {error && <div className="form-error">{error}</div>}
           {success && <div className="form-success">{success}</div>}
+          {isLoading && (
+            <div className="login-loading">
+              <LoadingSpinner />
+            </div>
+          )}
 
           <label htmlFor="email">Email</label>
           <input
@@ -155,6 +166,7 @@ export default function SignUp() {
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
+            disabled={isLoading}
           />
 
           <label htmlFor="password">Password</label>
@@ -164,6 +176,7 @@ export default function SignUp() {
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
+            disabled={isLoading}
           />
 
           <label htmlFor="repeat-password">Repeat Password</label>
@@ -173,18 +186,24 @@ export default function SignUp() {
             value={repeatPassword}
             onChange={e => setRepeatPassword(e.target.value)}
             required
+            disabled={isLoading}
           />
 
           <hr className="signup-divider" />
 
           <div className="signup-buttons">
-            <button type="submit" className="btn-signup">
+            <button 
+              type="submit" 
+              className="btn-signup"
+              disabled={isLoading}
+            >
               Sign Up
             </button>
             <button
               type="button"
               className="btn-signin"
               onClick={() => navigate('/login')}
+              disabled={isLoading}
             >
               Sign In
             </button>

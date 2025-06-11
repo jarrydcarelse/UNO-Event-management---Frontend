@@ -12,12 +12,14 @@ body {
 
 .tasks-page {
   flex: 1;
-  padding: 32px;
+  padding: 16px 32px;
   margin-left: 250px;
   box-sizing: border-box;
   transition: margin-left 0.3s ease;
   width: 100%;
   background: #f2f2f7;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .tasks-page.collapsed {
@@ -28,7 +30,7 @@ body {
   background: #fff;
   border-radius: 16px;
   padding: 26px 32px 18px 32px;
-  margin-bottom: 18px;
+  margin-bottom: 24px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   display: flex;
   align-items: center;
@@ -36,21 +38,22 @@ body {
 }
 
 .tasks-header h1 {
-  font-size: 22px;
-  font-weight: 700;
-  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
   color: #232336;
+  margin: 0;
+  letter-spacing: -1px;
 }
 
 .add-task-btn {
-  background: #FF5F8A;
+  background: #FF8FAB;
   color: #fff;
   font-weight: 700;
   border: none;
-  border-radius: 999px;
-  font-size: 16px;
-  padding: 10px 22px;
-  box-shadow: 0 2px 8px rgba(255,95,138,0.15);
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 12px 24px;
+  box-shadow: 0 2px 8px rgba(255,143,171,0.15);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -59,7 +62,7 @@ body {
 }
 
 .add-task-btn:hover {
-  background: #e94a73;
+  background: #ff7a9a;
 }
 
 .tasks-section {
@@ -67,37 +70,40 @@ body {
   border-radius: 16px;
   padding: 28px 32px 32px 32px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .tasks-section h2 {
-  font-size: 17px;
+  color: #FF8FAB;
+  font-size: 20px;
   font-weight: 700;
-  color: #232336;
   margin: 0 0 18px 0;
+  padding: 0 0 8px;
+  border-bottom: 2px solid #FF8FAB;
 }
 
 .tasks-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  align-items: start;
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
   justify-content: left;
 }
 
 .task-card {
   background: #f2f2f7;
   border-radius: 12px;
-  padding: 22px 18px 18px 18px;
-  min-width: 220px;
-  max-width: 360px;
-  box-shadow: none;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
-  gap: 13px;
-  position: relative;
-  border: 2px solid transparent;
-  transition: border 0.2s;
+  gap: 16px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .task-card.completed {
@@ -109,16 +115,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-weight: 600;
-  font-size: 16px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .task-header h3 {
   margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #232336;
+  font-size: 1.2rem;
+  color: #111827;
 }
 
 .priority-badge {
@@ -129,46 +132,49 @@ body {
 }
 
 .priority-badge.low {
-  background: #E3F2FD;
-  color: #1976D2;
+  background: rgba(255, 235, 59, 0.2);
+  color: #000000;
 }
 
 .priority-badge.medium {
-  background: #FFF3E0;
-  color: #F57C00;
+  background: rgba(255, 152, 0, 0.2);
+  color: #000000;
 }
 
 .priority-badge.high {
-  background: #FFEBEE;
-  color: #D32F2F;
+  background: rgba(244, 67, 54, 0.2);
+  color: #000000;
 }
 
 .task-description {
-  margin: 8px 0;
-  font-size: 14px;
-  color: #666;
-  line-height: 1.4;
+  margin: 0;
+  font-size: 0.95rem;
+  color: #374151;
+  line-height: 1.5;
 }
 
 .task-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 13px;
-  color: #666;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
 }
 
-.task-meta span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+.task-meta p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.task-meta p strong {
+  font-weight: 700;
+  color: #111827;
 }
 
 .task-actions {
   display: flex;
-  gap: 13px;
-  margin-top: auto;
-  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
 }
 
 .task-actions button {
@@ -176,155 +182,22 @@ body {
   align-items: center;
   gap: 5px;
   border: none;
-  background: none;
-  color: #FF5F8A;
+  background: #f2f2f7;
+  color: #FF8FAB;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  padding: 0;
-  border-radius: 7px;
-  transition: background 0.2s;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background 0.16s;
 }
 
 .task-actions button:hover {
-  background: #fce6ef;
+  background: #fde2ed;
 }
 
 .task-actions button svg {
   font-size: 16px;
-}
-
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  z-index: 9999;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(34, 34, 54, 0.24);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.18s;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.modal {
-  background: #fff;
-  border-radius: 20px;
-  padding: 34px 32px;
-  min-width: 320px;
-  max-width: 95vw;
-  animation: popIn 0.2s;
-}
-
-@keyframes popIn {
-  from { transform: scale(0.93); opacity: 0.6; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-  color: #232336;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  padding: 8px;
-  transition: color 0.2s;
-}
-
-.close-btn:hover {
-  color: #d61a51;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #232336;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.2s;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #FF5F8A;
-}
-
-.form-group textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 24px;
-}
-
-.save-btn {
-  background: #FF5F8A;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.save-btn:hover {
-  background: #e94a73;
-}
-
-@media (max-width: 900px) {
-  .tasks-header,
-  .tasks-section {
-    padding: 20px;
-  }
-  
-  .tasks-page {
-    margin-left: 80px;
-    padding: 12px;
-  }
-  
-  .tasks-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Progress Bar Section */
@@ -333,7 +206,7 @@ body {
   border-radius: 16px;
   padding: 24px 32px;
   margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 .progress-stats {
@@ -371,7 +244,7 @@ body {
 
 .progress-bar-bg {
   flex: 1;
-  height: 10px;
+  height: 8px;
   background: #e5e7eb;
   border-radius: 9999px;
   overflow: hidden;
@@ -381,8 +254,9 @@ body {
 
 .progress-bar-fill {
   height: 100%;
+  background: #FF8FAB;
   border-radius: 9999px;
-  transition: width 0.3s ease, background-color 0.3s ease;
+  transition: width 0.3s ease;
 }
 
 .progress-percentage {
@@ -392,10 +266,146 @@ body {
   min-width: 48px;
 }
 
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(34, 34, 54, 0.24);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.18s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 34px 32px;
+  min-width: 320px;
+  max-width: 95vw;
+  box-shadow: 0 4px 40px rgba(34,34,54,0.13), 0 0 2px rgba(255,95,138,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: popIn 0.19s;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.93); opacity: 0.6; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #232336;
+  font-weight: 800;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #FF8FAB;
+  font-size: 22px;
+  cursor: pointer;
+  margin-left: 6px;
+  transition: color 0.17s;
+}
+
+.close-btn:hover {
+  color: #ff7a9a;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #232336;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1.5px solid #eee;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #FF8FAB;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+.save-btn {
+  background: #FF8FAB;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-btn:hover {
+  background: #ff7a9a;
+}
+
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
+  .tasks-page {
+    margin-left: 80px;
+    padding: 12px;
+  }
+  
+  .tasks-header,
+  .tasks-section,
   .tasks-progress-section {
     padding: 20px;
+  }
+  
+  .tasks-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
   
   .progress-stats {

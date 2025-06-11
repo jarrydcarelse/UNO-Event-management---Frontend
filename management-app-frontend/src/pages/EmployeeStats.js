@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import { FaUser, FaTasks, FaCheckCircle, FaClock, FaTimes } from 'react-icons/fa';
 import { FiChevronDown, FiX } from 'react-icons/fi';
 import axios from 'axios';
+import LoadingSpinner from '../components/LoadingSpinner';
 import '../employees/Employees.css';
 
 // Update API_BASE to use the deployed backend URL
@@ -136,8 +137,13 @@ export default function EmployeeStats() {
           <div className="employees-header-row">
             <h2 className="employees-title">Employee Statistics</h2>
           </div>
-          <div className="employees-cards-grid">
-            <p>Loading employee statistics...</p>
+          <div className="employees-cards-grid" style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            minHeight: 'calc(100vh - 200px)'
+          }}>
+            <LoadingSpinner />
           </div>
         </div>
       </div>

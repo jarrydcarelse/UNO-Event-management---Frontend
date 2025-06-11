@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { FiPlus, FiEdit, FiTrash2 } from 'react-icons/fi';
 import '../events/Events.css';
 
 const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
@@ -53,6 +55,10 @@ export default function Events() {
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [usersError, setUsersError] = useState('');
+
+  // Success modal state
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Fetch events & users when filter changes
   useEffect(() => {
@@ -158,6 +164,26 @@ export default function Events() {
       );
       setShowAddModal(false);
       setNewEvent({ title: '', description: '', date: '', priority: 'Low', assignedToEmail: '', budget: '' });
+      
+      // Show success message
+      setSuccessMessage('Event added successfully!');
+      setShowSuccessModal(true);
+      
+      // Refresh events list
+      const res = await axios.get(API_BASE + '/api/events', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setEvents(res.data.map(e => ({
+        id: e.id,
+        name: e.title,
+        client: e.description,
+        date: new Date(e.date).toLocaleDateString(),
+        status: 'In Progress',
+        progress: 0,
+        completed: 0,
+        total: 0,
+        colorClass: 'yellow'
+      })));
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to add');
     }
@@ -191,6 +217,17 @@ export default function Events() {
       || e.client.toLowerCase().includes(q)
       || e.date.toLowerCase().includes(q);
   });
+
+  if (loadingEvents || loadingReq || loadingUsers) {
+    return (
+      <div className="events-layout">
+        <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+        <div className={`events-page${sidebarOpen ? '' : ' collapsed'}`}>
+          <LoadingSpinner />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="events-layout">
@@ -349,6 +386,31 @@ export default function Events() {
             <div className="events-modal-actions">
               <button className="btn-signup" onClick={addEvent}>Save</button>
               <button className="btn-signin" onClick={() => setShowAddModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="events-modal-overlay">
+          <div className="events-modal success-modal">
+            <div className="events-modal-header">
+              <h3>Success!</h3>
+              <button 
+                className="events-modal-close" 
+                onClick={() => setShowSuccessModal(false)}
+              >×</button>
+            </div>
+            <hr className="pink-divider" />
+            <div className="events-modal-content">
+              <p>{successMessage}</p>
+            </div>
+            <div className="events-modal-actions">
+              <button 
+                className="btn-signup" 
+                onClick={() => setShowSuccessModal(false)}
+              >Close</button>
             </div>
           </div>
         </div>
