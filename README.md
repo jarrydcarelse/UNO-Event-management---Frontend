@@ -63,6 +63,7 @@ Key goals included:
 ## 📦 Final Integration
 
 This version of **Eventify** represents the **final integration** of all major components:
+
 ✅ Frontend: Built with React, the UI is fully polished and responsive, styled using custom CSS alongside the Avien design system for a modern and consistent user experience.
 
 🖥️ Electron Integration: Enables native desktop application functionality, allowing Eventify to run cross-platform with full access to system resources, offering users a seamless desktop experience.
