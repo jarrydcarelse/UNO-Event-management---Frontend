@@ -1,5 +1,3 @@
-// __tests__/SignUp.test.js
-
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SignUp from '../signup/SignUp';

@@ -1,15 +1,14 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import Login from '../pages/Loginogin'; // Update path based on your structure
+import Login from '../pages/Login'; 
 import axios from 'axios';
 
-// Mock useRouter from next/router
+
 jest.mock('next/router', () => ({
   useRouter: () => ({
     push: jest.fn(),
   }),
 }));
 
-// Mock axios
 jest.mock('axios');
 
 describe('Login Page', () => {

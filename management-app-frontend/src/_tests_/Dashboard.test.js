@@ -1,17 +1,12 @@
-// src/_tests_/Dashboard.test.js
-
-// Mock react-router-dom BEFORE importing Dashboard
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
 
-// Mock child components as simple strings to avoid React scope errors
 jest.mock('../components/Navbar', () => () => 'MockNavbar');
 jest.mock('../components/LoadingSpinner', () => () => 'Loading...');
 
-// Mock axios
 jest.mock('axios');
 
 import React from 'react';
@@ -32,10 +27,6 @@ describe('Dashboard', () => {
   test('redirects to login if token is missing', () => {
     localStorage.removeItem('token');
     render(<Dashboard />);
-    // You will need to check if your mockNavigate is called, but
-    // since useNavigate returns jest.fn(), you'll want to 
-    // store that in a variable and check calls, or alternatively 
-    // check some UI change or console output depending on your code.
   });
 
   test('displays loading spinner initially', () => {

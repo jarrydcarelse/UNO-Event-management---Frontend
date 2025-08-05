@@ -1,18 +1,15 @@
-// __tests__/Employees.test.js
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import Employees from '../pages/Employees';
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 
-// Mock child components
+
 jest.mock('../components/Navbar', () => () => <div>MockNavbar</div>);
 jest.mock('../components/LoadingSpinner', () => () => <div>Loading...</div>);
 
-// Mock axios
 jest.mock('axios');
 
-// Mock useNavigate
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -25,7 +22,6 @@ describe('Employees', () => {
   });
 
   test('displays loading spinner initially', () => {
-    // axios.get won't resolve immediately, so loading stays true
     axios.get.mockReturnValue(new Promise(() => {}));
 
     render(
@@ -52,7 +48,6 @@ describe('Employees', () => {
       </BrowserRouter>
     );
 
-    // Wait for loading to finish and employees to be rendered
     await waitFor(() => {
       mockEmployees.forEach(emp => {
         expect(screen.getByText(emp.name)).toBeInTheDocument();
@@ -62,7 +57,6 @@ describe('Employees', () => {
   });
 
   test('handles fetch error gracefully', async () => {
-    // Optionally test error case if you implement error UI/logging
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     axios.get.mockRejectedValue(new Error('Network Error'));
@@ -78,7 +72,6 @@ describe('Employees', () => {
         'Error fetching employees:',
         expect.any(Error)
       );
-      // Could test for fallback UI if you add any
     });
 
     consoleSpy.mockRestore();

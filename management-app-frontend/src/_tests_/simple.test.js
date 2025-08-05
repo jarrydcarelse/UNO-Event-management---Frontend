@@ -1,4 +1,3 @@
-// simple.test.js
 import { useNavigate } from 'react-router-dom';
 
 test('useNavigate is a function', () => {

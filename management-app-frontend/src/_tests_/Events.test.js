@@ -4,18 +4,16 @@ import Events from '../pages/Events';
 import axios from 'axios';
 import { BrowserRouter } from 'react-router-dom';
 
-// Mock axios
+
 jest.mock('axios');
 
-// Helper to wrap components with Router
+
 const renderWithRouter = (ui) => render(<BrowserRouter>{ui}</BrowserRouter>);
 
 describe('Events Page', () => {
   beforeEach(() => {
-    // Mock localStorage
     Storage.prototype.getItem = jest.fn(() => 'mock-token');
 
-    // Reset mocks before each test
     jest.clearAllMocks();
   });
 
@@ -25,7 +23,7 @@ describe('Events Page', () => {
   });
 
   test('renders events and requests after loading', async () => {
-    // Mock responses
+
     axios.get.mockImplementation((url) => {
       if (url.includes('/api/events')) {
         return Promise.resolve({
@@ -55,7 +53,6 @@ describe('Events Page', () => {
 
     renderWithRouter(<Events />);
 
-    // Wait for "Event 1" and "Request 1" to appear
     expect(await screen.findByText('Event 1')).toBeInTheDocument();
     expect(await screen.findByText('Request 1')).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: /events/i })).toBeInTheDocument();
