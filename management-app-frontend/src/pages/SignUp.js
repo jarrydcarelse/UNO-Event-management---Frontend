@@ -1,302 +1,58 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import SignUp from '../pages/SignUp';
 import axios from 'axios';
-import LoadingSpinner from '../components/LoadingSpinner';
-import '../signup/SignUp.css';
-import logo from '../assets/logo.png';
-import pattern from '../assets/pink-pattern.png';
+import { BrowserRouter } from 'react-router-dom';
 
-const API_BASE =
-  process.env.REACT_APP_API_URL ||
-  'https://eventify-backend-kgtm.onrender.com';
+jest.mock('axios');
 
-export default function SignUp() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [repeatPassword, setRepeatPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+const renderWithRouter = (ui) => render(<BrowserRouter>{ui}</BrowserRouter>);
 
-  // ─── REQUEST-EVENT MODAL STATE ─────────────────────
-  const [showRequestModal, setShowRequestModal] = useState(false);
-  const [requestData, setRequestData] = useState({
-    title: '',
-    description: '',
-    date: '',
-    requesterName: '',
-    requesterEmail: '',
+beforeEach(() => {
+  axios.post.mockReset();
+});
+
+test('renders signup form elements', () => {
+  renderWithRouter(<SignUp />);
+  expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/repeat password/i)).toBeInTheDocument();
+  expect(screen.getByText(/sign up/i)).toBeInTheDocument();
+});
+
+test('shows error if passwords do not match', async () => {
+  renderWithRouter(<SignUp />);
+  fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } });
+  fireEvent.change(screen.getByLabelText(/^password$/i), { target: { value: '123456' } });
+  fireEvent.change(screen.getByLabelText(/repeat password/i), { target: { value: 'abcdef' } });
+
+  fireEvent.click(screen.getByText(/^sign up$/i));
+  expect(await screen.findByText(/passwords do not match/i)).toBeInTheDocument();
+});
+
+test('submits signup form and redirects on success', async () => {
+  axios.post.mockResolvedValueOnce({ data: { message: 'Registration successful!' } });
+
+  renderWithRouter(<SignUp />);
+  fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'user@example.com' } });
+  fireEvent.change(screen.getByLabelText(/^password$/i), { target: { value: 'password123' } });
+  fireEvent.change(screen.getByLabelText(/repeat password/i), { target: { value: 'password123' } });
+
+  fireEvent.click(screen.getByText(/^sign up$/i));
+
+  expect(await screen.findByText(/registration successful/i)).toBeInTheDocument();
+});
+
+test('shows error on failed signup', async () => {
+  axios.post.mockRejectedValueOnce({
+    response: { data: { message: 'User already exists' } },
   });
-  const [requestError, setRequestError] = useState('');
-  const [requestSuccess, setRequestSuccess] = useState(false);
 
-  // ─── SIGN-UP FORM SUBMIT ────────────────────────────
-  const handleSubmit = async e => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    setIsLoading(true);
+  renderWithRouter(<SignUp />);
+  fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'duplicate@example.com' } });
+  fireEvent.change(screen.getByLabelText(/^password$/i), { target: { value: 'pass' } });
+  fireEvent.change(screen.getByLabelText(/repeat password/i), { target: { value: 'pass' } });
 
-    if (password !== repeatPassword) {
-      setError("Passwords do not match.");
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const res = await axios.post(
-        `${API_BASE}/api/users/signup`,
-        { email, password },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-      const msg =
-        res.data?.message ||
-        "Registration successful! Redirecting to login...";
-      setSuccess(msg);
-      setTimeout(() => navigate('/login'), 1500);
-    } catch (err) {
-      console.error('Registration error:', err);
-      const msg =
-        err.response?.data?.message ||
-        err.response?.data?.title ||
-        "Registration failed. Please try again.";
-      setError(msg);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // ─── REQUEST-EVENT HANDLERS ────────────────────────
-  const handleRequestChange = e => {
-    const { name, value } = e.target;
-    setRequestData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmitRequest = async e => {
-    e.preventDefault();
-    setRequestError('');
-    setRequestSuccess(false);
-
-    const { title, description, date, requesterName, requesterEmail } =
-      requestData;
-    if (
-      !title ||
-      !description ||
-      !date ||
-      !requesterName ||
-      !requesterEmail
-    ) {
-      setRequestError('All fields are required.');
-      return;
-    }
-
-    try {
-      await axios.post(
-        `${API_BASE}/api/EventRequests`,
-        {
-          title,
-          description,
-          date: new Date(date).toISOString(),
-          requesterName,
-          requesterEmail,
-          status: 'Pending',
-        },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-      setRequestSuccess(true);
-      setRequestData({
-        title: '',
-        description: '',
-        date: '',
-        requesterName: '',
-        requesterEmail: '',
-      });
-    } catch (err) {
-      console.error('Request submission error:', err);
-      setRequestError(
-        err.response?.data?.message ||
-          'Failed to submit request. Try again later.'
-      );
-    }
-  };
-
-  return (
-    <div className="signup-page">
-      <div
-        className="signup-left"
-        style={{ backgroundImage: `url(${pattern})` }}
-      >
-        <div className="branding">
-          <img src={logo} alt="Eventify Logo" className="logo-img" />
-          <p className="welcome-text">
-            Welcome to Eventify Events Management System. <br/>
-            Sign up to manage your events, track tasks, and stay connected.
-          </p>
-          <button
-            className="link-btn"
-            onClick={() => {
-              setShowRequestModal(true);
-              setRequestError('');
-              setRequestSuccess(false);
-            }}
-          >
-            Request a New Event
-          </button>
-        </div>
-      </div>
-
-      <div className="signup-right">
-        <form className="signup-form" onSubmit={handleSubmit}>
-          <h2>Sign Up</h2>
-          <hr className="signup-divider" />
-
-          {error && <div className="form-error">{error}</div>}
-          {success && <div className="form-success">{success}</div>}
-          {isLoading && (
-            <div className="login-loading">
-              <LoadingSpinner />
-            </div>
-          )}
-
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-
-          <label htmlFor="repeat-password">Repeat Password</label>
-          <input
-            id="repeat-password"
-            type="password"
-            value={repeatPassword}
-            onChange={e => setRepeatPassword(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-
-          <hr className="signup-divider" />
-
-          <div className="signup-buttons">
-            <button 
-              type="submit" 
-              className="btn-signup"
-              disabled={isLoading}
-            >
-              Sign Up
-            </button>
-            <button
-              type="button"
-              className="btn-signin"
-              onClick={() => navigate('/login')}
-              disabled={isLoading}
-            >
-              Sign In
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {showRequestModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h3>Request New Event</h3>
-              <button
-                className="modal-close"
-                onClick={() => setShowRequestModal(false)}
-              >
-                ×
-              </button>
-            </div>
-
-            <form
-              className="modal-form"
-              onSubmit={handleSubmitRequest}
-            >
-              {requestError && (
-                <div className="form-error">{requestError}</div>
-              )}
-              {requestSuccess && (
-                <div className="form-success">
-                  Thanks! Your request has been submitted.
-                </div>
-              )}
-
-              <label>Title</label>
-              <input
-                name="title"
-                type="text"
-                value={requestData.title}
-                onChange={handleRequestChange}
-                required
-              />
-
-              <label>Description</label>
-              <textarea
-                name="description"
-                value={requestData.description}
-                onChange={handleRequestChange}
-                required
-              />
-
-              <label>Date</label>
-              <input
-                name="date"
-                type="date"
-                value={requestData.date}
-                onChange={handleRequestChange}
-                required
-              />
-
-              <label>Your Name</label>
-              <input
-                name="requesterName"
-                type="text"
-                value={requestData.requesterName}
-                onChange={handleRequestChange}
-                required
-              />
-
-              <label>Your Email</label>
-              <input
-                name="requesterEmail"
-                type="email"
-                value={requestData.requesterEmail}
-                onChange={handleRequestChange}
-                required
-              />
-
-              <div className="modal-actions">
-                <button type="submit" className="btn-signin">
-                  Submit Request
-                </button>
-                <button
-                  type="button"
-                  className="btn-signup"
-                  onClick={() => setShowRequestModal(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+  fireEvent.click(screen.getByText(/^sign up$/i));
+  expect(await screen.findByText(/user already exists/i)).toBeInTheDocument();
+});

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import LoadingSpinner from '../components/LoadingSpinner';
 import axios from 'axios';
-import '../tasks/Tasks.css';
+import '../pages/Tasks.css';
 
 // Update API_BASE to use the deployed backend URL
 const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
@@ -25,7 +25,7 @@ export default function Tasks() {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          navigate('/login');
+          navigate('/Login');
           return;
         }
 

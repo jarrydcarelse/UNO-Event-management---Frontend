@@ -1,0 +1,222 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tasks Component renders tasks after fetch 1`] = `
+<div>
+  <div
+    class="tasks-layout"
+  >
+    <div
+      data-testid="navbar"
+    />
+    <div
+      class="tasks-page"
+    >
+      <div
+        class="tasks-header"
+      >
+        <h1>
+          Tasks Overview
+        </h1>
+      </div>
+      <div
+        class="tasks-progress-section"
+      >
+        <div
+          class="progress-stats"
+        >
+          <div
+            class="progress-stat"
+          >
+            <span
+              class="stat-label"
+            >
+              Total Tasks
+            </span>
+            <span
+              class="stat-value"
+            >
+              2
+            </span>
+          </div>
+          <div
+            class="progress-stat"
+          >
+            <span
+              class="stat-label"
+            >
+              Completed
+            </span>
+            <span
+              class="stat-value"
+            >
+              1
+            </span>
+          </div>
+          <div
+            class="progress-stat"
+          >
+            <span
+              class="stat-label"
+            >
+              In Progress
+            </span>
+            <span
+              class="stat-value"
+            >
+              1
+            </span>
+          </div>
+        </div>
+        <div
+          class="progress-bar-container"
+        >
+          <div
+            class="progress-bar-bg"
+          >
+            <div
+              class="progress-bar-fill"
+              style="width: 50%; background-color: rgb(255, 143, 171);"
+            />
+          </div>
+          <span
+            class="progress-percentage"
+          >
+            50
+            %
+          </span>
+        </div>
+      </div>
+      <div
+        class="tasks-section"
+      >
+        <h2>
+          In Progress
+        </h2>
+        <div
+          class="tasks-grid"
+        >
+          <div
+            class="task-card"
+          >
+            <div
+              class="task-header"
+            >
+              <h3
+                class="task-name"
+              >
+                Task 1
+              </h3>
+              <span
+                class="priority-badge high"
+              >
+                High
+              </span>
+            </div>
+            <hr
+              class="inner-divider"
+            />
+            <p
+              class="task-desc"
+            >
+              Description: 
+              <strong>
+                Do something
+              </strong>
+            </p>
+            <hr
+              class="inner-divider"
+            />
+            <div
+              class="task-meta"
+            >
+              <p>
+                Assigned To: 
+                <strong>
+                  user@example.com
+                </strong>
+              </p>
+              <p>
+                Due Date: 
+                <strong>
+                  2025/08/05
+                </strong>
+              </p>
+              <p>
+                Budget: 
+                <strong>
+                  500
+                </strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="tasks-section"
+      >
+        <h2>
+          Completed
+        </h2>
+        <div
+          class="tasks-grid"
+        >
+          <div
+            class="task-card completed"
+          >
+            <div
+              class="task-header"
+            >
+              <h3
+                class="task-name"
+              >
+                Task 2
+              </h3>
+              <span
+                class="priority-badge low"
+              >
+                Low
+              </span>
+            </div>
+            <hr
+              class="inner-divider"
+            />
+            <p
+              class="task-desc"
+            >
+              Description: 
+              <strong>
+                Do another thing
+              </strong>
+            </p>
+            <hr
+              class="inner-divider"
+            />
+            <div
+              class="task-meta"
+            >
+              <p>
+                Assigned To: 
+                <strong>
+                  another@example.com
+                </strong>
+              </p>
+              <p>
+                Due Date: 
+                <strong>
+                  2025/08/05
+                </strong>
+              </p>
+              <p>
+                Budget: 
+                <strong>
+                  1000
+                </strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoadingSpinner Snapshot matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="loading-container"
+  >
+    <div
+      class="loading-spinner"
+    />
+  </div>
+</DocumentFragment>
+`;
