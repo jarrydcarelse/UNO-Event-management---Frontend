@@ -6,7 +6,7 @@ Eventify is a fully integrated desktop application built for streamlined **event
 
 ## 🚀 Project Overview
 
-Eventify is designed to simplify and optimize the management of events — from small gatherings to large-scale conferences. The application provides tools for managing schedules, attendees, and logistics in one cohesive environment. It features a responsive and intuitive interface built using **React** and packaged into a desktop application using **Electron**, with the help of **Avien** for advanced integration and UI functionality.
+Eventify is designed to simplify and optimize the management of events from small gatherings to large-scale conferences. The application provides tools for managing schedules, attendees, and logistics in one cohesive environment. It features a responsive and intuitive interface built using **React** and packaged into a desktop application using **Electron**, with the help of **Avien** for advanced integration and UI functionality.
 
 The development was a collaborative effort among four team members, each contributing to the frontend, integration, and backend logic to ensure a seamless experience.
 
@@ -42,6 +42,8 @@ All four members contributed to the frontend, resulting in a cohesive and consis
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
+![Jest](https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=jest&logoColor=white)
+![Babel](https://img.shields.io/badge/Babel-F9DC3E?style=for-the-badge&logo=babel&logoColor=black)
 
 ---
 
@@ -61,13 +63,29 @@ Key goals included:
 ## 📦 Final Integration
 
 This version of **Eventify** represents the **final integration** of all major components:
-- Frontend fully integrated and polished using React, styled with custom CSS and Avien
-- Electron integration for native desktop capabilities
-- C# backend support for system operations and logic handling
-- All frontend contributions merged and maintained by the full team
+✅ Frontend: Built with React, the UI is fully polished and responsive, styled using custom CSS alongside the Avien design system for a modern and consistent user experience.
+
+🖥️ Electron Integration: Enables native desktop application functionality, allowing Eventify to run cross-platform with full access to system resources, offering users a seamless desktop experience.
+
+🔧 Backend: Developed in C#, the backend handles core system operations, business logic, and database interactions, providing a secure and efficient architecture for managing events and user data.
+
+🤝 Team Collaboration: All frontend contributions including components, features, and bug fixes — were merged and maintained collaboratively by the full development team. Code reviews, feature planning, and issue tracking were handled through GitHub to ensure consistency, quality, and timely delivery.
 
 ---
+## 📁 How to Run Frontend Tests
 
+To run frontend tests for this project, make sure you have all dependencies installed.
+
+### ✅ Prerequisites
+- Node.js and npm installed
+- All project dependencies installed via `npm install` or `yarn install`
+
+### ▶️ Run Tests
+Use the following command to run the tests:
+
+npm test
+
+---
 ## 📁 How to Run
 
 > Ensure you have `Node.js`, `npm`, and `.NET` SDK installed on your machine.
