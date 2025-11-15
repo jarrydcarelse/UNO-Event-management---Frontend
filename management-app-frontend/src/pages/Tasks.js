@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import LoadingSpinner from '../components/LoadingSpinner';
 import axios from 'axios';
-import '../pages/Tasks.css';
+import '../tasks/Tasks.css';
 
 // Update API_BASE to use the deployed backend URL
 const API_BASE = 'https://eventify-backend-kgtm.onrender.com';

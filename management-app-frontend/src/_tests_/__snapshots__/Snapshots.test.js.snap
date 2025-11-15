@@ -1,0 +1,499 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component Snapshots Dashboard renders correctly with data 1`] = `
+<div>
+  <div
+    class="dashboard-layout"
+  >
+    <div>
+      MockNavbar
+    </div>
+    <div
+      class="dashboard-page"
+    >
+      <h1
+        class="dashboard-main-header"
+      >
+        Dashboard
+      </h1>
+      <div
+        class="dashboard-stats"
+      >
+        <div
+          class="stat-card"
+        >
+          <h3>
+            2
+          </h3>
+          <p>
+            Active Events
+          </p>
+        </div>
+        <div
+          class="stat-card"
+        >
+          <h3>
+            1
+          </h3>
+          <p>
+            Open Tasks
+          </p>
+        </div>
+        <div
+          class="stat-card"
+        >
+          <h3>
+            1
+          </h3>
+          <p>
+            Completed Tasks
+          </p>
+        </div>
+      </div>
+      <div
+        class="dashboard-content"
+      >
+        <div
+          class="card overview-card"
+        >
+          <h2>
+            My Events
+          </h2>
+          <div
+            class="scroll-container"
+          >
+            <div
+              class="overview-row"
+            >
+              <div
+                class="overview-main"
+              >
+                <span
+                  class="overview-name"
+                >
+                  Event 1
+                </span>
+                <div
+                  class="overview-details"
+                >
+                  <span>
+                    <b>
+                      Event Date:
+                    </b>
+                     
+                    2025/12/01
+                  </span>
+                </div>
+              </div>
+              <div
+                class="overview-status"
+              >
+                <span
+                  class="status-dot yellow"
+                />
+                <span>
+                  In Progress
+                </span>
+              </div>
+              <div
+                class="overview-progress"
+              >
+                <div
+                  class="progress-bar-bg"
+                >
+                  <div
+                    class="progress-bar-fill yellow"
+                    style="width: 50%;"
+                  />
+                </div>
+                <span>
+                  50
+                  %
+                </span>
+              </div>
+            </div>
+            <div
+              class="overview-row"
+            >
+              <div
+                class="overview-main"
+              >
+                <span
+                  class="overview-name"
+                >
+                  Event 2
+                </span>
+                <div
+                  class="overview-details"
+                >
+                  <span>
+                    <b>
+                      Event Date:
+                    </b>
+                     
+                    2025/12/15
+                  </span>
+                </div>
+              </div>
+              <div
+                class="overview-status"
+              >
+                <span
+                  class="status-dot green"
+                />
+                <span>
+                  Completed
+                </span>
+              </div>
+              <div
+                class="overview-progress"
+              >
+                <div
+                  class="progress-bar-bg"
+                >
+                  <div
+                    class="progress-bar-fill green"
+                    style="width: 100%;"
+                  />
+                </div>
+                <span>
+                  100
+                  %
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="card tasks-card"
+        >
+          <h2>
+            Recent Tasks
+          </h2>
+          <div
+            class="scroll-container"
+          >
+            <div
+              class="task-cards"
+            >
+              <div
+                class="task-block"
+              >
+                <h3
+                  class="task-name"
+                >
+                  Task 2
+                </h3>
+                <hr
+                  class="inner-divider"
+                />
+                <p
+                  class="task-desc"
+                >
+                  Description: 
+                  <strong>
+                    Description 2
+                  </strong>
+                </p>
+                <hr
+                  class="inner-divider"
+                />
+                <div
+                  class="task-meta"
+                >
+                  <p>
+                    Assigned To: 
+                    <strong>
+                      user2@example.com
+                    </strong>
+                  </p>
+                  <p>
+                    Due Date: 
+                    <strong>
+                      2025/11/25
+                    </strong>
+                  </p>
+                  <p>
+                    Status: 
+                    <strong>
+                      Completed
+                    </strong>
+                  </p>
+                </div>
+              </div>
+              <div
+                class="task-block"
+              >
+                <h3
+                  class="task-name"
+                >
+                  Task 1
+                </h3>
+                <hr
+                  class="inner-divider"
+                />
+                <p
+                  class="task-desc"
+                >
+                  Description: 
+                  <strong>
+                    Description 1
+                  </strong>
+                </p>
+                <hr
+                  class="inner-divider"
+                />
+                <div
+                  class="task-meta"
+                >
+                  <p>
+                    Assigned To: 
+                    <strong>
+                      user1@example.com
+                    </strong>
+                  </p>
+                  <p>
+                    Due Date: 
+                    <strong>
+                      2025/11/20
+                    </strong>
+                  </p>
+                  <p>
+                    Status: 
+                    <strong>
+                      In Progress
+                    </strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Component Snapshots Events page renders correctly 1`] = `
+<div>
+  <div
+    class="events-layout"
+  >
+    <div>
+      MockNavbar
+    </div>
+    <div
+      class="events-page"
+    >
+      <div
+        class="events-header-bar"
+      >
+        <h1
+          class="events-main-header"
+        >
+          Events
+        </h1>
+      </div>
+      <div
+        class="card requests-overview-card scroll-container"
+      >
+        <h2>
+          Pending Event Requests
+        </h2>
+        <hr
+          class="pink-divider"
+        />
+        <p>
+          No pending requests.
+        </p>
+      </div>
+      <hr
+        class="section-divider"
+      />
+      <div
+        class="card events-overview-card scroll-container"
+      >
+        <div
+          class="events-overview-header"
+        >
+          <h2>
+            All Events
+          </h2>
+        </div>
+        <hr
+          class="pink-divider"
+        />
+        <div
+          class="search-add-container"
+        >
+          <div
+            class="events-search-container"
+          >
+            <svg
+              class="search-icon"
+              fill="none"
+              height="16"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="16"
+            >
+              <circle
+                cx="11"
+                cy="11"
+                r="8"
+              />
+              <line
+                x1="21"
+                x2="16.65"
+                y1="21"
+                y2="16.65"
+              />
+            </svg>
+            <input
+              class="events-search-input"
+              placeholder="Search by name, client, or date..."
+              type="text"
+              value=""
+            />
+          </div>
+          <button
+            class="btn-signup add-event-btn"
+          >
+            + Add New Event
+          </button>
+        </div>
+        <p>
+          No events found.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Component Snapshots Tasks page renders correctly with empty state 1`] = `
+<div>
+  <div
+    class="tasks-layout"
+  >
+    <div>
+      MockNavbar
+    </div>
+    <div
+      class="tasks-page"
+    >
+      <div
+        class="tasks-header"
+      >
+        <h1>
+          Tasks Overview
+        </h1>
+      </div>
+      <div
+        class="tasks-progress-section"
+      >
+        <div
+          class="progress-stats"
+        >
+          <div
+            class="progress-stat"
+          >
+            <span
+              class="stat-label"
+            >
+              Total Tasks
+            </span>
+            <span
+              class="stat-value"
+            >
+              0
+            </span>
+          </div>
+          <div
+            class="progress-stat"
+          >
+            <span
+              class="stat-label"
+            >
+              Completed
+            </span>
+            <span
+              class="stat-value"
+            >
+              0
+            </span>
+          </div>
+          <div
+            class="progress-stat"
+          >
+            <span
+              class="stat-label"
+            >
+              In Progress
+            </span>
+            <span
+              class="stat-value"
+            >
+              0
+            </span>
+          </div>
+        </div>
+        <div
+          class="progress-bar-container"
+        >
+          <div
+            class="progress-bar-bg"
+          >
+            <div
+              class="progress-bar-fill"
+              style="width: 0%; background-color: rgb(255, 143, 171);"
+            />
+          </div>
+          <span
+            class="progress-percentage"
+          >
+            0
+            %
+          </span>
+        </div>
+      </div>
+      <div
+        class="tasks-section"
+      >
+        <h2>
+          In Progress
+        </h2>
+        <div
+          class="tasks-grid"
+        >
+          <p
+            class="no-tasks"
+          >
+            No tasks in progress
+          </p>
+        </div>
+      </div>
+      <div
+        class="tasks-section"
+      >
+        <h2>
+          Completed
+        </h2>
+        <div
+          class="tasks-grid"
+        >
+          <p
+            class="no-tasks"
+          >
+            No completed tasks
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

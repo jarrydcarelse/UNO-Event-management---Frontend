@@ -138,7 +138,7 @@ exports[`Tasks Component renders tasks after fetch 1`] = `
               <p>
                 Due Date: 
                 <strong>
-                  2025/08/05
+                  2025/11/15
                 </strong>
               </p>
               <p>
@@ -203,7 +203,7 @@ exports[`Tasks Component renders tasks after fetch 1`] = `
               <p>
                 Due Date: 
                 <strong>
-                  2025/08/05
+                  2025/11/15
                 </strong>
               </p>
               <p>
