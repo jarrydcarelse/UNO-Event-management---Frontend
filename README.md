@@ -73,6 +73,24 @@ This version of **Eventify** represents the **final integration** of all major c
 🤝 Team Collaboration: All frontend contributions including components, features, and bug fixes — were merged and maintained collaboratively by the full development team. Code reviews, feature planning, and issue tracking were handled through GitHub to ensure consistency, quality, and timely delivery.
 
 ---
+
+## 📦 Features
+
+- **Authentication**: JWT login, admin-PIN registration, session handling, password validation  
+- **Dashboard**: Stats overview, active events, recent tasks, custom scrollbars, animations  
+- **Events**: Create/manage events, pending requests (approve/deny), search, auto progress, full event details  
+- **Global Tasks**: All-tasks view, progress bar, task stats, priority badges, task detail cards  
+- **Event Tasks**: Add/edit/delete, complete/uncomplete, assign users, priority/budget tracking, archived tasks, event progress  
+- **Employees**: Performance dashboard, completion rates, search, sorting, grid/list views, rank badges, detailed employee modal  
+- **UI/UX**: Collapsible sidebar, pink theme, gradients, animations, skeleton loaders, responsive layout  
+- **Navigation**: Sidebar routing, active highlights, logout, user info display  
+- **External**: Public event request form, requester info, request status management  
+- **Technical**: Axios API, CORS, error handling, localStorage, formatting, dynamic styling  
+- **Responsive**: Mobile sidebar, flexible grids, touch-friendly interactions  
+- **Polish**: Empty states, search count, clear filters, badges, dropdowns, date pickers.
+  
+---
+
 ## 📁 How to Run Frontend Tests
 
 To run frontend tests for this project, make sure you have all dependencies installed.
@@ -121,6 +139,17 @@ Copy
 Edit
 npm run electron:pack
 ⚠️ Note: Backend services written in C# should be running alongside the frontend if applicable to ensure full functionality.
+
+---
+
+## Mockups
+<img width="1500" height="1125" alt="PixelBook Go" src="https://github.com/user-attachments/assets/ee8e8324-d1b3-4e5d-a00d-6f52a9978143" />
+<img width="1500" height="1125" alt="MacBook #13" src="https://github.com/user-attachments/assets/bfc08d9f-c2e4-4d58-b7c1-74a4a0785342" />
+<img width="1500" height="1125" alt="Monitor XDR" src="https://github.com/user-attachments/assets/263493c1-af6b-43d3-842b-498173814b60" />
+
+
+
+---
 
 ## 📝 License
 This project was developed for academic purposes as part of a final software development integration module. For further information, contributions, or collaboration, feel free to reach out to any of the listed contributors.
