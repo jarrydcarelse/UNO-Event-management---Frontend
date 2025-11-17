@@ -8,7 +8,9 @@ import pattern from '../assets/pink-pattern.png';
 
 const API_BASE =
   process.env.REACT_APP_API_URL ||
-  'https://eventify-backend-kgtm.onrender.com';
+  (process.env.NODE_ENV === 'production' 
+    ? 'https://eventify-backend-kgtm.onrender.com'
+    : '');
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -21,41 +23,77 @@ export default function SignUp() {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    console.log('=== SIGNUP FORM SUBMITTED ===');
+    console.log('Email:', email);
+    console.log('API Base URL:', API_BASE);
+    
     setSignupError('');
     setSignupSuccess(false);
 
-    // Validate passwords match
     if (password !== repeatPassword) {
+      console.log('❌ Password validation failed - passwords do not match');
       setSignupError('Passwords do not match');
       return;
     }
+    console.log('✅ Password validation passed');
 
     setIsLoading(true);
+    console.log('🔄 Starting API request...');
+    
     try {
-      const res = await axios.post(
-        `${API_BASE}/api/users/register`,
-        { email, password },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+      const requestURL = `${API_BASE}/api/users/register`;
+      const requestData = { email, password };
+      const requestConfig = { headers: { 'Content-Type': 'application/json' } };
+      
+      console.log('📤 Request Details:');
+      console.log('  URL:', requestURL);
+      console.log('  Data:', { email, password: '***' });
+      console.log('  Headers:', requestConfig.headers);
+      
+      const res = await axios.post(requestURL, requestData, requestConfig);
+      
+      console.log('✅ Registration successful!');
+      console.log('📥 Response status:', res.status);
+      console.log('📥 Response data:', res.data);
+      
       setSignupSuccess(true);
       setSignupError('');
-      // Redirect to login after successful signup
+      
+      console.log('⏱️ Redirecting to login in 2 seconds...');
       setTimeout(() => {
+        console.log('➡️ Navigating to /login');
         navigate('/login');
       }, 2000);
     } catch (err) {
+      console.error('❌ Registration failed');
+      console.error('Error object:', err);
+      
+      if (err.response) {
+        console.error('📥 Server responded with error:');
+        console.error('  Status:', err.response.status);
+        console.error('  Data:', err.response.data);
+        console.error('  Headers:', err.response.headers);
+      } else if (err.request) {
+        console.error('📡 Request made but no response received:');
+        console.error('  Request:', err.request);
+      } else {
+        console.error('⚙️ Error setting up request:');
+        console.error('  Message:', err.message);
+      }
+      
       setSignupError(
         err.response?.data?.message ||
         'Registration failed. Please try again.'
       );
     } finally {
       setIsLoading(false);
+      console.log('🏁 Signup process completed');
     }
   };
 
   return (
     <div className="signup-page">
-      {/* LEFT PANEL */}
+
       <div
         className="signup-left"
         style={{ backgroundImage: `url(${pattern})` }}
@@ -69,7 +107,7 @@ export default function SignUp() {
         </div>
       </div>
 
-      {/* RIGHT PANEL */}
+
       <div className="signup-right">
         <form className="signup-form" onSubmit={handleSignUp}>
           <h2>Sign Up</h2>

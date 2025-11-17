@@ -63,7 +63,6 @@ describe('Component Snapshots', () => {
       </BrowserRouter>
     );
 
-    // Wait for loading to complete
     await new Promise(resolve => setTimeout(resolve, 100));
 
     expect(container).toMatchSnapshot();

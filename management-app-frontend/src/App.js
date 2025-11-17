@@ -7,6 +7,7 @@ import Events from './pages/Events';
 import EventTasks from './pages/EventTasks';
 import Tasks from './pages/Tasks';
 import EmployeeStats from './pages/EmployeeStats';
+import './styles/smoothAnimations.css';
 
 function App() {
   return (

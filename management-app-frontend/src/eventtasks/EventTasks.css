@@ -23,7 +23,6 @@ body {
   margin-left: 100px;
 }
 
-/* Header & Progress */
 .eventtasks-header-card {
   background: #fff;
   border-radius: 16px;
@@ -86,7 +85,6 @@ body {
   min-width: 120px;
 }
 
-/* Tasks Section */
 .eventtasks-tasksection-card {
   background: #fff;
   border-radius: 16px;
@@ -119,7 +117,6 @@ body {
   background: #ff7a9a;
 }
 
-/* Headings */
 .eventtasks-task-status-heading {
   color: #FF8FAB;
   font-size: 20px;
@@ -141,7 +138,6 @@ body {
   justify-content: left;
 }
 
-/* Task Card */
 .eventtasks-taskcard {
   background: #f2f2f7;
   border-radius: 12px;
@@ -250,11 +246,17 @@ body {
 .eventtasks-taskbtn:hover {
   background: #fde2ed;
 }
+.eventtasks-taskbtn.undo {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.eventtasks-taskbtn.undo:hover {
+  background: #fecaca;
+}
 .eventtasks-taskbtn svg {
   font-size: 16px;
 }
 
-/* Modal Styles */
 .eventtasks-modal-overlay {
   position: fixed;
   z-index: 9999;
@@ -269,62 +271,101 @@ body {
 .eventtasks-modal {
   background: #fff;
   border-radius: 20px;
-  padding: 34px 32px;
-  min-width: 320px;
-  max-width: 95vw;
-  box-shadow: 0 4px 40px rgba(34,34,54,0.13), 0 0 2px rgba(255,143,171,0.04);
+  padding: 32px;
+  width: 90%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
   animation: popIn 0.19s;
 }
 @keyframes popIn { from { transform: scale(0.93); opacity: 0.6; } to { transform: scale(1); opacity: 1; } }
 .eventtasks-modal-header {
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 .eventtasks-modal-header h3 {
   margin: 0;
-  font-size: 18px;
-  color: #232336;
-  font-weight: 800;
+  font-size: 24px;
+  color: #FF5F8A;
+  font-weight: 700;
+  letter-spacing: -0.4px;
 }
 .eventtasks-modal-close {
-  background: none;
+  background: #FFE4EC;
   border: none;
-  color: #FF8FAB;
+  color: #FF5F8A;
   font-size: 22px;
   cursor: pointer;
-  margin-left: 6px;
-  transition: color 0.17s;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-weight: 300;
 }
-.eventtasks-modal-close:hover { color: #ff7a9a; }
+.eventtasks-modal-close:hover {
+  background: #FF8FAB;
+  color: #fff;
+  transform: rotate(90deg);
+}
+.eventtasks-modal-divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #FFB3C6, transparent);
+  margin: 12px 0 16px 0;
+  width: 100%;
+}
+.eventtasks-modal-content {
+  padding: 0 4px;
+}
 .eventtasks-modal-fields {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0;
+  margin-top: 20px;
 }
 .eventtasks-modal-fields label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #232336;
-  font-size: 14px;
+  margin-bottom: 6px;
+  margin-top: 0;
+  font-weight: 600;
+  color: #374151;
+  font-size: 13px;
 }
 .eventtasks-modal-fields input,
 .eventtasks-modal-fields textarea,
 .eventtasks-modal-fields select {
   width: 100%;
-  padding: 10px;
-  border: 1.5px solid #eee;
-  border-radius: 8px;
-  font-size: 15px;
-  transition: border-color 0.2s;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #fafafa;
+  transition: all 0.2s ease;
+  font-family: 'Manrope', sans-serif;
+  box-sizing: border-box;
 }
 .eventtasks-modal-fields input:focus,
 .eventtasks-modal-fields textarea:focus,
 .eventtasks-modal-fields select:focus {
   outline: none;
   border-color: #FF8FAB;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 143, 171, 0.1);
+}
+.eventtasks-modal-fields input::placeholder,
+.eventtasks-modal-fields textarea::placeholder {
+  color: #9ca3af;
 }
 .eventtasks-modal-fields textarea {
   min-height: 100px;
@@ -332,31 +373,40 @@ body {
 }
 .eventtasks-modal-actions {
   display: flex;
-  gap: 14px;
-  margin-top: 16px;
-  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+  justify-content: flex-start;
 }
 .eventtasks-modal-btn {
-  padding: 12px 24px;
-  border-radius: 8px;
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
   border: none;
 }
 .eventtasks-modal-btn.pink {
-  background: #FF8FAB;
+  background: linear-gradient(135deg, #FF8FAB 0%, #FF5F8A 100%);
   color: white;
+  box-shadow: 0 2px 8px rgba(255, 143, 171, 0.3);
 }
 .eventtasks-modal-btn.pink:hover {
-  background: #ff7a9a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.4);
 }
-.eventtasks-modal-btn:hover {
-  background: #f2f2f7;
+.eventtasks-modal-btn:not(.pink) {
+  background: #fff;
+  color: #FF5F8A;
+  border: 1.5px solid #FF8FAB;
+}
+.eventtasks-modal-btn:not(.pink):hover {
+  background: #FFE4EC;
+  border-color: #FF5F8A;
+  transform: translateY(-1px);
 }
 
-/* Responsive */
 @media (max-width: 900px) {
   .eventtasks-header-card, .eventtasks-progress-card, .eventtasks-tasksection-card {
     padding: 20px;

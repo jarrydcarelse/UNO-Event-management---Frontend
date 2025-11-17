@@ -43,7 +43,6 @@ const Employees = () => {
     <div className="employees-layout">
       <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <div className={`employees-page${sidebarOpen ? '' : ' collapsed'}`}>
-        {/* Rest of the component content */}
       </div>
     </div>
   );

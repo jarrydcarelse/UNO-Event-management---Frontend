@@ -3,19 +3,20 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import LoadingSpinner from '../components/LoadingSpinner';
+import PageSkeleton from '../components/SkeletonLoader';
 import { FiPlus, FiEdit, FiCheck, FiTrash2, FiX } from 'react-icons/fi';
 import '../eventtasks/EventTasks.css';
 
-// Update API_BASE to use the deployed backend URL
+
 const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
 
-// Add axios default configuration
+
 axios.defaults.baseURL = API_BASE;
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,PATCH,OPTIONS';
 axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
 
-// Add axios interceptor for debugging
+
 axios.interceptors.request.use(request => {
   console.log('Starting Request:', request);
   return request;
@@ -58,11 +59,42 @@ export default function EventTasks() {
     dueDate: ''
   });
 
-  // Computed values for tasks
+
   const tasksInProgress = tasks.filter(task => !task.completed);
   const completedTasks = tasks.filter(task => task.completed);
 
-  // Fetch users on component mount
+
+  const recalculateEventDetails = (updatedTasks) => {
+    const completedCount = updatedTasks.filter(t => t.completed).length;
+    const totalCount = updatedTasks.length;
+    const completionPercentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+
+    const overallBudget = updatedTasks.reduce((total, task) => {
+      const budget = task.budget.toString().replace(/[^0-9]/g, '');
+      return total + parseInt(budget || 0, 10);
+    }, 0);
+
+
+    const spentAmount = updatedTasks
+      .filter(task => task.completed)
+      .reduce((total, task) => {
+        const budget = task.budget.toString().replace(/[^0-9]/g, '');
+        return total + parseInt(budget || 0, 10);
+      }, 0);
+
+    setEventDetails(prev => ({
+      ...prev,
+      progress: completionPercentage,
+      completed: completedCount,
+      totalTasks: totalCount,
+      budget: `R${overallBudget.toLocaleString()}`,
+      spent: `R${spentAmount.toLocaleString()}`,
+      colorClass: completionPercentage === 100 ? 'green' : completionPercentage > 0 ? 'yellow' : 'yellow'
+    }));
+  };
+
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -90,7 +122,7 @@ export default function EventTasks() {
     fetchUsers();
   }, [navigate]);
 
-  // Fetch event details and tasks
+
   useEffect(() => {
     const fetchEventData = async () => {
       try {
@@ -101,7 +133,7 @@ export default function EventTasks() {
           return;
         }
 
-        // Fetch event details
+
         const eventResponse = await axios.get(`/api/events/${eventId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -110,7 +142,7 @@ export default function EventTasks() {
           }
         });
 
-        // Fetch tasks separately
+  
         const tasksResponse = await axios.get(`${API_BASE}/api/eventtasks/byevent/${eventId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -119,7 +151,6 @@ export default function EventTasks() {
           }
         });
 
-        // Validate and format tasks data
         let tasks = [];
         if (tasksResponse.data && Array.isArray(tasksResponse.data)) {
           tasks = tasksResponse.data.map(task => ({
@@ -136,18 +167,17 @@ export default function EventTasks() {
           }));
         }
 
-        // Calculate completion percentage and budget totals
+
         const completedTasks = tasks.filter(t => t.completed).length;
         const totalTasks = tasks.length;
         const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-        // Calculate overall budget (sum of all task budgets)
         const overallBudget = tasks.reduce((total, task) => {
-          const budget = task.budget.replace(/[^0-9]/g, ''); // Remove 'R' and any other non-numeric characters
+          const budget = task.budget.replace(/[^0-9]/g, ''); 
           return total + parseInt(budget || 0);
         }, 0);
 
-        // Calculate spent amount (sum of completed task budgets)
+      
         const spentAmount = tasks
           .filter(task => task.completed)
           .reduce((total, task) => {
@@ -155,7 +185,7 @@ export default function EventTasks() {
             return total + parseInt(budget || 0);
           }, 0);
 
-        // Set event details
+   
         setEventDetails({
           name: eventResponse.data.title || 'Untitled Event',
           client: eventResponse.data.description || 'No description',
@@ -180,7 +210,7 @@ export default function EventTasks() {
     fetchEventData();
   }, [eventId, navigate]);
 
-  // Modal controls
+ 
   const openAddModal = () => {
     setModalType('add');
     setTaskForm({
@@ -228,13 +258,12 @@ export default function EventTasks() {
     });
   };
 
-  // Form handling
+  
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setTaskForm(prev => ({ ...prev, [name]: value }));
   };
 
-  // Helper function to format date for API
   const formatDateForAPI = (dateString) => {
     if (!dateString) return new Date().toISOString();
     try {
@@ -249,14 +278,13 @@ export default function EventTasks() {
     }
   };
 
-  // Helper function to format date for display
+
   const formatDateForDisplay = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString();
   };
 
-  // Task operations
   const handleAddTask = async () => {
     if (!taskForm.title || !taskForm.assignedToEmail || !taskForm.budget) {
       setError('Please fill in all required fields');
@@ -297,7 +325,7 @@ export default function EventTasks() {
         }
       );
 
-      // Add new task immediately
+
       const newTask = {
         id: response.data.id,
         title: response.data.title,
@@ -313,6 +341,7 @@ export default function EventTasks() {
 
       const updatedTasks = [...tasks, newTask];
       setTasks(updatedTasks);
+      recalculateEventDetails(updatedTasks);
       closeModal();
     } catch (err) {
       console.error('Error adding task:', err);
@@ -365,7 +394,6 @@ export default function EventTasks() {
         }
       );
 
-      // Update tasks immediately
       const updatedTasks = tasks.map(t => 
         t.id === selectedTask.id ? {
           ...t,
@@ -378,6 +406,7 @@ export default function EventTasks() {
         } : t
       );
       setTasks(updatedTasks);
+      recalculateEventDetails(updatedTasks);
       closeModal();
     } catch (err) {
       console.error('Error updating task:', err);
@@ -418,11 +447,11 @@ export default function EventTasks() {
         }
       );
 
-      // Update tasks immediately
       const updatedTasks = tasks.map(t => 
         t.id === task.id ? { ...t, completed: true } : t
       );
       setTasks(updatedTasks);
+      recalculateEventDetails(updatedTasks);
     } catch (err) {
       console.error('Error completing task:', err);
       if (err.response) {
@@ -430,6 +459,50 @@ export default function EventTasks() {
         setError(`Failed to complete task: ${err.response.data.message || 'Please try again.'}`);
       } else {
         setError('Failed to complete task. Please try again.');
+      }
+    }
+  };
+
+  const handleUncompleteTask = async (task) => {
+    const token = localStorage.getItem('token');
+    try {
+      const taskData = {
+        id: task.id,
+        title: task.title,
+        priority: task.priority,
+        completed: false,
+        description: task.description,
+        dueDate: task.dueDate ? formatDateForAPI(task.dueDate) : new Date().toISOString(),
+        eventId: parseInt(eventId),
+        assignedToEmail: task.assignedTo,
+        budget: task.budget,
+        archived: task.archived || false
+      };
+
+      await axios.put(
+        `${API_BASE}/api/eventtasks/${task.id}`,
+        taskData,
+        { 
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+
+      const updatedTasks = tasks.map(t => 
+        t.id === task.id ? { ...t, completed: false } : t
+      );
+      setTasks(updatedTasks);
+      recalculateEventDetails(updatedTasks);
+    } catch (err) {
+      console.error('Error uncompleting task:', err);
+      if (err.response) {
+        console.error('Error response:', err.response.data);
+        setError(`Failed to undo task: ${err.response.data.message || 'Please try again.'}`);
+      } else {
+        setError('Failed to undo task. Please try again.');
       }
     }
   };
@@ -448,9 +521,9 @@ export default function EventTasks() {
         }
       );
 
-      // Update tasks immediately
       const updatedTasks = tasks.filter(t => t.id !== taskId);
       setTasks(updatedTasks);
+      recalculateEventDetails(updatedTasks);
       closeModal();
     } catch (err) {
       console.error('Error deleting task:', err);
@@ -484,7 +557,7 @@ export default function EventTasks() {
           }
         }
       );
-      // Refresh tasks after updating
+   
       fetchTasks();
     } catch (err) {
       console.error('Error updating task:', err);
@@ -503,7 +576,7 @@ export default function EventTasks() {
       return;
     }
     try {
-      // Archive the task on the backend
+ 
       await axios.put(
         `${API_BASE}/api/eventtasks/${taskId}`,
         {
@@ -518,7 +591,6 @@ export default function EventTasks() {
           }
         }
       );
-      // Remove the task from the frontend state
       setTasks(tasks.filter(task => task.id !== taskId));
     } catch (err) {
       console.error('Error archiving task:', err);
@@ -569,7 +641,7 @@ export default function EventTasks() {
     }
   };
 
-  // Make sure we fetch tasks when the component mounts
+
   useEffect(() => {
     fetchTasks();
   }, [eventId]);
@@ -579,7 +651,7 @@ export default function EventTasks() {
       <div className="eventtasks-layout">
         <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
         <div className={`eventtasks-page${sidebarOpen ? '' : ' collapsed'}`}>
-          <LoadingSpinner />
+          <PageSkeleton type="eventtasks" />
         </div>
       </div>
     );
@@ -599,7 +671,7 @@ export default function EventTasks() {
           </div>
         )}
 
-        {/* Event Header */}
+   
         <div className="eventtasks-header-card">
           <div>
             <h2 className="eventtasks-event-title">{eventDetails.name}</h2>
@@ -608,7 +680,7 @@ export default function EventTasks() {
           <span className={`status-dot ${eventDetails.colorClass}`} />
         </div>
 
-        {/* Progress Card */}
+        
         <div className="eventtasks-progress-card">
           <div className="eventtasks-progress-bar-bg">
             <div
@@ -635,7 +707,7 @@ export default function EventTasks() {
           </div>
         </div>
 
-        {/* Tasks Section */}
+ 
         <div className="eventtasks-tasksection-card">
           <div className="eventtasks-tasksection-header">
             <h2>Task Management</h2>
@@ -644,7 +716,7 @@ export default function EventTasks() {
             </button>
           </div>
 
-          {/* Pending Tasks */}
+      
           <div className="eventtasks-task-status-heading">Pending Tasks</div>
           <div className="eventtasks-tasks-grid">
             {tasksInProgress.length === 0 ? (
@@ -685,7 +757,7 @@ export default function EventTasks() {
             )}
           </div>
 
-          {/* Completed Tasks */}
+  
           <div className="eventtasks-task-status-heading" style={{ marginTop: 36 }}>Completed Tasks</div>
           <div className="eventtasks-tasks-grid">
             {completedTasks.length === 0 ? (
@@ -711,13 +783,18 @@ export default function EventTasks() {
                   <div className="eventtasks-taskcard-description">
                     {task.description}
                   </div>
+                  <div className="eventtasks-taskcard-actions">
+                    <button className="eventtasks-taskbtn undo" onClick={() => handleUncompleteTask(task)}>
+                      Undo
+                    </button>
+                  </div>
                 </div>
               ))
             )}
           </div>
         </div>
 
-        {/* Modals */}
+  
         {showModal && (
           <div className="eventtasks-modal-overlay">
             <div className="eventtasks-modal">
@@ -733,6 +810,7 @@ export default function EventTasks() {
                   <FiX />
                 </button>
               </div>
+              <hr className="eventtasks-modal-divider" />
 
               {modalType === 'delete' ? (
                 <div className="eventtasks-modal-content">
@@ -749,17 +827,19 @@ export default function EventTasks() {
               ) : (
                 <div className="eventtasks-modal-content">
                   <div className="eventtasks-modal-fields">
-                    <label>Title: *</label>
+                    <label htmlFor="task-title">Title *</label>
                     <input
+                      id="task-title"
                       name="title"
                       value={taskForm.title}
                       onChange={handleFormChange}
-                      placeholder="Task title"
+                      placeholder="Enter task title"
                       required
                     />
 
-                    <label>Priority: *</label>
+                    <label htmlFor="task-priority">Priority *</label>
                     <select 
+                      id="task-priority"
                       name="priority" 
                       value={taskForm.priority} 
                       onChange={handleFormChange}
@@ -770,8 +850,9 @@ export default function EventTasks() {
                       <option value="High">High</option>
                     </select>
 
-                    <label>Assigned To: *</label>
+                    <label htmlFor="task-assigned">Assigned To *</label>
                     <select
+                      id="task-assigned"
                       name="assignedToEmail"
                       value={taskForm.assignedToEmail}
                       onChange={handleFormChange}
@@ -785,8 +866,9 @@ export default function EventTasks() {
                       ))}
                     </select>
 
-                    <label>Budget: *</label>
+                    <label htmlFor="task-budget">Budget *</label>
                     <input
+                      id="task-budget"
                       name="budget"
                       value={taskForm.budget}
                       onChange={handleFormChange}
@@ -794,23 +876,25 @@ export default function EventTasks() {
                       required
                     />
 
-                    <label>Description:</label>
+                    <label htmlFor="task-description">Description</label>
                     <textarea
+                      id="task-description"
                       name="description"
                       value={taskForm.description}
                       onChange={handleFormChange}
-                      placeholder="Task description"
+                      placeholder="Enter task description"
                     />
 
-                    <label>Due Date:</label>
+                    <label htmlFor="task-duedate">Due Date</label>
                     <input
+                      id="task-duedate"
                       type="date"
                       name="dueDate"
                       value={taskForm.dueDate}
                       onChange={handleFormChange}
                     />
                   </div>
-
+                  <hr className="eventtasks-modal-divider" />
                   <div className="eventtasks-modal-actions">
                     <button 
                       className="eventtasks-modal-btn pink"

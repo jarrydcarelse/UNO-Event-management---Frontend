@@ -1,0 +1,130 @@
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+button, 
+.btn, 
+.btn-signin, 
+.btn-signup,
+input,
+select,
+textarea {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition-duration: 0.25s !important;
+}
+
+
+button:hover,
+.btn:hover,
+.btn-signin:hover,
+.btn-signup:hover {
+  transform: translateY(-2px);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active,
+.btn:active {
+  transform: translateY(0);
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+.card,
+.task-card,
+.event-card,
+.overview-card,
+.eventtasks-taskcard {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.card:hover,
+.task-card:hover,
+.event-card:hover {
+  transform: translateY(-4px);
+}
+
+
+.modal-overlay,
+.login-modal-overlay,
+.events-modal-overlay,
+.eventtasks-modal-overlay {
+  animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+.modal,
+.login-modal,
+.events-modal,
+.eventtasks-modal {
+  animation: modalSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+.progress-bar-fill,
+.eventtasks-progress-bar-fill {
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+
+input:focus,
+select:focus,
+textarea:focus {
+  transition: border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+
+.dashboard-page,
+.events-page,
+.eventtasks-page,
+.tasks-page {
+  transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+
+.card,
+.task-card,
+.event-card {
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+
+.navbar {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

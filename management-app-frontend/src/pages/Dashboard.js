@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import LoadingSpinner from '../components/LoadingSpinner';
+import PageSkeleton from '../components/SkeletonLoader';
 import '../dashboard/Dashboard.css';
 
 const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
@@ -22,7 +23,6 @@ export default function Dashboard() {
       return;
     }
 
-    // Fetch events
     axios
       .get(`${API_BASE}/api/events`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -33,7 +33,6 @@ export default function Dashboard() {
         setError('Could not load active events.');
       });
 
-    // Fetch tasks
     axios
       .get(`${API_BASE}/api/eventtasks`, {
         headers: {
@@ -61,26 +60,40 @@ export default function Dashboard() {
       });
   }, [navigate]);
 
+  useEffect(() => {
+    const scrollContainer = document.getElementById('tasks-scroll');
+    const tasksCard = document.querySelector('.tasks-card');
+    
+    if (!scrollContainer || !tasksCard) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+      
+      if (isAtBottom) {
+        tasksCard.classList.add('scrolled-to-bottom');
+      } else {
+        tasksCard.classList.remove('scrolled-to-bottom');
+      }
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+    handleScroll();
+
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  }, [tasks]);
+
   return (
     <div className="dashboard-layout">
       <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
       <div className={`dashboard-page${sidebarOpen ? '' : ' collapsed'}`}>
-        {/* Page Header */}
         <h1 className="dashboard-main-header">Dashboard</h1>
 
         {loading ? (
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center',
-            minHeight: 'calc(100vh - 200px)'
-          }}>
-            <LoadingSpinner />
-          </div>
+          <PageSkeleton type="dashboard" />
         ) : (
           <>
-            {/* Quick Stats */}
             <div className="dashboard-stats">
               <div className="stat-card">
                 <h3>{events.length}</h3>
@@ -96,9 +109,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Events + Tasks Container */}
             <div className="dashboard-content">
-              {/* Active Events */}
               <div className="card overview-card">
                 <h2>My Events</h2>
                 <div className="scroll-container">
@@ -141,10 +152,12 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Task Management */}
               <div className="card tasks-card">
-                <h2>Recent Tasks</h2>
-                <div className="scroll-container">
+                <div className="tasks-header">
+                  <h2>Recent Tasks</h2>
+                  <span className="task-count">{tasks.length} total</span>
+                </div>
+                <div className="scroll-container" id="tasks-scroll">
                   {error && <p className="error-text">{error}</p>}
                   {!error && tasks.length === 0 && <p>No tasks found.</p>}
                   <div className="task-cards">
@@ -175,6 +188,14 @@ export default function Dashboard() {
                         </div>
                       ))}
                   </div>
+                  {tasks.length > 2 && (
+                    <div className="scroll-indicator">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                      <span>Scroll for more</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

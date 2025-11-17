@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import LoadingSpinner from '../components/LoadingSpinner';
+import PageSkeleton from '../components/SkeletonLoader';
 import axios from 'axios';
 import '../tasks/Tasks.css';
 
-// Update API_BASE to use the deployed backend URL
+
 const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
 
-// Add axios default configuration
+
 axios.defaults.baseURL = API_BASE;
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,PATCH,OPTIONS';
@@ -19,7 +20,7 @@ export default function Tasks() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Fetch tasks on component mount
+ 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -37,7 +38,6 @@ export default function Tasks() {
           }
         });
 
-        // Transform the tasks data to match our display format
         const formattedTasks = response.data.map(task => ({
           id: task.id,
           title: task.title,
@@ -74,7 +74,7 @@ export default function Tasks() {
       <div className="tasks-layout">
         <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
         <div className={`tasks-page${sidebarOpen ? '' : ' collapsed'}`}>
-          <LoadingSpinner />
+          <PageSkeleton type="tasks" />
         </div>
       </div>
     );
@@ -104,7 +104,6 @@ export default function Tasks() {
           <h1>Tasks Overview</h1>
         </div>
 
-        {/* Progress Bar Section */}
         <div className="tasks-progress-section">
           <div className="progress-stats">
             <div className="progress-stat">
@@ -134,7 +133,6 @@ export default function Tasks() {
           </div>
         </div>
 
-        {/* In Progress Tasks Section */}
         <div className="tasks-section">
           <h2>In Progress</h2>
           <div className="tasks-grid">
@@ -173,7 +171,6 @@ export default function Tasks() {
           </div>
         </div>
 
-        {/* Completed Tasks Section */}
         <div className="tasks-section">
           <h2>Completed</h2>
           <div className="tasks-grid">
