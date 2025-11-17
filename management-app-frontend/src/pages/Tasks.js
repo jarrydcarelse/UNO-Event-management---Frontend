@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import LoadingSpinner from '../components/LoadingSpinner';
 import axios from 'axios';
-import '../pages/Tasks.css';
+import '../tasks/Tasks.css';
 
 // Update API_BASE to use the deployed backend URL
 const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
@@ -14,6 +15,7 @@ axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DE
 axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
 
 export default function Tasks() {
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +27,7 @@ export default function Tasks() {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          navigate('/Login');
+          navigate('/login');
           return;
         }
 

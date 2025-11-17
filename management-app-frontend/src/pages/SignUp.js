@@ -1,58 +1,141 @@
-import React from 'react';
-import { render, fireEvent, screen, waitFor } from '@testing-library/react';
-import SignUp from '../pages/SignUp';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BrowserRouter } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
+import '../signup/SignUp.css';
+import logo from '../assets/logo.png';
+import pattern from '../assets/pink-pattern.png';
 
-jest.mock('axios');
+const API_BASE =
+  process.env.REACT_APP_API_URL ||
+  'https://eventify-backend-kgtm.onrender.com';
 
-const renderWithRouter = (ui) => render(<BrowserRouter>{ui}</BrowserRouter>);
+export default function SignUp() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [repeatPassword, setRepeatPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-beforeEach(() => {
-  axios.post.mockReset();
-});
+  const handleSignUp = async e => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
 
-test('renders signup form elements', () => {
-  renderWithRouter(<SignUp />);
-  expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-  expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
-  expect(screen.getByLabelText(/repeat password/i)).toBeInTheDocument();
-  expect(screen.getByText(/sign up/i)).toBeInTheDocument();
-});
+    if (password !== repeatPassword) {
+      setError('Passwords do not match');
+      return;
+    }
 
-test('shows error if passwords do not match', async () => {
-  renderWithRouter(<SignUp />);
-  fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } });
-  fireEvent.change(screen.getByLabelText(/^password$/i), { target: { value: '123456' } });
-  fireEvent.change(screen.getByLabelText(/repeat password/i), { target: { value: 'abcdef' } });
+    setIsLoading(true);
+    try {
+      await axios.post(
+        `${API_BASE}/api/users/register`,
+        { email, password },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
 
-  fireEvent.click(screen.getByText(/^sign up$/i));
-  expect(await screen.findByText(/passwords do not match/i)).toBeInTheDocument();
-});
+      setSuccess('Registration successful!');
 
-test('submits signup form and redirects on success', async () => {
-  axios.post.mockResolvedValueOnce({ data: { message: 'Registration successful!' } });
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+        'Registration failed. Please try again.'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  renderWithRouter(<SignUp />);
-  fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'user@example.com' } });
-  fireEvent.change(screen.getByLabelText(/^password$/i), { target: { value: 'password123' } });
-  fireEvent.change(screen.getByLabelText(/repeat password/i), { target: { value: 'password123' } });
+  return (
+    <div className="signup-page">
+      {/* LEFT PANEL */}
+      <div
+        className="signup-left"
+        style={{ backgroundImage: `url(${pattern})` }}
+      >
+        <div className="branding">
+          <img src={logo} alt="Eventify Logo" className="logo-img" />
+          <p className="welcome-text">
+            Welcome to Eventify Events Management System.
+            <br />
+            Sign up to manage your events, track tasks, and stay connected.
+          </p>
+        </div>
+      </div>
 
-  fireEvent.click(screen.getByText(/^sign up$/i));
+      {/* RIGHT PANEL */}
+      <div className="signup-right">
+        <form className="signup-form" onSubmit={handleSignUp}>
+          <h2>Sign Up</h2>
 
-  expect(await screen.findByText(/registration successful/i)).toBeInTheDocument();
-});
+          <hr className="signup-divider" />
 
-test('shows error on failed signup', async () => {
-  axios.post.mockRejectedValueOnce({
-    response: { data: { message: 'User already exists' } },
-  });
+          {error && <div className="form-error">{error}</div>}
+          {success && <div className="form-success">{success}</div>}
 
-  renderWithRouter(<SignUp />);
-  fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'duplicate@example.com' } });
-  fireEvent.change(screen.getByLabelText(/^password$/i), { target: { value: 'pass' } });
-  fireEvent.change(screen.getByLabelText(/repeat password/i), { target: { value: 'pass' } });
+          {isLoading && (
+            <div className="signup-loading">
+              <LoadingSpinner />
+            </div>
+          )}
 
-  fireEvent.click(screen.getByText(/^sign up$/i));
-  expect(await screen.findByText(/user already exists/i)).toBeInTheDocument();
-});
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+
+          <label htmlFor="repeatPassword">Repeat Password</label>
+          <input
+            id="repeatPassword"
+            type="password"
+            value={repeatPassword}
+            onChange={e => setRepeatPassword(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+
+          <hr className="signup-divider" />
+
+          <div className="signup-buttons">
+            <button
+              type="submit"
+              className="btn-signup"
+              disabled={isLoading}
+            >
+              Sign Up
+            </button>
+            <button
+              type="button"
+              className="btn-signin"
+              onClick={() => navigate('/login')}
+              disabled={isLoading}
+            >
+              Sign In
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
