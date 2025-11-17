@@ -33,56 +33,51 @@ export default function EmployeeStats() {
 
 
   useEffect(() => {
-    const fetchAllTasks = async () => {
+    const abortController = new AbortController();
+    
+    const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          return;
-        }
-
-        const response = await axios.get('/api/eventtasks', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
-        });
-        setAllTasks(response.data);
-      } catch (error) {
-        console.error('Error fetching all tasks:', error);
-        setError('Failed to load tasks. Please try again later.');
-      }
-    };
-
-    fetchAllTasks();
-  }, []);
-
-
-  useEffect(() => {
-    const fetchEmployeeStats = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          return;
-        }
-
-     
-        const usersResponse = await axios.get('/api/users', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
-        });
-
+        setLoading(true);
+        setError('');
         
-        const employeeStats = usersResponse.data.map(user => {
-          const userTasks = allTasks.filter(task => task.assignedToEmail === user.email);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        const headers = {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        };
+
+        // Fetch both API calls in parallel for faster loading
+        const [tasksResponse, usersResponse] = await Promise.all([
+          axios.get('/api/eventtasks', { headers, signal: abortController.signal }),
+          axios.get('/api/users', { headers, signal: abortController.signal })
+        ]);
+
+        const tasks = tasksResponse.data || [];
+        const users = usersResponse.data || [];
+
+        // Optimize: Create a map of tasks by email for O(1) lookup instead of O(n) filtering
+        const tasksByEmail = new Map();
+        tasks.forEach(task => {
+          if (task.assignedToEmail) {
+            if (!tasksByEmail.has(task.assignedToEmail)) {
+              tasksByEmail.set(task.assignedToEmail, []);
+            }
+            tasksByEmail.get(task.assignedToEmail).push(task);
+          }
+        });
+
+        // Process employee stats efficiently
+        const employeeStats = users.map(user => {
+          const userTasks = tasksByEmail.get(user.email) || [];
           const completedTasks = userTasks.filter(task => task.completed).length;
           const totalTasks = userTasks.length;
           const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-
-          console.log(`Employee: ${user.name || user.email}, Total: ${totalTasks}, Completed: ${completedTasks}, Rate: ${completionRate.toFixed(1)}%`);
 
           return {
             id: user.id,
@@ -95,21 +90,28 @@ export default function EmployeeStats() {
           };
         });
 
-        
+        // Sort by completion rate
         const sortedEmployees = employeeStats.sort((a, b) => parseFloat(b.completionRate) - parseFloat(a.completionRate));
+        
+        setAllTasks(tasks);
         setEmployees(sortedEmployees);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching employee statistics:', error);
-        setError('Failed to load employee statistics. Please try again later.');
-        setLoading(false);
+        if (error.name !== 'CanceledError') {
+          console.error('Error fetching employee statistics:', error);
+          setError('Failed to load employee statistics. Please try again later.');
+          setLoading(false);
+        }
       }
     };
 
-    if (allTasks.length > 0) {
-      fetchEmployeeStats();
-    }
-  }, [allTasks]);
+    fetchData();
+
+    // Cleanup: cancel requests if component unmounts
+    return () => {
+      abortController.abort();
+    };
+  }, []);
 
   const handleSortChange = (newSortBy) => {
     setSortBy(newSortBy);
