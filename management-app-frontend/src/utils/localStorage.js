@@ -1,5 +1,3 @@
-// localStorage utility functions
-
 export const setUserData = (email) => {
   localStorage.setItem('userEmail', email);
 };

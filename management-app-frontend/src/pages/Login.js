@@ -11,7 +11,7 @@ const API_BASE =
   process.env.REACT_APP_API_URL ||
   'https://eventify-backend-kgtm.onrender.com';
 
-const ADMIN_PIN = '123123'; // 6-digit admin PIN
+const ADMIN_PIN = '123123'; 
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -20,13 +20,13 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // PIN (OTP) Modal state
+
   const [showPinModal, setShowPinModal] = useState(false);
   const [pin, setPin] = useState(Array(6).fill(''));
   const [pinError, setPinError] = useState('');
   const inputRefs = useRef([]);
 
-  // Request-Event Modal state
+
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestData, setRequestData] = useState({
     title: '',
@@ -224,6 +224,7 @@ export default function Login() {
           <div className="modal">
             <div className="modal-header">
               <h3>Admin PIN Verification</h3>
+              <p>Enter the 6-digit admin PIN to proceed</p>
             </div>
             <hr className="login-divider" />
 
@@ -298,8 +299,10 @@ export default function Login() {
                 </div>
               )}
 
+              <label htmlFor="event-title">Event Title</label>
               <input
-                placeholder='Title'
+                id="event-title"
+                placeholder='Enter event title'
                 name="title"
                 type="text"
                 value={requestData.title}
@@ -307,15 +310,19 @@ export default function Login() {
                 required
               />
 
+              <label htmlFor="event-description">Description</label>
               <textarea
-                placeholder='Description'
+                id="event-description"
+                placeholder='Describe your event in detail'
                 name="description"
                 value={requestData.description}
                 onChange={handleRequestChange}
                 required
               />
 
+              <label htmlFor="event-date">Event Date</label>
               <input
+                id="event-date"
                 name="date"
                 type="date"
                 value={requestData.date}
@@ -323,8 +330,10 @@ export default function Login() {
                 required
               />
 
+              <label htmlFor="requester-name">Your Name</label>
               <input
-                placeholder='Name'
+                id="requester-name"
+                placeholder='Enter your full name'
                 name="requesterName"
                 type="text"
                 value={requestData.requesterName}
@@ -332,8 +341,10 @@ export default function Login() {
                 required
               />
 
+              <label htmlFor="requester-email">Your Email</label>
               <input
-                placeholder='Email'
+                id="requester-email"
+                placeholder='Enter your email address'
                 name="requesterEmail"
                 type="email"
                 value={requestData.requesterEmail}

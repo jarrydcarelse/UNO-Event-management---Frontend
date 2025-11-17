@@ -200,7 +200,6 @@ body {
   font-size: 16px;
 }
 
-/* Progress Bar Section */
 .tasks-progress-section {
   background: #fff;
   border-radius: 16px;
@@ -266,7 +265,6 @@ body {
   min-width: 48px;
 }
 
-/* Modal Styles */
 .modal-overlay {
   position: fixed;
   z-index: 9999;
@@ -390,7 +388,6 @@ body {
   background: #ff7a9a;
 }
 
-/* Responsive adjustments */
 @media (max-width: 900px) {
   .tasks-page {
     margin-left: 80px;

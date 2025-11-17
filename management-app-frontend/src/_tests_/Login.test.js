@@ -1,19 +1,25 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Login from '../pages/Login'; 
 import axios from 'axios';
+import { BrowserRouter } from 'react-router-dom';
 
-
-jest.mock('next/router', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
 }));
 
 jest.mock('axios');
 
+const renderWithRouter = (ui) => render(<BrowserRouter>{ui}</BrowserRouter>);
+
 describe('Login Page', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   test('renders login form and allows user to input email and password', () => {
-    render(<Login />);
+    renderWithRouter(<Login />);
     
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
@@ -33,7 +39,7 @@ describe('Login Page', () => {
       response: { data: { message: 'Invalid credentials' } },
     });
 
-    render(<Login />);
+    renderWithRouter(<Login />);
     
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: 'wrong@example.com' },
@@ -49,15 +55,13 @@ describe('Login Page', () => {
   });
 
   test('calls axios and navigates on successful login', async () => {
-    const mockPush = jest.fn();
     const token = 'fake-jwt-token';
-    jest.mocked(require('next/router').useRouter).mockReturnValue({ push: mockPush });
 
     axios.post.mockResolvedValue({
       data: { token },
     });
 
-    render(<Login />);
+    renderWithRouter(<Login />);
 
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: 'admin@example.com' },
@@ -77,7 +81,7 @@ describe('Login Page', () => {
         },
         expect.any(Object)
       );
-      expect(mockPush).toHaveBeenCalledWith('/dashboard');
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
 });

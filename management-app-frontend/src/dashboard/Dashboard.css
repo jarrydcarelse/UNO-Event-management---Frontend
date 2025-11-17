@@ -1,6 +1,3 @@
-/* src/dashboard/Dashboard.css */
-
-/* ---------------- Global Styles ---------------- */
 body {
   font-family: 'Manrope', sans-serif;
   font-size: 14px;
@@ -9,7 +6,6 @@ body {
   background: #f2f2f7;
 }
 
-/* ---------------- Layout ---------------- */
 .dashboard-layout {
   display: flex;
   height: 100vh;
@@ -30,7 +26,6 @@ body {
   margin-left: 100px;
 }
 
-/* ---------------- Page Header ---------------- */
 .dashboard-main-header {
   font-size: 2rem;
   font-weight: 800;
@@ -38,7 +33,6 @@ body {
   letter-spacing: -1px;
 }
 
-/* ---------------- Quick Stats ---------------- */
 .dashboard-stats {
   display: flex;
   gap: 24px;
@@ -68,7 +62,6 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* ---------------- Content ---------------- */
 .dashboard-content {
   display: flex;
   gap: 24px;
@@ -76,7 +69,6 @@ body {
   overflow: hidden;
 }
 
-/* ---------------- Card Base ---------------- */
 .card {
   background: #ffffff;
   border-radius: 16px;
@@ -86,7 +78,6 @@ body {
   overflow: hidden;
 }
 
-/* ---------------- Active Events ---------------- */
 .overview-card {
   flex: 3;
   display: flex;
@@ -154,13 +145,21 @@ body {
   transition: width 0.3s ease;
 }
 
-/* ---------------- Task Management ---------------- */
 .tasks-card {
   flex: 2;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  position: relative;
 }
+
+.tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
 .tasks-card h2 {
   color: #FF5F8A;
   font-size: 20px;
@@ -169,19 +168,61 @@ body {
   padding: 0 0 8px;
   border-bottom: 2px solid #FF5F8A;
 }
+
+.task-count {
+  font-size: 0.875rem;
+  color: #718096;
+  font-weight: 600;
+  background: #FFE4EC;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
 .tasks-card .scroll-container {
   flex: 1;
   overflow-y: auto;
   padding-right: 8px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
   min-height: 0;
-}
-.tasks-card .scroll-container::-webkit-scrollbar {
-  display: none;
+  position: relative;
+  scroll-behavior: smooth;
 }
 
-/* ---------------- Restyled Task Cards ---------------- */
+.tasks-card .scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tasks-card .scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.tasks-card .scroll-container::-webkit-scrollbar-thumb {
+  background: #FF8FAB;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.tasks-card .scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #FF5F8A;
+}
+
+.tasks-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.95) 0%, transparent 100%);
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.tasks-card.scrolled-to-bottom::after {
+  opacity: 0;
+}
+
 .task-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px,1fr));
@@ -206,7 +247,7 @@ body {
 .task-name {
   margin: 0;
   font-size: 1.2rem;
-  color: #111827; /* back to black */
+  color: #111827;
 }
 
 .inner-divider {
@@ -241,7 +282,54 @@ body {
   color: #111827;
 }
 
-/* ---------------- Responsive ---------------- */
+.scroll-indicator {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 1) 60%, transparent 100%);
+  color: #FF5F8A;
+  font-size: 0.875rem;
+  font-weight: 600;
+  gap: 8px;
+  animation: bounce 2s ease-in-out infinite;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.scroll-indicator:hover {
+  color: #FF3B73;
+  transform: translateY(-4px);
+}
+
+.scroll-indicator svg {
+  animation: arrowBounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes arrowBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
 @media (max-width: 900px) {
   .dashboard-page {
     margin-left: 80px;
@@ -254,5 +342,10 @@ body {
   }
   .task-cards {
     grid-template-columns: 1fr;
+  }
+  .tasks-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }

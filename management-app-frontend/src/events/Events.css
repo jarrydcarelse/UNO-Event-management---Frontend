@@ -1,4 +1,3 @@
-/* ==== Global Reset ==== */
 body,
 html {
   margin: 0;
@@ -8,7 +7,6 @@ html {
   background: #f2f2f7;
 }
 
-/* ==== Layout ==== */
 .events-layout {
   display: flex;
   height: 100vh;
@@ -27,7 +25,6 @@ html {
   margin-left: 100px;
 }
 
-/* ==== Header + Filter ==== */
 .events-header-bar {
   display: flex;
   align-items: center;
@@ -48,14 +45,12 @@ html {
   gap: 12px;
 }
 
-/* Buttons use login/signup styles, override vertical padding */
 .events-page .btn-signin,
 .events-page .btn-signup {
   padding: 12px 18px;
   font-size: 14px;
 }
 
-/* ==== Pink Divider ==== */
 .pink-divider {
   border: none;
   height: 1px;
@@ -64,12 +59,12 @@ html {
   width: 100%;
 }
 
-/* ==== Cards Base ==== */
 .card {
   background: #ffffff;
+  border: 1px solid #f5f5f7;
   border-radius: 16px;
   padding: 26px 32px 22px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
   margin-bottom: 32px;
   display: flex;
   flex-direction: column;
@@ -80,10 +75,10 @@ html {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
-  color: #FF8FAB;
+  color: #FF5F8A;
+  letter-spacing: -0.3px;
 }
 
-/* Light gray divider (between sections) */
 .section-divider {
   border: none;
   height: 1px;
@@ -91,7 +86,6 @@ html {
   margin: 8px 0 14px;
 }
 
-/* ==== Pending Requests ==== */
 .requests-overview-card {
   max-height: calc(100% - 200px);
   display: flex;
@@ -112,11 +106,19 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f2f2f7;
-  border-radius: 12px;
-  padding: 14px 12px;
-  margin-bottom: 8px;
-  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  gap: 16px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.events-overview-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.15);
+  border-color: #FFE4EC;
 }
 
 .events-overview-main {
@@ -128,24 +130,38 @@ html {
 
 .events-overview-name {
   font-weight: 700;
-  color: #111827;
-  font-size: 16px;
+  color: #1f2937;
+  font-size: 17px;
+  letter-spacing: -0.2px;
+  margin-bottom: 4px;
 }
 
 .events-overview-details {
-  font-size: 14px;
-  color: #5b5b5b;
+  font-size: 13px;
+  color: #6b7280;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
+  line-height: 1.5;
+}
+.events-overview-details b {
+  color: #374151;
+  font-weight: 600;
 }
 
 .request-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
+}
+.request-actions .btn-signin,
+.request-actions .btn-signup {
+  padding: 10px 18px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  white-space: nowrap;
 }
 
-/* ==== Active Events ==== */
 .events-overview-card {
   flex: 1;
   display: flex;
@@ -175,7 +191,6 @@ html {
   width: 100%;
 }
 
-/* Search (80%) */
 .events-search-container {
   flex: 4;
   margin-right: 70px;
@@ -204,27 +219,30 @@ html {
   pointer-events: none;
 }
 
-/* Add New Event (20%) */
 .add-event-btn {
   flex: 1;
   max-width: 200px;
-  height: 43px; /* match search field height */
+  height: 43px; 
   align-self: center;
 }
 
-/* Pink divider under heading */
-.events-overview-header + .pink-divider {}
-
-/* Event rows */
 .events-overview-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f2f2f7;
-  border-radius: 12px;
-  padding: 14px 12px;
-  margin-bottom: 8px;
-  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  gap: 16px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.events-overview-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.15);
+  border-color: #FFE4EC;
 }
 
 .events-overview-status {
@@ -249,26 +267,43 @@ html {
   flex: 2;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   justify-content: flex-end;
-  min-width: 140px;
+  min-width: 160px;
 }
 .progress-bar-bg {
-  height: 10px;
+  height: 8px;
   flex: 1;
-  background: #e5e7eb;
+  background: #f3f4f6;
   border-radius: 9999px;
   overflow: hidden;
-  min-width: 90px;
-  max-width: 170px;
+  min-width: 100px;
+  max-width: 180px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .progress-bar-fill {
-  height: 10px;
+  height: 8px;
   border-radius: 9999px;
   transition: width 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.progress-bar-fill.yellow {
+  background: linear-gradient(90deg, #FFCC00 0%, #FFB800 100%);
+}
+.progress-bar-fill.green {
+  background: linear-gradient(90deg, #34C759 0%, #2BA84A 100%);
+}
+.progress-bar-fill.red {
+  background: linear-gradient(90deg, #FF3B30 0%, #E02020 100%);
+}
+.events-overview-progress > span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  min-width: 40px;
+  text-align: right;
 }
 
-/* Tasks Completed label/value */
 .events-overview-tasks {
   min-width: 110px;
   font-size: 14px;
@@ -286,10 +321,22 @@ html {
   color: #232336;
 }
 
-/* View Tasks button */
+.view-tasks-btn {
+  padding: 10px 20px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(255, 143, 171, 0.25) !important;
+}
+.view-tasks-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(255, 143, 171, 0.35) !important;
+}
 .events-overview-viewbtn-block {
   max-width: 200px;
-  min-width: 80px;
+  min-width: 100px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -299,7 +346,6 @@ html {
   max-width: 200px;
 }
 
-/* ==== Add Event Modal ==== */
 .events-modal-overlay {
   position: fixed;
   z-index: 9999;
@@ -378,7 +424,6 @@ html {
   font-size: 14px;
 }
 
-/* ==== Responsive ==== */
 @media (max-width: 900px) {
   .events-page {
     margin-left: 100px;

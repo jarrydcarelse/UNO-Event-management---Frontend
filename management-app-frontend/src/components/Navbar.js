@@ -1,5 +1,3 @@
-// src/components/Navbar.js
-
 import React, { useState, useEffect } from "react";
 import { 
   FiChevronLeft, 
@@ -19,7 +17,6 @@ import "../styles/Navbar.css";
 const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
 
 const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
-  // Allow controlled or internal open/collapse state
   const [internalIsOpen, internalSetIsOpen] = useState(true);
   const isOpen = propIsOpen !== undefined ? propIsOpen : internalIsOpen;
   const setIsOpen = propSetIsOpen !== undefined ? propSetIsOpen : internalSetIsOpen;
@@ -42,7 +39,6 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
           }
         });
 
-        // Find the current user by email
         const currentUser = response.data.find(user => user.email === getUserData().email);
         if (currentUser) {
           setUserData({
@@ -67,7 +63,6 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
 
   return (
     <div className={`sidebar${isOpen ? "" : " collapsed"}`}>
-      {/* Sidebar Toggle */}
       <button 
         className="toggle-btn"
         onClick={() => setIsOpen(!isOpen)}
@@ -80,7 +75,6 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
         )}
       </button>
 
-      {/* Profile Section */}
       <div className="profile">
         <div className="avatar">
           <FiUser size={24} />
@@ -93,7 +87,6 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
         )}
       </div>
 
-      {/* Navigation Links */}
       <nav className="nav-links">
         {navItems.map((item, index) => (
           <Link 
@@ -108,7 +101,6 @@ const Navbar = ({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) => {
         ))}
       </nav>
 
-      {/* Logout */}
       <div className="logout">
         <button
           title={!isOpen ? "Logout" : ""}

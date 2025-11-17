@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import LoadingSpinner from '../components/LoadingSpinner';
+import PageSkeleton from '../components/SkeletonLoader';
 import { FiPlus, FiEdit, FiTrash2 } from 'react-icons/fi';
 import '../events/Events.css';
 
 const API_BASE = 'https://eventify-backend-kgtm.onrender.com';
 
-// Search icon SVG component
+
 const SearchIcon = () => (
   <svg
     className="search-icon"
@@ -30,42 +31,41 @@ export default function Events() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
 
-  // Filter + search
+
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Events
+
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [eventsError, setEventsError] = useState('');
 
-  // Requests
+
   const [requests, setRequests] = useState([]);
   const [loadingReq, setLoadingReq] = useState(true);
   const [reqError, setReqError] = useState('');
 
-  // Modal + form state
+
   const [showAddModal, setShowAddModal] = useState(false);
   const [newEvent, setNewEvent] = useState({
     title: '', description: '', date: '',
     priority: 'Low', assignedToEmail: '', budget: ''
   });
 
-  // Users for dropdown
+
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [usersError, setUsersError] = useState('');
 
-  // Success modal state
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Fetch events & users when filter changes
+  
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) return navigate('/login');
 
-    // Events
+
     (async () => {
       setLoadingEvents(true);
       try {
@@ -73,17 +73,49 @@ export default function Events() {
         const res = await axios.get(API_BASE + url, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setEvents(res.data.map(e => ({
-          id: e.id,
-          name: e.title,
-          client: e.description,
-          date: new Date(e.date).toLocaleDateString(),
-          status: 'In Progress',
-          progress: 0,
-          completed: 0,
-          total: 0,
-          colorClass: 'yellow'
-        })));
+        
+
+        const eventsWithProgress = await Promise.all(
+          res.data.map(async (e) => {
+            try {
+              const tasksRes = await axios.get(`${API_BASE}/api/eventtasks/byevent/${e.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              
+              const tasks = tasksRes.data || [];
+              const totalTasks = tasks.length;
+              const completedTasks = tasks.filter(t => t.completed).length;
+              const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+              
+              return {
+                id: e.id,
+                name: e.title,
+                client: e.description,
+                date: new Date(e.date).toLocaleDateString(),
+                status: progress === 100 ? 'Completed' : 'In Progress',
+                progress: progress,
+                completed: completedTasks,
+                total: totalTasks,
+                colorClass: progress === 100 ? 'green' : progress > 0 ? 'yellow' : 'yellow'
+              };
+            } catch {
+            
+              return {
+                id: e.id,
+                name: e.title,
+                client: e.description,
+                date: new Date(e.date).toLocaleDateString(),
+                status: 'In Progress',
+                progress: 0,
+                completed: 0,
+                total: 0,
+                colorClass: 'yellow'
+              };
+            }
+          })
+        );
+        
+        setEvents(eventsWithProgress);
       } catch {
         setEventsError('Failed to load events');
       } finally {
@@ -110,7 +142,7 @@ export default function Events() {
     })();
   }, [filter, navigate]);
 
-  // Fetch pending requests once
+ 
   useEffect(() => {
     const token = localStorage.getItem('token');
     (async () => {
@@ -136,7 +168,7 @@ export default function Events() {
     })();
   }, []);
 
-  // Handlers
+
   const onNewChange = e => {
     const { name, value } = e.target;
     setNewEvent(prev => ({ ...prev, [name]: value }));
@@ -165,25 +197,55 @@ export default function Events() {
       setShowAddModal(false);
       setNewEvent({ title: '', description: '', date: '', priority: 'Low', assignedToEmail: '', budget: '' });
       
-      // Show success message
+      
       setSuccessMessage('Event added successfully!');
       setShowSuccessModal(true);
       
-      // Refresh events list
+     
       const res = await axios.get(API_BASE + '/api/events', {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setEvents(res.data.map(e => ({
-        id: e.id,
-        name: e.title,
-        client: e.description,
-        date: new Date(e.date).toLocaleDateString(),
-        status: 'In Progress',
-        progress: 0,
-        completed: 0,
-        total: 0,
-        colorClass: 'yellow'
-      })));
+      
+      const eventsWithProgress = await Promise.all(
+        res.data.map(async (e) => {
+          try {
+            const tasksRes = await axios.get(`${API_BASE}/api/eventtasks/byevent/${e.id}`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            const tasks = tasksRes.data || [];
+            const totalTasks = tasks.length;
+            const completedTasks = tasks.filter(t => t.completed).length;
+            const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            
+            return {
+              id: e.id,
+              name: e.title,
+              client: e.description,
+              date: new Date(e.date).toLocaleDateString(),
+              status: progress === 100 ? 'Completed' : 'In Progress',
+              progress: progress,
+              completed: completedTasks,
+              total: totalTasks,
+              colorClass: progress === 100 ? 'green' : progress > 0 ? 'yellow' : 'yellow'
+            };
+          } catch {
+            return {
+              id: e.id,
+              name: e.title,
+              client: e.description,
+              date: new Date(e.date).toLocaleDateString(),
+              status: 'In Progress',
+              progress: 0,
+              completed: 0,
+              total: 0,
+              colorClass: 'yellow'
+            };
+          }
+        })
+      );
+      
+      setEvents(eventsWithProgress);
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to add');
     }
@@ -223,7 +285,7 @@ export default function Events() {
       <div className="events-layout">
         <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
         <div className={`events-page${sidebarOpen ? '' : ' collapsed'}`}>
-          <LoadingSpinner />
+          <PageSkeleton type="events" />
         </div>
       </div>
     );
@@ -234,12 +296,12 @@ export default function Events() {
       <Navbar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
       <div className={`events-page${sidebarOpen ? '' : ' collapsed'}`}>
-        {/* Header + Filter */}
+     
         <div className="events-header-bar">
           <h1 className="events-main-header">Events</h1>
         </div>
 
-        {/* Pending Requests */}
+     
         <div className="card requests-overview-card scroll-container">
           <h2>Pending Event Requests</h2>
           <hr className="pink-divider" />
@@ -265,7 +327,7 @@ export default function Events() {
 
         <hr className="section-divider" />
 
-        {/* Active Events */}
+       
         <div className="card events-overview-card scroll-container">
           <div className="events-overview-header">
             <h2>All Events</h2>
@@ -317,7 +379,7 @@ export default function Events() {
         </div>
       </div>
 
-      {/* Add Event Modal */}
+
       {showAddModal && (
         <div className="events-modal-overlay">
           <div className="events-modal">
@@ -391,7 +453,7 @@ export default function Events() {
         </div>
       )}
 
-      {/* Success Modal */}
+      
       {showSuccessModal && (
         <div className="events-modal-overlay">
           <div className="events-modal success-modal">
