@@ -41,7 +41,7 @@ export default function SignUp() {
     console.log('🔄 Starting API request...');
     
     try {
-      const requestURL = `${API_BASE}/api/users/register`;
+      const requestURL = `${API_BASE}/api/users/signup`;
       const requestData = { email, password };
       const requestConfig = { headers: { 'Content-Type': 'application/json' } };
       
